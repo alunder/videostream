@@ -8,20 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		205B6ABD1D6F662E002879BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205B6ABC1D6F662E002879BF /* AppDelegate.swift */; };
-		205B6ABF1D6F662E002879BF /* VideoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205B6ABE1D6F662E002879BF /* VideoTableViewController.swift */; };
 		205B6AC21D6F662E002879BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 205B6AC01D6F662E002879BF /* Main.storyboard */; };
 		205B6AC41D6F662E002879BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 205B6AC31D6F662E002879BF /* Assets.xcassets */; };
 		205B6AC71D6F662E002879BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 205B6AC51D6F662E002879BF /* LaunchScreen.storyboard */; };
+		205B6ACF1D6F74ED002879BF /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205B6ACE1D6F74ED002879BF /* PlayerViewController.swift */; };
+		205B6AD11D6F74F9002879BF /* VideoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */; };
+		20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		205B6AB91D6F662E002879BF /* VideoStreamer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoStreamer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		205B6ABC1D6F662E002879BF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		205B6ABE1D6F662E002879BF /* VideoTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTableViewController.swift; sourceTree = "<group>"; };
 		205B6AC11D6F662E002879BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		205B6AC31D6F662E002879BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		205B6AC61D6F662E002879BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		205B6AC81D6F662E002879BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		205B6ACE1D6F74ED002879BF /* PlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
+		205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTableViewCell.swift; sourceTree = "<group>"; };
+		20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,7 +59,9 @@
 			isa = PBXGroup;
 			children = (
 				205B6ABC1D6F662E002879BF /* AppDelegate.swift */,
-				205B6ABE1D6F662E002879BF /* VideoTableViewController.swift */,
+				20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */,
+				205B6ACE1D6F74ED002879BF /* PlayerViewController.swift */,
+				205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */,
 				205B6AC01D6F662E002879BF /* Main.storyboard */,
 				205B6AC31D6F662E002879BF /* Assets.xcassets */,
 				205B6AC51D6F662E002879BF /* LaunchScreen.storyboard */,
@@ -135,8 +141,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				205B6ABF1D6F662E002879BF /* VideoTableViewController.swift in Sources */,
+				205B6AD11D6F74F9002879BF /* VideoTableViewCell.swift in Sources */,
+				20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */,
 				205B6ABD1D6F662E002879BF /* AppDelegate.swift in Sources */,
+				205B6ACF1D6F74ED002879BF /* PlayerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,6 +296,7 @@
 				205B6ACD1D6F662E002879BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
