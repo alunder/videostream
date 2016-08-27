@@ -12,7 +12,7 @@ import AVFoundation
 
 class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
-    var videos = [NSURL]()
+    var videos = [Video]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,8 +26,8 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     private func loadSampleVideos() {
-        downloadVideo("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
-        downloadVideo("http://techslides.com/demos/sample-videos/small.mp4")
+        saveVideoFromString("https://rsn-25ge7nek.googlevideo.com/videoplayback?dur=596.567&ei=eU3AV7u9HdXCcPv6lNgD&expire=1472242137&sver=3&sparams=dur,ei,expire,id,initcwndbps,ip,ipbits,ipbypass,itag,lmt,mime,mm,mn,ms,mv,nh,pl,ratebypass,requiressl,source,upn&source=youtube&ratebypass=yes&signature=6A8C6411DDC7C03102848D898D5737FE87F9ACEC.21F4C435B6B848B470BAA928A1A8FDC74083F0EB&upn=gh4-hzxA5q0&itag=22&key=cms1&lmt=1471054390643811&id=o-AEZe8vCawsplP58czKnrqxF6I2-LDz-QTGYIqPtgL5wg&mime=video/mp4&pl=24&ipbits=0&ip=51.255.133.247&requiressl=yes&redirect_counter=1&req_id=11dc3ab8d95ba3ee&cms_redirect=yes&ipbypass=yes&mm=31&mn=sn-25ge7nek&ms=au&mt=1472239151&mv=m&nh=IgpwcjAxLnBhcjEwKg4zNy4xODcuMjMxLjI0MA&&title=Big+Buck+Bunny")
+        saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
         
     }
     
@@ -47,9 +47,9 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
         videoLinkAlert.addAction(cancelAction)
         let downloadAction = UIAlertAction(title: "Download", style: .Default) { (action) in
-            self.downloadVideo(linkField.text!)
+            self.saveVideoFromString(linkField.text!)
         }
-
+        
         videoLinkAlert.addAction(downloadAction)
         downloadAction.enabled = false
         
@@ -64,14 +64,11 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         (alert!.actions[1] as UIAlertAction).enabled = (sender.text != "")
     }
     
-    // TODO: Make run background
-    private func downloadVideo(videoURL: String) {
-        if let url = NSURL(string: videoURL) {
-            if UIApplication.sharedApplication().canOpenURL(url) {
-                
-                self.videos.insert(url, atIndex: 0)
-                self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .Automatic)
-                
+    private func saveVideoFromString(urlString: String) {
+        if let videoURL = NSURL(string: urlString) {
+            if let video = Video(url: videoURL) {
+                self.videos.append(video)
+                tableView.reloadData()
             } else {
                 let invalidLink = UIAlertController(title: "Invalid URL", message: nil, preferredStyle: .Alert)
                 let dismissAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
@@ -81,38 +78,6 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
                 
             }
         }
-    }
-    
-    // TODO: Make this run in utility queue
-    private func getVideoThumbnail(sourceURL: NSURL) -> UIImage {
-        let asset = AVAsset(URL: sourceURL)
-        let duration = CMTimeGetSeconds(asset.duration)
-        let imageGenerator = AVAssetImageGenerator(asset: asset)
-        let time = CMTime(seconds: duration/4, preferredTimescale: 1)
-        do {
-            let imageRef = try imageGenerator.copyCGImageAtTime(time, actualTime: nil)
-            return UIImage(CGImage: imageRef)
-        } catch {
-            print(error)
-            return UIImage()
-        }
-    }
-    
-    private func getDuration(sourceURL: NSURL) -> String {
-        let asset = AVAsset(URL: sourceURL)
-        let durationInSeconds = CMTimeGetSeconds(asset.duration)
-        
-        let seconds = Int(durationInSeconds % 60)
-        let totalMinutes = Int(durationInSeconds / 60)
-        let minutes = Int(Double(totalMinutes) % 60)
-        let hours = Int(Double(totalMinutes) / 60)
-        
-        if hours <= 0 {
-            return String(format: "%02d:%02d", minutes, seconds)
-        } else {
-            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        }
-        
     }
     
     override func canBecomeFirstResponder() -> Bool {
@@ -131,13 +96,12 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(Storyboard.VideoCellIdentifier, forIndexPath: indexPath) as! VideoTableViewCell
-        let video = videos[indexPath.row]
+        let cell = tableView.dequeueReusableCellWithIdentifier(Storyboard.VideoCellIdentifier, forIndexPath: indexPath)
         
-        cell.titleLabel.text = video.lastPathComponent
-        cell.durationLabel.text = getDuration(video)
-        cell.thumbnail.image = nil
-        cell.thumbnail.image = getVideoThumbnail(video)
+        if let videoCell = cell as? VideoTableViewCell {
+            let video = videos[indexPath.row]
+            videoCell.video = video
+        }
         
         return cell
     }
@@ -149,31 +113,21 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-     
-     }
-     */
-    
     // MARK: - Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == Storyboard.PlayVideoSegue {
-            
-            let playerController = segue.destinationViewController as! PlayerViewController
-            
-            if let selectedMealCell = sender as? VideoTableViewCell {
-                let indexPath = tableView.indexPathForCell(selectedMealCell)!
-                let video = videos[indexPath.row]
-                let player = AVPlayer(URL: video)
-                playerController.player = player
-                player.play()
+            if let playerController = segue.destinationViewController as? AVPlayerViewController {
+                if let selectedVideoCell = sender as? VideoTableViewCell {
+                    let indexPath = tableView.indexPathForCell(selectedVideoCell)!
+                    let video = videos[indexPath.row]
+                    let player = AVPlayer(URL: video.url)
+                    playerController.player = player
+                    player.play()
+                }
             }
         }
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
     }
     
 }

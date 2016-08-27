@@ -19,7 +19,7 @@
                                 <rect key="frame" x="0.0" y="92" width="600" height="69"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="M1X-aK-5Wv" id="6vQ-2u-14z">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="68.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="69"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wf1-4E-HpQ">
@@ -30,19 +30,23 @@
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xVK-RH-04g">
-                                            <rect key="frame" x="118" y="8" width="474" height="19.5"/>
+                                            <rect key="frame" x="118" y="8" width="474" height="20"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XHw-CM-wzg">
-                                            <rect key="frame" x="118" y="35" width="49" height="14.5"/>
+                                            <rect key="frame" x="118" y="35" width="49" height="15"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Ivo-DC-5sH">
+                                            <rect key="frame" x="52" y="25" width="20" height="20"/>
+                                        </activityIndicatorView>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstItem="Ivo-DC-5sH" firstAttribute="centerX" secondItem="wf1-4E-HpQ" secondAttribute="centerX" id="9m0-1g-GCJ"/>
                                         <constraint firstItem="wf1-4E-HpQ" firstAttribute="leading" secondItem="6vQ-2u-14z" secondAttribute="leadingMargin" constant="6" id="CoL-yg-TDJ"/>
                                         <constraint firstItem="xVK-RH-04g" firstAttribute="top" secondItem="6vQ-2u-14z" secondAttribute="topMargin" id="Dkw-Uv-7qO"/>
                                         <constraint firstItem="xVK-RH-04g" firstAttribute="leading" secondItem="wf1-4E-HpQ" secondAttribute="trailing" constant="8" id="I9t-QU-ZPx"/>
@@ -50,10 +54,12 @@
                                         <constraint firstItem="XHw-CM-wzg" firstAttribute="leading" secondItem="wf1-4E-HpQ" secondAttribute="trailing" constant="8" id="Mpc-eh-sHi"/>
                                         <constraint firstItem="xVK-RH-04g" firstAttribute="trailing" secondItem="6vQ-2u-14z" secondAttribute="trailingMargin" id="lv1-iY-9uC"/>
                                         <constraint firstItem="wf1-4E-HpQ" firstAttribute="centerY" secondItem="6vQ-2u-14z" secondAttribute="centerY" id="uww-3U-Ftq"/>
+                                        <constraint firstItem="Ivo-DC-5sH" firstAttribute="centerY" secondItem="wf1-4E-HpQ" secondAttribute="centerY" id="z0I-qi-Kn9"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="durationLabel" destination="XHw-CM-wzg" id="hxA-Le-ZGc"/>
+                                    <outlet property="imageLoadingIndicator" destination="Ivo-DC-5sH" id="aXG-oi-ZmT"/>
                                     <outlet property="thumbnail" destination="wf1-4E-HpQ" id="f95-dR-vnC"/>
                                     <outlet property="titleLabel" destination="xVK-RH-04g" id="Dfo-Fc-IIl"/>
                                     <segue destination="mPY-lO-F7u" kind="presentation" identifier="PlayVideo" id="mhK-Rk-b3e"/>
@@ -84,7 +90,7 @@
         <!--AV Player View Controller-->
         <scene sceneID="JMi-zL-vlE">
             <objects>
-                <avPlayerViewController videoGravity="AVLayerVideoGravityResizeAspect" id="mPY-lO-F7u" customClass="PlayerViewController" customModule="VideoStreamer" customModuleProvider="target" sceneMemberID="viewController"/>
+                <avPlayerViewController videoGravity="AVLayerVideoGravityResizeAspect" id="mPY-lO-F7u" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gqj-U4-aT0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1795" y="324"/>
