@@ -15,24 +15,11 @@ class Video: NSObject {
     var title: String
     var isDownloaded: Bool
     
-    init?(url: NSURL) {
+    init(url: NSURL) {
         self.url = url
         self.title = url.lastPathComponent!
         self.isDownloaded = false
         
         super.init()
-        
-        // Fails to create video if URL is invalid
-        if !isValidURL(url) {
-            return nil
-        }
-    }
-    
-    private func isValidURL(url: NSURL) -> Bool {
-//        if UIApplication.sharedApplication().canOpenURL(url) {
-//            return true
-//        }
-//        return false
-        return true
     }
 }

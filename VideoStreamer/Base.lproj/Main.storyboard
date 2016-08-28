@@ -62,7 +62,6 @@
                                     <outlet property="imageLoadingIndicator" destination="Ivo-DC-5sH" id="aXG-oi-ZmT"/>
                                     <outlet property="thumbnail" destination="wf1-4E-HpQ" id="f95-dR-vnC"/>
                                     <outlet property="titleLabel" destination="xVK-RH-04g" id="Dfo-Fc-IIl"/>
-                                    <segue destination="mPY-lO-F7u" kind="presentation" identifier="PlayVideo" id="mhK-Rk-b3e"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -86,14 +85,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RbQ-D4-Fxb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1101" y="324"/>
-        </scene>
-        <!--AV Player View Controller-->
-        <scene sceneID="JMi-zL-vlE">
-            <objects>
-                <avPlayerViewController videoGravity="AVLayerVideoGravityResizeAspect" id="mPY-lO-F7u" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Gqj-U4-aT0" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1795" y="324"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="mmf-dp-v5b">

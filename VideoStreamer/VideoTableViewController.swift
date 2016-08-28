@@ -13,6 +13,7 @@ import AVFoundation
 class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     var videos = [Video]()
+    let playerController = AVPlayerViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,11 +23,10 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     struct Storyboard {
         static let VideoCellIdentifier = "VideoCell"
-        static let PlayVideoSegue = "PlayVideo"
     }
     
     private func loadSampleVideos() {
-        saveVideoFromString("https://rsn-25ge7nek.googlevideo.com/videoplayback?dur=596.567&ei=eU3AV7u9HdXCcPv6lNgD&expire=1472242137&sver=3&sparams=dur,ei,expire,id,initcwndbps,ip,ipbits,ipbypass,itag,lmt,mime,mm,mn,ms,mv,nh,pl,ratebypass,requiressl,source,upn&source=youtube&ratebypass=yes&signature=6A8C6411DDC7C03102848D898D5737FE87F9ACEC.21F4C435B6B848B470BAA928A1A8FDC74083F0EB&upn=gh4-hzxA5q0&itag=22&key=cms1&lmt=1471054390643811&id=o-AEZe8vCawsplP58czKnrqxF6I2-LDz-QTGYIqPtgL5wg&mime=video/mp4&pl=24&ipbits=0&ip=51.255.133.247&requiressl=yes&redirect_counter=1&req_id=11dc3ab8d95ba3ee&cms_redirect=yes&ipbypass=yes&mm=31&mn=sn-25ge7nek&ms=au&mt=1472239151&mv=m&nh=IgpwcjAxLnBhcjEwKg4zNy4xODcuMjMxLjI0MA&&title=Big+Buck+Bunny")
+        saveVideoFromString("http://techslides.com/demos/sample-videos/invalid-video.mp4")
         saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
         
     }
@@ -65,17 +65,54 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     private func saveVideoFromString(urlString: String) {
-        if let videoURL = NSURL(string: urlString) {
-            if let video = Video(url: videoURL) {
-                self.videos.append(video)
-                tableView.reloadData()
-            } else {
-                let invalidLink = UIAlertController(title: "Invalid URL", message: nil, preferredStyle: .Alert)
-                let dismissAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
-                invalidLink.addAction(dismissAction)
-                
-                self.presentViewController(invalidLink, animated: true, completion: nil)
-                
+        if let url = NSURL(string: urlString) where isValidURL(url) {
+            let video = Video(url: url)
+            self.videos.append(video)
+            // FIXME: Reload relevant row
+            tableView.reloadData()
+        }
+        else {
+            let invalidLink = UIAlertController(title: "Invalid URL!", message: nil, preferredStyle: .Alert)
+            let dismissAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
+            invalidLink.addAction(dismissAction)
+            
+            presentViewController(invalidLink, animated: true, completion: nil)
+            
+        }
+    }
+    
+    private func isValidURL(url: NSURL) -> Bool {
+        guard UIApplication.sharedApplication().canOpenURL(url) else {return false}
+        return true
+    }
+    
+    private func setupPlayerForVideo(video: Video) {
+        let playerItem = AVPlayerItem(URL: video.url)
+        let player = AVPlayer(playerItem: playerItem)
+        playerController.player = player
+        presentViewController(playerController, animated: true, completion: nil)
+        playerItem.addObserver(self, forKeyPath: "status", options: .New, context: nil)
+    }
+    
+    private func displayPlaybackErrorAlert() {
+        playerController.dismissViewControllerAnimated(true) {
+            let playbackError = UIAlertController(title: "An error occurred while loading this video", message: nil, preferredStyle: .Alert)
+            let dismissAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
+            playbackError.addAction(dismissAction)
+            
+            self.presentViewController(playbackError, animated: true, completion: nil)
+        }
+    }
+    
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        if let playerItem = object as? AVPlayerItem {
+            if keyPath == "status" {
+                playerItem.removeObserver(self, forKeyPath: "status")
+                if playerItem.status == .ReadyToPlay {
+                    playerController.player!.play()
+                } else if playerItem.status == .Failed {
+                    displayPlaybackErrorAlert()
+                }
             }
         }
     }
@@ -113,21 +150,8 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    // MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == Storyboard.PlayVideoSegue {
-            if let playerController = segue.destinationViewController as? AVPlayerViewController {
-                if let selectedVideoCell = sender as? VideoTableViewCell {
-                    let indexPath = tableView.indexPathForCell(selectedVideoCell)!
-                    let video = videos[indexPath.row]
-                    let player = AVPlayer(URL: video.url)
-                    playerController.player = player
-                    player.play()
-                }
-            }
-        }
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let video = videos[indexPath.row]
+        setupPlayerForVideo(video)
     }
-    
 }
