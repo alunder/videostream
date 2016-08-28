@@ -33,12 +33,24 @@ class VideoTableViewCell: UITableViewCell {
         // Load video data
         if let video = self.video
         {
-            titleLabel?.text = video.title
+            titleLabel.text = video.filename
             
             imageLoadingIndicator.startAnimating()
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0)) {
                 let asset = AVAsset(URL: video.url)
                 let durationInSeconds = CMTimeGetSeconds(asset.duration)
+                
+                // If video file has title metadata set titleLabel to it, otherwise keep filename
+                let titles = AVMetadataItem.metadataItemsFromArray(asset.commonMetadata,
+                                                                   withKey: AVMetadataCommonKeyTitle,
+                                                                   keySpace: AVMetadataKeySpaceCommon)
+                if !titles.isEmpty {
+                    if let title = titles.first?.value {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.titleLabel.text = title as? String
+                        }
+                    }
+                }
                 
                 // Format duration into readable time
                 let seconds = Int(durationInSeconds % 60)
@@ -46,6 +58,7 @@ class VideoTableViewCell: UITableViewCell {
                 let minutes = Int(Double(totalMinutes) % 60)
                 let hours = Int(Double(totalMinutes) / 60)
                 
+                //  Set duration label
                 dispatch_async(dispatch_get_main_queue()) {
                     if hours <= 0 {
                         self.durationLabel.text = String(format: "%02d:%02d", minutes, seconds)
@@ -53,8 +66,8 @@ class VideoTableViewCell: UITableViewCell {
                         self.durationLabel.text = String(format: "%d:%02d:%02d", hours, minutes, seconds)
                     }
                 }
-                
-                // Set thumbnail image
+
+                // Load thumbnail image
                 let imageGenerator = AVAssetImageGenerator(asset: asset)
                 let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 1)
                 do {
@@ -64,13 +77,21 @@ class VideoTableViewCell: UITableViewCell {
                         self.imageLoadingIndicator.stopAnimating()
                     }
                 } catch {
+                    print("Failed to load thumbnail")
                     print(error)
                     dispatch_async(dispatch_get_main_queue()) {
                         self.thumbnail.image = UIImage(named: "Generic Video")!
                         self.imageLoadingIndicator.stopAnimating()
                     }
                 }
+
             }
+            
+            // Shows all metadata information
+            // for item in assets.commonMetadata {
+            // print(item.commonKey!, ":", item.value!)
+            // }
+            
         }
         
     }

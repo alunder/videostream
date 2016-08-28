@@ -28,6 +28,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     private func loadSampleVideos() {
         saveVideoFromString("http://techslides.com/demos/sample-videos/invalid-video.mp4")
         saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
+        saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
         
     }
     
@@ -72,7 +73,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
             tableView.reloadData()
         }
         else {
-            let invalidLink = UIAlertController(title: "Invalid URL!", message: nil, preferredStyle: .Alert)
+            let invalidLink = UIAlertController(title: "Unable to find URL", message: nil, preferredStyle: .Alert)
             let dismissAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
             invalidLink.addAction(dismissAction)
             
@@ -96,7 +97,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     private func displayPlaybackErrorAlert() {
         playerController.dismissViewControllerAnimated(true) {
-            let playbackError = UIAlertController(title: "An error occurred while loading this video", message: nil, preferredStyle: .Alert)
+            let playbackError = UIAlertController(title: "An error occurred loading this video", message: nil, preferredStyle: .Alert)
             let dismissAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
             playbackError.addAction(dismissAction)
             
