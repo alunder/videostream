@@ -13,6 +13,7 @@ import AVFoundation
 class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     var videos = [Video]()
+    
     let playerController = AVPlayerViewController()
     
     override func viewDidLoad() {
@@ -68,9 +69,9 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     private func saveVideoFromString(urlString: String) {
         if let url = NSURL(string: urlString) where isValidURL(url) {
             let video = Video(url: url)
-            self.videos.append(video)
-            // FIXME: Reload relevant row
-            tableView.reloadData()
+            self.videos.insert(video, atIndex: 0)
+            let indexPath = NSIndexPath(forRow: videos.startIndex, inSection: 0)
+            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
         }
         else {
             let invalidLink = UIAlertController(title: "Unable to find URL", message: nil, preferredStyle: .Alert)
@@ -148,6 +149,12 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         if editingStyle == .Delete {
             videos.removeAtIndex(indexPath.row)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+        }
+    }
+    
+    override func tableView(tableView: UITableView, moveRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
+        if sourceIndexPath != destinationIndexPath {
+            swap(&videos[sourceIndexPath.row], &videos[destinationIndexPath.row])
         }
     }
     
