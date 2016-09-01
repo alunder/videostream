@@ -33,7 +33,11 @@ class VideoTableViewCell: UITableViewCell {
         // Load video data
         if let video = self.video
         {
-            titleLabel.text = video.filename
+            if video.filename.isEmpty {
+                titleLabel.text = "\(video.url)"
+            } else {
+                titleLabel.text = video.filename
+            }
             
             imageLoadingIndicator.startAnimating()
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0)) {
@@ -66,7 +70,7 @@ class VideoTableViewCell: UITableViewCell {
                         self.durationLabel.text = String(format: "%d:%02d:%02d", hours, minutes, seconds)
                     }
                 }
-
+                
                 // Load thumbnail image
                 let imageGenerator = AVAssetImageGenerator(asset: asset)
                 let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 1)
@@ -84,7 +88,7 @@ class VideoTableViewCell: UITableViewCell {
                         self.imageLoadingIndicator.stopAnimating()
                     }
                 }
-
+                
             }
             
             // Shows all metadata information

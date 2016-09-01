@@ -27,8 +27,9 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     private func loadSampleVideos() {
-        saveVideoFromString("http://techslides.com/demos/sample-videos/invalid-video.mp4")
         saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
+        saveVideoFromString("http://techslides.com/demos/sample-videos/invalid-video.mp4")
+        saveVideoFromString("https://pixabay.com/en/videos/download/video-3713_source.mp4?attachment")
         saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
         
     }
@@ -112,6 +113,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
                 playerItem.removeObserver(self, forKeyPath: "status")
                 if playerItem.status == .ReadyToPlay {
                     playerController.player!.play()
+                    playerController.player!.rate = NSUserDefaults.standardUserDefaults().floatForKey(SettingsConstants.Speed)
                 } else if playerItem.status == .Failed {
                     displayPlaybackErrorAlert()
                 }

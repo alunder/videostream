@@ -12,6 +12,9 @@
 		205B6AC41D6F662E002879BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 205B6AC31D6F662E002879BF /* Assets.xcassets */; };
 		205B6AC71D6F662E002879BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 205B6AC51D6F662E002879BF /* LaunchScreen.storyboard */; };
 		205B6AD11D6F74F9002879BF /* VideoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */; };
+		20631E471D77C7DA00173ACA /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20631E461D77C7DA00173ACA /* SettingsTableViewController.swift */; };
+		20B65FE61D77CD6100118586 /* SpeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */; };
+		20B65FEC1D78950700118586 /* SettingsConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B65FEB1D78950700118586 /* SettingsConstants.swift */; };
 		20B774C51D724D4B0024B35E /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B774C41D724D4B0024B35E /* Video.swift */; };
 		20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */; };
 /* End PBXBuildFile section */
@@ -24,6 +27,9 @@
 		205B6AC61D6F662E002879BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		205B6AC81D6F662E002879BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTableViewCell.swift; sourceTree = "<group>"; };
+		20631E461D77C7DA00173ACA /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
+		20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeedTableViewController.swift; sourceTree = "<group>"; };
+		20B65FEB1D78950700118586 /* SettingsConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsConstants.swift; sourceTree = "<group>"; };
 		20B774C41D724D4B0024B35E /* Video.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
 		20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -63,11 +69,30 @@
 				20B774C41D724D4B0024B35E /* Video.swift */,
 				205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */,
 				205B6AC01D6F662E002879BF /* Main.storyboard */,
+				20B65FE71D77CD6500118586 /* Settings */,
+				20B65FE81D77CD7500118586 /* Supporting Files */,
+			);
+			path = VideoStreamer;
+			sourceTree = "<group>";
+		};
+		20B65FE71D77CD6500118586 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				20631E461D77C7DA00173ACA /* SettingsTableViewController.swift */,
+				20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */,
+				20B65FEB1D78950700118586 /* SettingsConstants.swift */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
+		20B65FE81D77CD7500118586 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
 				205B6AC31D6F662E002879BF /* Assets.xcassets */,
 				205B6AC51D6F662E002879BF /* LaunchScreen.storyboard */,
 				205B6AC81D6F662E002879BF /* Info.plist */,
 			);
-			path = VideoStreamer;
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,9 +168,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				205B6AD11D6F74F9002879BF /* VideoTableViewCell.swift in Sources */,
+				20B65FEC1D78950700118586 /* SettingsConstants.swift in Sources */,
+				20631E471D77C7DA00173ACA /* SettingsTableViewController.swift in Sources */,
 				20B774C51D724D4B0024B35E /* Video.swift in Sources */,
 				20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */,
 				205B6ABD1D6F662E002879BF /* AppDelegate.swift in Sources */,
+				20B65FE61D77CD6100118586 /* SpeedTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
