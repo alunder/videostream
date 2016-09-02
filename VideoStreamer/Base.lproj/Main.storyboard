@@ -148,7 +148,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Settings" id="qbm-SG-CTq">
-                        <barButtonItem key="rightBarButtonItem" title="Item" systemItem="done" id="TZA-gZ-odF">
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="TZA-gZ-odF">
                             <connections>
                                 <action selector="done:" destination="GSx-Q8-tiL" id="ENt-K8-rhh"/>
                             </connections>
