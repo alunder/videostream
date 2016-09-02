@@ -20,7 +20,7 @@ class SettingsTableViewController: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        let speed = defaults.objectForKey(SettingsConstants.Speed) ?? "1.0"
+        let speed = defaults.objectForKey(SettingsConstants.Speed)
         speedValueLabel.text = String(speed!)
     }
 

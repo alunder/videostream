@@ -8,13 +8,10 @@
 
 import UIKit
 import AVKit
-import AVFoundation
 
-class VideoTableViewController: UITableViewController, UITextFieldDelegate {
+class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPlayerViewControllerDelegate {
     
     var videos = [Video]()
-    
-    let playerController = AVPlayerViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +21,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     struct Storyboard {
         static let VideoCellIdentifier = "VideoCell"
+        static let AVPlayerVCSegue = "ShowPlayer"
     }
     
     private func loadSampleVideos() {
@@ -89,12 +87,14 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         return true
     }
     
+    /* TODO: Remove chunk
     private func setupPlayerForVideo(video: Video) {
         let playerItem = AVPlayerItem(URL: video.url)
         let player = AVPlayer(playerItem: playerItem)
         playerController.player = player
         presentViewController(playerController, animated: true, completion: nil)
         playerItem.addObserver(self, forKeyPath: "status", options: .New, context: nil)
+        player.addObserver(self, forKeyPath: "rate", options: .New, context: nil)
     }
     
     private func displayPlaybackErrorAlert() {
@@ -113,13 +113,20 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
                 playerItem.removeObserver(self, forKeyPath: "status")
                 if playerItem.status == .ReadyToPlay {
                     playerController.player!.play()
-                    playerController.player!.rate = NSUserDefaults.standardUserDefaults().floatForKey(SettingsConstants.Speed)
                 } else if playerItem.status == .Failed {
                     displayPlaybackErrorAlert()
                 }
             }
+        } else if let player = object as? AVPlayer {
+            if keyPath == "rate" {
+                let userRate = NSUserDefaults.standardUserDefaults().floatForKey(SettingsConstants.Speed)
+                if player.rate != 0 && player.rate != userRate  {
+                    playerController.player!.rate = userRate
+                }
+            }
         }
     }
+     */
     
     override func canBecomeFirstResponder() -> Bool {
         return true
@@ -160,8 +167,20 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let video = videos[indexPath.row]
-        setupPlayerForVideo(video)
+//    TODO: Remove
+//    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+//        let video = videos[indexPath.row]
+//        setupPlayerForVideo(video)
+//    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == Storyboard.AVPlayerVCSegue {
+            if let playervc = segue.destinationViewController as? PlayerViewController {
+                if let videoCell = sender as? VideoTableViewCell {
+                    playervc.video = videoCell.video
+                }
+            }
+        }
     }
+    
 }
