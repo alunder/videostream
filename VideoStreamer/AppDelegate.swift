@@ -8,15 +8,22 @@
 
 import UIKit
 
+let themeColor = UIColor.orangeColor()
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        // Default settings
         NSUserDefaults.standardUserDefaults().registerDefaults([SettingsConstants.Speed : 1.0])
+        
+        // Color themes
+        UITableViewCell.appearance().tintColor = themeColor
+        UINavigationBar.appearance().tintColor = themeColor
+        UIToolbar.appearance().tintColor = themeColor
+        
         return true
     }
 
