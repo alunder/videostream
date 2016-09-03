@@ -56,24 +56,30 @@ class VideoTableViewCell: UITableViewCell {
                     }
                 }
                 
-                // Format duration into readable time
-                let seconds = Int(durationInSeconds % 60)
-                let totalMinutes = Int(durationInSeconds / 60)
-                let minutes = Int(Double(totalMinutes) % 60)
-                let hours = Int(Double(totalMinutes) / 60)
-                
-                //  Set duration label
-                dispatch_async(dispatch_get_main_queue()) {
-                    if hours <= 0 {
-                        self.durationLabel.text = String(format: "%02d:%02d", minutes, seconds)
-                    } else {
-                        self.durationLabel.text = String(format: "%d:%02d:%02d", hours, minutes, seconds)
+                if durationInSeconds.isFinite {
+                    // Format duration into readable time
+                    let seconds = Int(durationInSeconds % 60)
+                    let totalMinutes = Int(durationInSeconds / 60)
+                    let minutes = Int(Double(totalMinutes) % 60)
+                    let hours = Int(Double(totalMinutes) / 60)
+                    
+                    //  Set duration label
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if hours <= 0 {
+                            self.durationLabel.text = String(format: "%02d:%02d", minutes, seconds)
+                        } else {
+                            self.durationLabel.text = String(format: "%d:%02d:%02d", hours, minutes, seconds)
+                        }
+                    }
+                } else {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.durationLabel.text = "Live Broadcast"
                     }
                 }
                 
                 // Load thumbnail image
                 let imageGenerator = AVAssetImageGenerator(asset: asset)
-                let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 1)
+                let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 60000)
                 do {
                     let imageRef = try imageGenerator.copyCGImageAtTime(time, actualTime: nil)
                     dispatch_async(dispatch_get_main_queue()) {
@@ -81,8 +87,8 @@ class VideoTableViewCell: UITableViewCell {
                         self.imageLoadingIndicator.stopAnimating()
                     }
                 } catch {
-                    print("Failed to load thumbnail")
-                    print(error)
+                    print("Failed to load thumbnail for \(video.filename)")
+                    print(error, "\n")
                     dispatch_async(dispatch_get_main_queue()) {
                         self.thumbnail.image = UIImage(named: "Generic Video")!
                         self.imageLoadingIndicator.stopAnimating()

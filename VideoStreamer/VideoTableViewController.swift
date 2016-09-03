@@ -26,9 +26,10 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     
     private func loadSampleVideos() {
         saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
+        saveVideoFromString("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/appleman.m3u8")
         saveVideoFromString("http://techslides.com/demos/sample-videos/invalid-video.mp4")
-        saveVideoFromString("https://pixabay.com/en/videos/download/video-3713_source.mp4?attachment")
         saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
+        saveVideoFromString("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8")
         
     }
     

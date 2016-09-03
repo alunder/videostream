@@ -13,9 +13,7 @@ class SpeedTableViewController: UITableViewController {
     let defaults = NSUserDefaults.standardUserDefaults()
     var rowForSelectedSpeed: Int = 2 { // Row index 2 corresponds with Normal speed
         didSet {
-            print(oldValue, "->", rowForSelectedSpeed)
             if oldValue != rowForSelectedSpeed {
-                print("Set new defaults value")
                 switch rowForSelectedSpeed {
                 case 0: defaults.setFloat(0.25, forKey: SettingsConstants.Speed)
                 case 1: defaults.setFloat(0.5, forKey: SettingsConstants.Speed)

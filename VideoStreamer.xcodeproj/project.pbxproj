@@ -131,6 +131,11 @@
 					205B6AB81D6F662E002879BF = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = 582KY6XV9S;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
