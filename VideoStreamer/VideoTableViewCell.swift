@@ -71,30 +71,32 @@ class VideoTableViewCell: UITableViewCell {
                             self.durationLabel.text = String(format: "%d:%02d:%02d", hours, minutes, seconds)
                         }
                     }
+                    
+                    // Load thumbnail image
+                    let imageGenerator = AVAssetImageGenerator(asset: asset)
+                    let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 60000)
+                    do {
+                        let imageRef = try imageGenerator.copyCGImageAtTime(time, actualTime: nil)
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.thumbnail.image = UIImage(CGImage: imageRef)
+                            self.imageLoadingIndicator.stopAnimating()
+                        }
+                    } catch {
+                        print("Failed to load thumbnail for \(video.filename)")
+                        print(error, "\n")
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.thumbnail.image = UIImage(named: "Generic Video")!
+                            self.imageLoadingIndicator.stopAnimating()
+                        }
+                    }
+
                 } else {
                     dispatch_async(dispatch_get_main_queue()) {
                         self.durationLabel.text = "Live Broadcast"
-                    }
-                }
-                
-                // Load thumbnail image
-                let imageGenerator = AVAssetImageGenerator(asset: asset)
-                let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 60000)
-                do {
-                    let imageRef = try imageGenerator.copyCGImageAtTime(time, actualTime: nil)
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.thumbnail.image = UIImage(CGImage: imageRef)
-                        self.imageLoadingIndicator.stopAnimating()
-                    }
-                } catch {
-                    print("Failed to load thumbnail for \(video.filename)")
-                    print(error, "\n")
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.thumbnail.image = UIImage(named: "Generic Video")!
+                        self.thumbnail.image = UIImage(named: "Broadcast")
                         self.imageLoadingIndicator.stopAnimating()
                     }
                 }
-                
             }
             
             // Shows all metadata information
