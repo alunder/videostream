@@ -23,7 +23,7 @@ class VideoTableViewCell: UITableViewCell {
         }
     }
     
-    private func updateUI()
+    fileprivate func updateUI()
     {
         // Reset any existing data
         thumbnail.image = nil
@@ -40,17 +40,17 @@ class VideoTableViewCell: UITableViewCell {
             }
             
             imageLoadingIndicator.startAnimating()
-            dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0)) {
-                let asset = AVAsset(URL: video.url)
+            DispatchQueue.global(qos: .utility).async {
+                let asset = AVAsset(url: video.url as URL)
                 let durationInSeconds = CMTimeGetSeconds(asset.duration)
                 
                 // If video file has title metadata set titleLabel to it, otherwise keep filename
-                let titles = AVMetadataItem.metadataItemsFromArray(asset.commonMetadata,
+                let titles = AVMetadataItem.metadataItems(from: asset.commonMetadata,
                                                                    withKey: AVMetadataCommonKeyTitle,
                                                                    keySpace: AVMetadataKeySpaceCommon)
                 if !titles.isEmpty {
                     if let title = titles.first?.value {
-                        dispatch_async(dispatch_get_main_queue()) {
+                        DispatchQueue.main.async {
                             self.titleLabel.text = title as? String
                         }
                     }
@@ -58,13 +58,13 @@ class VideoTableViewCell: UITableViewCell {
                 
                 if durationInSeconds.isFinite {
                     // Format duration into readable time
-                    let seconds = Int(durationInSeconds % 60)
+                    let seconds = Int(durationInSeconds.truncatingRemainder(dividingBy: 60))
                     let totalMinutes = Int(durationInSeconds / 60)
-                    let minutes = Int(Double(totalMinutes) % 60)
+                    let minutes = Int(Double(totalMinutes).truncatingRemainder(dividingBy: 60))
                     let hours = Int(Double(totalMinutes) / 60)
                     
                     //  Set duration label
-                    dispatch_async(dispatch_get_main_queue()) {
+                    DispatchQueue.main.async {
                         if hours <= 0 {
                             self.durationLabel.text = String(format: "%02d:%02d", minutes, seconds)
                         } else {
@@ -74,24 +74,24 @@ class VideoTableViewCell: UITableViewCell {
                     
                     // Load thumbnail image
                     let imageGenerator = AVAssetImageGenerator(asset: asset)
-                    let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 60000)
+                    let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 600)
                     do {
-                        let imageRef = try imageGenerator.copyCGImageAtTime(time, actualTime: nil)
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self.thumbnail.image = UIImage(CGImage: imageRef)
+                        let imageRef = try imageGenerator.copyCGImage(at: time, actualTime: nil)
+                        DispatchQueue.main.async {
+                            self.thumbnail.image = UIImage(cgImage: imageRef)
                             self.imageLoadingIndicator.stopAnimating()
                         }
                     } catch {
                         print("Failed to load thumbnail for \(video.filename)")
                         print(error, "\n")
-                        dispatch_async(dispatch_get_main_queue()) {
+                        DispatchQueue.main.async {
                             self.thumbnail.image = UIImage(named: "Generic Video")!
                             self.imageLoadingIndicator.stopAnimating()
                         }
                     }
 
                 } else {
-                    dispatch_async(dispatch_get_main_queue()) {
+                    DispatchQueue.main.async {
                         self.durationLabel.text = "Live Broadcast"
                         self.thumbnail.image = UIImage(named: "Broadcast")
                         self.imageLoadingIndicator.stopAnimating()

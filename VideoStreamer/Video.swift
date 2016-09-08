@@ -11,13 +11,13 @@ import AVFoundation
 
 class Video: NSObject {
     
-    var url: NSURL
+    var url: URL
     var filename: String
     var isDownloaded: Bool
     
-    init(url: NSURL) {
+    init(url: URL) {
         self.url = url
-        self.filename = url.lastPathComponent!
+        self.filename = url.lastPathComponent
         self.isDownloaded = false
         
         super.init()

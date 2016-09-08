@@ -16,7 +16,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     override func viewDidLoad() {
         super.viewDidLoad()
         loadSampleVideos()
-        self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
     struct Storyboard {
@@ -24,7 +24,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
         static let AVPlayerVCSegue = "ShowPlayer"
     }
     
-    private func loadSampleVideos() {
+    fileprivate func loadSampleVideos() {
         saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
         saveVideoFromString("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/appleman.m3u8")
         saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
@@ -32,150 +32,102 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
         
     }
     
-    @IBAction func addStream(sender: UIBarButtonItem) {
-        let videoLinkAlert = UIAlertController(title: "New Video Stream", message: nil, preferredStyle: .Alert)
+    @IBAction func addStream(_ sender: UIBarButtonItem) {
+        let videoLinkAlert = UIAlertController(title: "New Video Stream", message: nil, preferredStyle: .alert)
         var linkField: UITextField!
         
         // Set up textField to enter link
-        videoLinkAlert.addTextFieldWithConfigurationHandler { (textField) in
+        videoLinkAlert.addTextField { (textField) in
             textField.delegate = self
             textField.placeholder = "http://"
             textField.enablesReturnKeyAutomatically = true
-            textField.addTarget(self, action: #selector(VideoTableViewController.textChanged(_:)), forControlEvents: .EditingChanged)
+            textField.addTarget(self, action: #selector(VideoTableViewController.textChanged(_:)), for: .editingChanged)
             linkField = textField
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         videoLinkAlert.addAction(cancelAction)
-        let downloadAction = UIAlertAction(title: "Download", style: .Default) { (action) in
+        let downloadAction = UIAlertAction(title: "Download", style: .default) { (action) in
             self.saveVideoFromString(linkField.text!)
         }
         
         videoLinkAlert.addAction(downloadAction)
-        downloadAction.enabled = false
+        downloadAction.isEnabled = false
         
-        presentViewController(videoLinkAlert, animated: true, completion: nil)
-        
+        present(videoLinkAlert, animated: true, completion: nil)
     }
     
-    func textChanged(sender: UITextField) {
+    func textChanged(_ sender: UITextField) {
         var resp: UIResponder = sender
-        while !(resp is UIAlertController) { resp = resp.nextResponder()! }
+        while !(resp is UIAlertController) { resp = resp.next! }
         let alert = resp as? UIAlertController
-        (alert!.actions[1] as UIAlertAction).enabled = (sender.text != "")
+        (alert!.actions[1] as UIAlertAction).isEnabled = (sender.text != "")
     }
     
-    private func saveVideoFromString(urlString: String) {
-        if let url = NSURL(string: urlString) where isValidURL(url) {
+    fileprivate func saveVideoFromString(_ urlString: String) {
+        if let url = URL(string: urlString) , isValidURL(url) {
             let video = Video(url: url)
-            self.videos.insert(video, atIndex: 0)
-            let indexPath = NSIndexPath(forRow: videos.startIndex, inSection: 0)
-            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+            self.videos.insert(video, at: 0)
+            let indexPath = IndexPath(row: videos.startIndex, section: 0)
+            tableView.insertRows(at: [indexPath], with: .automatic)
         }
         else {
-            let invalidLink = UIAlertController(title: "Unable to find URL", message: nil, preferredStyle: .Alert)
-            let dismissAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
+            let invalidLink = UIAlertController(title: "Unable to find URL", message: nil, preferredStyle: .alert)
+            let dismissAction = UIAlertAction(title: "Dismiss", style: .default, handler: nil)
             invalidLink.addAction(dismissAction)
             
-            presentViewController(invalidLink, animated: true, completion: nil)
+            present(invalidLink, animated: true, completion: nil)
             
         }
     }
     
-    private func isValidURL(url: NSURL) -> Bool {
-        guard UIApplication.sharedApplication().canOpenURL(url) else {return false}
+    fileprivate func isValidURL(_ url: URL) -> Bool {
+        guard UIApplication.shared.canOpenURL(url) else {return false}
         return true
     }
     
-    /* TODO: Remove chunk
-    private func setupPlayerForVideo(video: Video) {
-        let playerItem = AVPlayerItem(URL: video.url)
-        let player = AVPlayer(playerItem: playerItem)
-        playerController.player = player
-        presentViewController(playerController, animated: true, completion: nil)
-        playerItem.addObserver(self, forKeyPath: "status", options: .New, context: nil)
-        player.addObserver(self, forKeyPath: "rate", options: .New, context: nil)
-    }
-    
-    private func displayPlaybackErrorAlert() {
-        playerController.dismissViewControllerAnimated(true) {
-            let playbackError = UIAlertController(title: "An error occurred loading this video", message: nil, preferredStyle: .Alert)
-            let dismissAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
-            playbackError.addAction(dismissAction)
-            
-            self.presentViewController(playbackError, animated: true, completion: nil)
-        }
-    }
-    
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        if let playerItem = object as? AVPlayerItem {
-            if keyPath == "status" {
-                playerItem.removeObserver(self, forKeyPath: "status")
-                if playerItem.status == .ReadyToPlay {
-                    playerController.player!.play()
-                } else if playerItem.status == .Failed {
-                    displayPlaybackErrorAlert()
-                }
-            }
-        } else if let player = object as? AVPlayer {
-            if keyPath == "rate" {
-                let userRate = NSUserDefaults.standardUserDefaults().floatForKey(SettingsConstants.Speed)
-                if player.rate != 0 && player.rate != userRate  {
-                    playerController.player!.rate = userRate
-                }
-            }
-        }
-    }
-     */
-    
-    override func canBecomeFirstResponder() -> Bool {
+    override var canBecomeFirstResponder : Bool {
         return true
     }
     
     // MARK: - UITextFieldDelegate
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         self.resignFirstResponder()
     }
     
     // MARK: - Table view data source
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return videos.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(Storyboard.VideoCellIdentifier, forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Storyboard.VideoCellIdentifier, for: indexPath)
         
         if let videoCell = cell as? VideoTableViewCell {
-            let video = videos[indexPath.row]
+            let video = videos[(indexPath as NSIndexPath).row]
             videoCell.video = video
         }
         
         return cell
     }
     
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            videos.removeAtIndex(indexPath.row)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            videos.remove(at: (indexPath as NSIndexPath).row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
     
-    override func tableView(tableView: UITableView, moveRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         if sourceIndexPath != destinationIndexPath {
-            swap(&videos[sourceIndexPath.row], &videos[destinationIndexPath.row])
+            swap(&videos[(sourceIndexPath as NSIndexPath).row], &videos[(destinationIndexPath as NSIndexPath).row])
         }
     }
     
-//    TODO: Remove
-//    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-//        let video = videos[indexPath.row]
-//        setupPlayerForVideo(video)
-//    }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == Storyboard.AVPlayerVCSegue {
-            if let playervc = segue.destinationViewController as? PlayerViewController {
+            if let playervc = segue.destination as? PlayerViewController {
                 if let videoCell = sender as? VideoTableViewCell {
                     playervc.video = videoCell.video
                 }

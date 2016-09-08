@@ -12,16 +12,16 @@ class SettingsTableViewController: UITableViewController {
 
     @IBOutlet weak var speedValueLabel: UILabel!
     
-    let defaults = NSUserDefaults.standardUserDefaults()
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let speed = defaults.objectForKey(SettingsConstants.Speed)
-        speedValueLabel.text = String(speed!)
+        let speed = defaults.object(forKey: SettingsConstants.Speed)
+        speedValueLabel.text = String(describing: speed!)
     }
 
     struct Storyboard {
@@ -30,8 +30,8 @@ class SettingsTableViewController: UITableViewController {
    
     // MARK: - Navigation
 
-    @IBAction func done(sender: UIBarButtonItem) {
-        dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func done(_ sender: UIBarButtonItem) {
+        dismiss(animated: true, completion: nil)
     }
     
 }
