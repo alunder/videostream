@@ -13,12 +13,12 @@ class Video: NSObject {
     
     var url: URL
     var filename: String
-    var isDownloaded: Bool
+    var lastPlayedTime: CMTime?
     
     init(url: URL) {
         self.url = url
         self.filename = url.lastPathComponent
-        self.isDownloaded = false
+        self.lastPlayedTime = nil
         
         super.init()
     }

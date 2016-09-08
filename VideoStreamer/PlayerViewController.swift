@@ -14,21 +14,32 @@ class PlayerViewController: AVPlayerViewController {
     
     var video: Video?
     var playerItem: AVPlayerItem?
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupPlayerForVideo()
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         playerItem!.removeObserver(self, forKeyPath: "status")
         player!.removeObserver(self, forKeyPath: "rate")
+        if defaults.bool(forKey: SettingsConstants.ResumePlayback) {
+            video?.lastPlayedTime = player?.currentTime()
+        } else {
+            video?.lastPlayedTime = nil
+        }
     }
     
     fileprivate func setupPlayerForVideo() {
         playerItem = AVPlayerItem(url: video!.url as URL)
         player = AVPlayer(playerItem: playerItem!)
+        if defaults.bool(forKey: SettingsConstants.ResumePlayback) {
+            if let time = video?.lastPlayedTime  {
+                player!.seek(to: time)
+            }
+        }
         playerItem!.addObserver(self, forKeyPath: "status", options: .new, context: nil)
         player!.addObserver(self, forKeyPath: "rate", options: .new, context: nil)
     }
@@ -54,7 +65,7 @@ class PlayerViewController: AVPlayerViewController {
             }
         } else if keyPath == "rate" {
             if let player = object as? AVPlayer {
-                let userRate = UserDefaults.standard.float(forKey: SettingsConstants.Speed)
+                let userRate = defaults.float(forKey: SettingsConstants.Speed)
                 if player.rate != 0 && player.rate != userRate  {
                     player.rate = userRate
                 }

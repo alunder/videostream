@@ -10,4 +10,5 @@ import Foundation
 
 struct SettingsConstants {
     static let Speed = "playbackSpeed"
+    static let ResumePlayback = "doesResumePlayback"
 }

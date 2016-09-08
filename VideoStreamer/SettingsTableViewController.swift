@@ -11,6 +11,7 @@ import UIKit
 class SettingsTableViewController: UITableViewController {
 
     @IBOutlet weak var speedValueLabel: UILabel!
+    @IBOutlet weak var resumePlaybackSwitch: UISwitch!
     
     let defaults = UserDefaults.standard
     
@@ -22,6 +23,8 @@ class SettingsTableViewController: UITableViewController {
         super.viewWillAppear(animated)
         let speed = defaults.object(forKey: SettingsConstants.Speed)
         speedValueLabel.text = String(describing: speed!)
+        let doesResume = defaults.bool(forKey: SettingsConstants.ResumePlayback)
+        resumePlaybackSwitch.isOn = doesResume
     }
 
     struct Storyboard {
@@ -32,6 +35,10 @@ class SettingsTableViewController: UITableViewController {
 
     @IBAction func done(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func resumePlaybackChanged(_ sender: UISwitch) {
+        defaults.set(sender.isOn, forKey: SettingsConstants.ResumePlayback)
     }
     
 }
