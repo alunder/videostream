@@ -15,7 +15,13 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadSampleVideos()
+        
+        if let savedVideos = loadVideos() {
+            videos += savedVideos
+        } else {
+            loadSampleVideos()
+        }
+        
         self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
@@ -63,10 +69,11 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     
     fileprivate func saveVideoFromString(_ urlString: String) {
         if let url = URL(string: urlString) , isValidURL(url) {
-            let video = Video(url: url)
+            let video = Video(url: url, lastPlayedTime: nil)
             self.videos.insert(video, at: 0)
             let indexPath = IndexPath(row: videos.startIndex, section: 0)
             tableView.insertRows(at: [indexPath], with: .automatic)
+            saveVideos()
         }
         else {
             let invalidLink = UIAlertController(title: "Unable to find URL", message: nil, preferredStyle: .alert)
@@ -74,7 +81,6 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
             invalidLink.addAction(dismissAction)
             
             present(invalidLink, animated: true, completion: nil)
-            
         }
     }
     
@@ -85,6 +91,18 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     
     override var canBecomeFirstResponder : Bool {
         return true
+    }
+    
+    // MARK: NSCoding
+    private func saveVideos() {
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(videos, toFile: Video.archiveURL.path)
+        if !isSuccessfulSave {
+            print("Failed to save videos...")
+        }
+    }
+    
+    private func loadVideos() -> [Video]? {
+        return NSKeyedUnarchiver.unarchiveObject(withFile: Video.archiveURL.path) as? [Video]
     }
     
     // MARK: - UITextFieldDelegate
@@ -112,6 +130,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             videos.remove(at: indexPath.row)
+            saveVideos()
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
