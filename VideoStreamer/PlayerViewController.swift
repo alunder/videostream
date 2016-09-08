@@ -35,7 +35,7 @@ class PlayerViewController: AVPlayerViewController {
     
     fileprivate func displayPlaybackErrorAlert() {
         let playbackError = UIAlertController(title: "An error occurred loading this video", message: nil, preferredStyle: .alert)
-        let dismissAction = UIAlertAction(title: "Dismiss", style: .default, handler: { (action) in
+        let dismissAction = UIAlertAction(title: "Close", style: .default, handler: { (action) in
             self.dismiss(animated: true, completion: nil)
         })
         playbackError.addAction(dismissAction)

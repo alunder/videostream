@@ -8,7 +8,7 @@
 
 import UIKit
 
-let themeColor = UIColor.orange
+let themeColor = UIColor.red
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

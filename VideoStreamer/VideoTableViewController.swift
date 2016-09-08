@@ -25,11 +25,8 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     }
     
     fileprivate func loadSampleVideos() {
-        saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
         saveVideoFromString("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/appleman.m3u8")
         saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
-        saveVideoFromString("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8")
-        
     }
     
     @IBAction func addStream(_ sender: UIBarButtonItem) {
@@ -114,10 +111,11 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            videos.remove(at: (indexPath as NSIndexPath).row)
+            videos.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
+
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         if sourceIndexPath != destinationIndexPath {
