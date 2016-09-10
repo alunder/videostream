@@ -27,7 +27,6 @@ class Video: NSObject, NSCoding {
         self.url = url
         self.filename = url.lastPathComponent
         self.lastPlayedTime = lastPlayedTime
-        
         super.init()
     }
     
@@ -39,7 +38,7 @@ class Video: NSObject, NSCoding {
 
     required convenience init?(coder aDecoder: NSCoder) {
         let url = aDecoder.decodeObject(forKey: PropertyKey.urlKey) as! URL
-        let lastPlayedTime = aDecoder.decodeTime(forKey: PropertyKey.lastPlayedKey)
+        let lastPlayedTime = aDecoder.decodeObject(forKey: PropertyKey.lastPlayedKey) as? CMTime
         
         // Must call designated initializer.
         self.init(url: url, lastPlayedTime: lastPlayedTime)

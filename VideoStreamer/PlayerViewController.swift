@@ -20,13 +20,15 @@ class PlayerViewController: AVPlayerViewController {
         super.viewDidLoad()
         setupPlayerForVideo()
     }
-    
+        
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         playerItem!.removeObserver(self, forKeyPath: "status")
         player!.removeObserver(self, forKeyPath: "rate")
         if defaults.bool(forKey: SettingsConstants.ResumePlayback) {
             video?.lastPlayedTime = player?.currentTime()
+            
+            // TODO: Save videos with new lastPlayedTime
         } else {
             video?.lastPlayedTime = nil
         }

@@ -8,6 +8,7 @@
 
 import UIKit
 import AVKit
+import AVFoundation
 
 class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPlayerViewControllerDelegate {
     
@@ -89,19 +90,30 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
         return true
     }
     
+    fileprivate func deleteThumbnail(forVideo video: Video) {
+        let fileManager = FileManager.default
+        let imagePath = (UIApplication.shared.delegate as! AppDelegate).imagesDirectoryPath + "/\(video.filename).png"
+        do {
+            try fileManager.removeItem(atPath: imagePath)
+        }
+        catch {
+            print("Failed to delete thumbnail\n \(error)")
+        }
+    }
+    
     override var canBecomeFirstResponder : Bool {
         return true
     }
     
     // MARK: NSCoding
-    private func saveVideos() {
+    func saveVideos() {
         let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(videos, toFile: Video.archiveURL.path)
         if !isSuccessfulSave {
             print("Failed to save videos...")
         }
     }
     
-    private func loadVideos() -> [Video]? {
+    func loadVideos() -> [Video]? {
         return NSKeyedUnarchiver.unarchiveObject(withFile: Video.archiveURL.path) as? [Video]
     }
     
@@ -129,6 +141,8 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
+            let video = videos[indexPath.row]
+            deleteThumbnail(forVideo: video)
             videos.remove(at: indexPath.row)
             saveVideos()
             tableView.deleteRows(at: [indexPath], with: .fade)

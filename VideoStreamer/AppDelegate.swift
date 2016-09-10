@@ -14,11 +14,26 @@ let themeColor = UIColor.red
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    var imagesDirectoryPath: String {
+        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+        let cachesDirectoryPath = paths[0] as String
+        return cachesDirectoryPath + "/Thumbnails"
+    }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Default settings
         UserDefaults.standard.register(defaults: [SettingsConstants.Speed : 1.0])
         UserDefaults.standard.register(defaults: [SettingsConstants.ResumePlayback : true])
+        
+        // Create thumbnails directory
+        var objcBool: ObjCBool = true
+        if !FileManager.default.fileExists(atPath: imagesDirectoryPath, isDirectory: &objcBool) {
+            do {
+                try FileManager.default.createDirectory(atPath: imagesDirectoryPath, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("Something went wrong while creating a new folder")
+            }
+        }
         
         // Color themes
         UITableViewCell.appearance().tintColor = themeColor

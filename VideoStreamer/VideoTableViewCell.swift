@@ -40,59 +40,83 @@ class VideoTableViewCell: UITableViewCell {
             }
             
             imageLoadingIndicator.startAnimating()
-            let asset = AVAsset(url: video.url as URL)
-            let durationInSeconds = CMTimeGetSeconds(asset.duration)
-            
-            // If video file has title metadata set titleLabel to it, otherwise keep filename
-            let titles = AVMetadataItem.metadataItems(from: asset.commonMetadata,
-                                                      withKey: AVMetadataCommonKeyTitle,
-                                                      keySpace: AVMetadataKeySpaceCommon)
-            if !titles.isEmpty {
-                if let title = titles.first?.value {
-                    DispatchQueue.main.async {
-                        self.titleLabel.text = title as? String
-                    }
-                }
-            }
-            
-            if durationInSeconds.isFinite {
-                // Format duration into readable time
-                let seconds = Int(durationInSeconds.truncatingRemainder(dividingBy: 60))
-                let totalMinutes = Int(durationInSeconds / 60)
-                let minutes = Int(Double(totalMinutes).truncatingRemainder(dividingBy: 60))
-                let hours = Int(Double(totalMinutes) / 60)
+            DispatchQueue.global(qos: .utility).async {
+                let asset = AVAsset(url: video.url as URL)
+                let durationInSeconds = CMTimeGetSeconds(asset.duration)
                 
-                //  Set duration label
-                DispatchQueue.main.async {
-                    if hours <= 0 {
-                        self.durationLabel.text = String(format: "%02d:%02d", minutes, seconds)
-                    } else {
-                        self.durationLabel.text = String(format: "%d:%02d:%02d", hours, minutes, seconds)
-                    }
-                }
-                
-                // Load thumbnail image
-                let imageGenerator = AVAssetImageGenerator(asset: asset)
-                let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 600)
-                imageGenerator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { (_, imageRef, _, _, error) in
-                    DispatchQueue.main.async {
-                        if let image = imageRef {
-                            self.thumbnail.image = UIImage(cgImage: image)
-                            self.imageLoadingIndicator.stopAnimating()
-                        } else {
-                            print("Failed to load thumbnail for \(video.filename)")
-                            print(error, "\n")
-                            self.thumbnail.image = UIImage(named: "Generic Video")!
-                            self.imageLoadingIndicator.stopAnimating()
+                // If video file has title metadata set titleLabel to it, otherwise keep filename
+                let titles = AVMetadataItem.metadataItems(from: asset.commonMetadata,
+                                                          withKey: AVMetadataCommonKeyTitle,
+                                                          keySpace: AVMetadataKeySpaceCommon)
+                if !titles.isEmpty {
+                    if let title = titles.first?.value {
+                        DispatchQueue.main.async {
+                            self.titleLabel.text = title as? String
                         }
                     }
                 }
                 
-            } else {
-                DispatchQueue.main.async {
-                    self.durationLabel.text = "Live Broadcast"
-                    self.thumbnail.image = UIImage(named: "Broadcast")
-                    self.imageLoadingIndicator.stopAnimating()
+                if durationInSeconds.isFinite {
+                    // Format duration into readable time
+                    let seconds = Int(durationInSeconds.truncatingRemainder(dividingBy: 60))
+                    let totalMinutes = Int(durationInSeconds / 60)
+                    let minutes = Int(Double(totalMinutes).truncatingRemainder(dividingBy: 60))
+                    let hours = Int(Double(totalMinutes) / 60)
+                    
+                    //  Set duration label
+                    DispatchQueue.main.async {
+                        if hours <= 0 {
+                            self.durationLabel.text = String(format: "%02d:%02d", minutes, seconds)
+                        } else {
+                            self.durationLabel.text = String(format: "%d:%02d:%02d", hours, minutes, seconds)
+                        }
+                    }
+                    
+                    // Load thumbnail image
+                    let imagePath = (UIApplication.shared.delegate as! AppDelegate).imagesDirectoryPath + "/\(video.filename).png"
+                    // Check if thumbnail already exists
+                    if FileManager.default.fileExists(atPath: imagePath) {
+                        let data = FileManager.default.contents(atPath: imagePath)
+                        let image = UIImage(data: data!)
+                        DispatchQueue.main.async {
+                            self.thumbnail.image = image
+                            self.imageLoadingIndicator.stopAnimating()
+                        }
+                    } else {
+                        // Generate image
+                        let imageGenerator = AVAssetImageGenerator(asset: asset)
+                        let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 600)
+                        imageGenerator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { (_, imageRef, _, _, error) in
+                            
+                            if let imageCG = imageRef {
+                                let image = UIImage(cgImage: imageCG)
+                                DispatchQueue.main.async {
+                                    self.thumbnail.image = image
+                                    self.imageLoadingIndicator.stopAnimating()
+                                }
+                                
+                                // Save thumbnail to Document directory
+                                let imageData = UIImagePNGRepresentation(image)
+                                let _ = FileManager.default.createFile(atPath: imagePath, contents: imageData, attributes: nil)
+                                print("Saved \(imagePath)")
+
+                            } else {
+                                DispatchQueue.main.async {
+                                    print("Failed to load thumbnail for \(video.filename)")
+                                    print(error, "\n")
+                                    self.thumbnail.image = UIImage(named: "Generic Video")!
+                                    self.imageLoadingIndicator.stopAnimating()
+                                }
+                            }
+                        }
+                    }
+                    
+                } else {
+                    DispatchQueue.main.async {
+                        self.durationLabel.text = "Live Broadcast"
+                        self.thumbnail.image = UIImage(named: "Broadcast")
+                        self.imageLoadingIndicator.stopAnimating()
+                    }
                 }
             }
         }
