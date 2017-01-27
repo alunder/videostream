@@ -35,8 +35,18 @@ class PlayerViewController: AVPlayerViewController {
     }
     
     fileprivate func setupPlayerForVideo() {
-        playerItem = AVPlayerItem(url: video!.url as URL)
+        let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let destination = documentsDirectoryURL.appendingPathComponent((video?.filename)!)
+
+        // If video not downloaded, stream from url
+        if !FileManager.default.fileExists(atPath: destination.path) {
+            playerItem = AVPlayerItem(url: video!.url as URL)
+        } else {
+            playerItem = AVPlayerItem(url: destination)
+        }
+        
         player = AVPlayer(playerItem: playerItem!)
+        
         if defaults.bool(forKey: SettingsConstants.ResumePlayback) {
             if let time = video?.lastPlayedTime  {
                 player!.seek(to: time)

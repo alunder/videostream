@@ -13,6 +13,7 @@ import AVFoundation
 class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPlayerViewControllerDelegate {
     
     var videos = [Video]()
+    static let unsupportedFileTypes = ["flv"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,9 +32,17 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
         static let AVPlayerVCSegue = "ShowPlayer"
     }
     
+    enum AlertType {
+        case unplayableFileType
+    }
+    
+    
     fileprivate func loadSampleVideos() {
-        saveVideoFromString("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/appleman.m3u8")
+        saveVideoFromString("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8")
         saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
+        saveVideoFromString("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8")
+        saveVideoFromString("http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4")
+        saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
     }
     
     @IBAction func addStream(_ sender: UIBarButtonItem) {
@@ -100,6 +109,22 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
             print("Failed to delete thumbnail\n \(error)")
         }
     }
+    
+    fileprivate func showAlert(for type: AlertType) {
+        var alert: UIAlertController
+        let dismissAction = UIAlertAction(title: "Dismiss", style: .default) { (action) in
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+        switch type {
+        case .unplayableFileType:
+            alert = UIAlertController(title: "File type cannot be played!", message: nil, preferredStyle: .alert)
+            alert.addAction(dismissAction)
+        }
+        
+        present(alert, animated: true, completion: nil)
+    }
+
     
     override var canBecomeFirstResponder : Bool {
         return true

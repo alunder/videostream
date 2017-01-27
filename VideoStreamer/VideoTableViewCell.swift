@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Photos
 import AVFoundation
 
 class VideoTableViewCell: UITableViewCell {
@@ -16,6 +17,7 @@ class VideoTableViewCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var durationLabel: UILabel!
     @IBOutlet weak var imageLoadingIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var downloadButton: UIButton!
     
     var video: Video? {
         didSet {
@@ -23,20 +25,25 @@ class VideoTableViewCell: UITableViewCell {
         }
     }
     
-    fileprivate func updateUI()
-    {
+    fileprivate func updateUI() {
         // Reset any existing data
         thumbnail.image = nil
         titleLabel.text = nil
         durationLabel.text = nil
         
         // Load video data
-        if let video = self.video
-        {
+        if let video = self.video {
             if video.filename.isEmpty {
                 titleLabel.text = "\(video.url)"
             } else {
                 titleLabel.text = video.filename
+            }
+            
+            let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let destination = documentsDirectoryURL.appendingPathComponent(video.filename)
+            
+            if FileManager.default.fileExists(atPath: destination.path) {
+                downloadButton.isEnabled = false
             }
             
             imageLoadingIndicator.startAnimating()
@@ -99,11 +106,11 @@ class VideoTableViewCell: UITableViewCell {
                                 let imageData = UIImagePNGRepresentation(image)
                                 let _ = FileManager.default.createFile(atPath: imagePath, contents: imageData, attributes: nil)
                                 print("Saved \(imagePath)")
-
+                                
                             } else {
                                 DispatchQueue.main.async {
                                     print("Failed to load thumbnail for \(video.filename)")
-                                    print(error, "\n")
+                                    print(error!, "\n")
                                     self.thumbnail.image = UIImage(named: "Generic Video")!
                                     self.imageLoadingIndicator.stopAnimating()
                                 }
@@ -121,4 +128,52 @@ class VideoTableViewCell: UITableViewCell {
             }
         }
     }
+    
+    @IBAction func setupAssetDownload(_ sender: UIButton) {
+        
+        downloadButton.isEnabled = false
+        
+        guard let video = video else { return }
+        let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let destination = documentsDirectoryURL.appendingPathComponent(video.filename)
+        print(destination)
+        
+        if !FileManager.default.fileExists(atPath: destination.path) {
+            
+            let alert = UIAlertController(title: "Downloading Video...", message: "Please be patient", preferredStyle: .alert)
+            
+            let indicator = UIActivityIndicatorView(frame: alert.view.bounds)
+            indicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            
+            alert.view.addSubview(indicator)
+            indicator.isUserInteractionEnabled = false
+            indicator.startAnimating()
+            
+            UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+            
+            URLSession.shared.downloadTask(with: video.url) { (location, response, error) -> Void in
+                guard let location = location else { return }
+                
+                do {
+                    try FileManager.default.moveItem(at: location, to: destination)
+                    DispatchQueue.main.async {
+                        alert.dismiss(animated: true, completion: nil)
+                        let alert2 = UIAlertController(title: "Success!", message: "This video is now available offline", preferredStyle: .alert)
+                        alert2.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                        UIApplication.shared.keyWindow?.rootViewController?.present(alert2, animated: true, completion: nil)
+                    }
+                } catch let error as NSError {
+                    print(error.localizedDescription)
+                }
+                }.resume()
+            
+        } else {
+            let downloadAlert = UIAlertController(title: "Video already downloaded!", message: nil, preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+            downloadAlert.addAction(action)
+            
+            UIApplication.shared.keyWindow?.rootViewController?.present(downloadAlert, animated: true, completion: nil)
+        }
+    }
+    
 }
