@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 let themeColor = UIColor.red
 
@@ -39,6 +40,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UITableViewCell.appearance().tintColor = themeColor
         UINavigationBar.appearance().tintColor = themeColor
         UIToolbar.appearance().tintColor = themeColor
+        
+        try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
         
         return true
     }

@@ -124,7 +124,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
         
         present(alert, animated: true, completion: nil)
     }
-
+    
     
     override var canBecomeFirstResponder : Bool {
         return true
@@ -169,11 +169,21 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
             let video = videos[indexPath.row]
             deleteThumbnail(forVideo: video)
             videos.remove(at: indexPath.row)
+            
+            let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let destination = documentsDirectoryURL.appendingPathComponent(video.filename)
+            
+            do {
+                try FileManager.default.removeItem(at: destination)
+            } catch {
+                print("Unable to delete file")
+            }
+            
             saveVideos()
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
-
+    
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         if sourceIndexPath != destinationIndexPath {

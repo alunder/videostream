@@ -18,6 +18,7 @@ class VideoTableViewCell: UITableViewCell {
     @IBOutlet weak var durationLabel: UILabel!
     @IBOutlet weak var imageLoadingIndicator: UIActivityIndicatorView!
     @IBOutlet weak var downloadButton: UIButton!
+    @IBOutlet weak var videoDownloadProgressView: UIProgressView!
     
     var video: Video? {
         didSet {
@@ -30,6 +31,8 @@ class VideoTableViewCell: UITableViewCell {
         thumbnail.image = nil
         titleLabel.text = nil
         durationLabel.text = nil
+        downloadButton.isEnabled = true
+        videoDownloadProgressView.isHidden = true
         
         // Load video data
         if let video = self.video {
@@ -131,42 +134,47 @@ class VideoTableViewCell: UITableViewCell {
     
     @IBAction func setupAssetDownload(_ sender: UIButton) {
         
-        downloadButton.isEnabled = false
-        
         guard let video = video else { return }
         let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destination = documentsDirectoryURL.appendingPathComponent(video.filename)
         print(destination)
         
         if !FileManager.default.fileExists(atPath: destination.path) {
+            downloadButton.isEnabled = false
+            durationLabel.isHidden = true
+            videoDownloadProgressView.isHidden = false
             
-            let alert = UIAlertController(title: "Downloading Video...", message: "Please be patient", preferredStyle: .alert)
-            
-            let indicator = UIActivityIndicatorView(frame: alert.view.bounds)
-            indicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            
-            alert.view.addSubview(indicator)
-            indicator.isUserInteractionEnabled = false
-            indicator.startAnimating()
-            
-            UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
-            
-            URLSession.shared.downloadTask(with: video.url) { (location, response, error) -> Void in
-                guard let location = location else { return }
-                
-                do {
-                    try FileManager.default.moveItem(at: location, to: destination)
-                    DispatchQueue.main.async {
-                        alert.dismiss(animated: true, completion: nil)
-                        let alert2 = UIAlertController(title: "Success!", message: "This video is now available offline", preferredStyle: .alert)
-                        alert2.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                        UIApplication.shared.keyWindow?.rootViewController?.present(alert2, animated: true, completion: nil)
+            let request = URLRequest(url: video.url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
+            var downloadTask = DownloadService.shared.download(request: request)
+            downloadTask.completionHandler = { [weak self] in
+                switch $0 {
+                case .failure(let error):
+                    print(error)
+                case .success(let data):
+                    print("Number of bytes: \(data.count)")
+                    // Save to disk
+                    do {
+                        try data.write(to: URL(fileURLWithPath: destination.path), options: [.atomic])
+                        DispatchQueue.main.async {
+                            self?.videoDownloadProgressView.isHidden = true
+                            self?.durationLabel.isHidden = false
+                            self?.downloadButton.isEnabled = false
+                            let alert = UIAlertController(title: "Download successful!", message: "\"\(video.filename)\" is now available offline", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                            UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+                        }
+                    } catch let error {
+                        print(error)
                     }
-                } catch let error as NSError {
-                    print(error.localizedDescription)
                 }
-                }.resume()
+            }
+            downloadTask.progressHandler = { [weak self] in
+                print("Download progress for \(video.filename): \($0)")
+                self?.videoDownloadProgressView.progress = Float($0)
+            }
             
+            videoDownloadProgressView.progress = 0
+            downloadTask.resume()
         } else {
             let downloadAlert = UIAlertController(title: "Video already downloaded!", message: nil, preferredStyle: .alert)
             let action = UIAlertAction(title: "OK", style: .default, handler: nil)
