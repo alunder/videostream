@@ -38,9 +38,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     
     
     fileprivate func loadSampleVideos() {
-        saveVideoFromString("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8")
         saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
-        saveVideoFromString("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8")
         saveVideoFromString("http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4")
         saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
     }
@@ -70,7 +68,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
         present(videoLinkAlert, animated: true, completion: nil)
     }
     
-    func textChanged(_ sender: UITextField) {
+    @objc func textChanged(_ sender: UITextField) {
         var resp: UIResponder = sender
         while !(resp is UIAlertController) { resp = resp.next! }
         let alert = resp as? UIAlertController

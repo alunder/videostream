@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "205B6AB81D6F662E002879BF"
-               BuildableName = "VideoStreamer.app"
-               BlueprintName = "VideoStreamer"
-               ReferencedContainer = "container:VideoStreamer.xcodeproj">
+               BlueprintIdentifier = "ECC6781175096A5097D2D1B017DC320B"
+               BuildableName = "XCDYouTubeKit.framework"
+               BlueprintName = "XCDYouTubeKit"
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -30,15 +30,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "205B6AB81D6F662E002879BF"
-            BuildableName = "VideoStreamer.app"
-            BlueprintName = "VideoStreamer"
-            ReferencedContainer = "container:VideoStreamer.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -53,16 +44,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "205B6AB81D6F662E002879BF"
-            BuildableName = "VideoStreamer.app"
-            BlueprintName = "VideoStreamer"
-            ReferencedContainer = "container:VideoStreamer.xcodeproj">
+            BlueprintIdentifier = "ECC6781175096A5097D2D1B017DC320B"
+            BuildableName = "XCDYouTubeKit.framework"
+            BlueprintName = "XCDYouTubeKit"
+            ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -72,16 +62,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "205B6AB81D6F662E002879BF"
-            BuildableName = "VideoStreamer.app"
-            BlueprintName = "VideoStreamer"
-            ReferencedContainer = "container:VideoStreamer.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
