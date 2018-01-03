@@ -8,7 +8,13 @@
 
 import UIKit
 import AVKit
-import AVFoundation
+import XCDYouTubeKit
+
+struct YouTubeVideoQuality {
+    static let hd720 = NSNumber(value: XCDYouTubeVideoQuality.HD720.rawValue)
+    static let medium360 = NSNumber(value: XCDYouTubeVideoQuality.medium360.rawValue)
+    static let small240 = NSNumber(value: XCDYouTubeVideoQuality.small240.rawValue)
+}
 
 class PlayerViewController: AVPlayerViewController {
     
@@ -20,38 +26,73 @@ class PlayerViewController: AVPlayerViewController {
         super.viewDidLoad()
         setupPlayerForVideo()
     }
-        
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        playerItem!.removeObserver(self, forKeyPath: "status")
-        player!.removeObserver(self, forKeyPath: "rate")
         if defaults.bool(forKey: SettingsConstants.ResumePlayback) {
             video?.lastPlayedTime = player?.currentTime()
-            
-            // TODO: Save videos with new lastPlayedTime
         } else {
             video?.lastPlayedTime = nil
         }
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        playerItem!.removeObserver(self, forKeyPath: "status")
+        player!.removeObserver(self, forKeyPath: "rate")
+    }
+    
     fileprivate func setupPlayerForVideo() {
-        let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let destination = documentsDirectoryURL.appendingPathComponent((video?.filename)!)
-
-        // If video not downloaded, stream from url
-        if !FileManager.default.fileExists(atPath: destination.path) {
-            playerItem = AVPlayerItem(url: video!.url as URL)
-        } else {
-            playerItem = AVPlayerItem(url: destination)
+        guard let video = video else {
+            displayPlaybackErrorAlert()
+            return
         }
         
+        if video.isYouTube {
+            playYouTubeVideo()
+        } else {
+            playVideo()
+            
+        }
+    }
+    
+    func playYouTubeVideo() {
+        
+        // TODO check for downloaded video
+        
+        let identifier = video!.getYouTubeVideoIdentifier()
+        XCDYouTubeClient.default().getVideoWithIdentifier(identifier) { (video, error) in
+            if let streamURLs = video?.streamURLs, let streamURL = (streamURLs[XCDYouTubeVideoQualityHTTPLiveStreaming] ?? streamURLs[YouTubeVideoQuality.hd720] ?? streamURLs[YouTubeVideoQuality.medium360] ?? streamURLs[YouTubeVideoQuality.small240]) {
+                self.configurePlayer(withURL: streamURL)
+            } else {
+                DispatchQueue.main.async {
+                    self.displayPlaybackErrorAlert()
+                }
+            }
+        }
+    }
+    
+    func playVideo() {
+        let destination = Video.documentsDirectory.appendingPathComponent(video!.filename)
+        
+        // If video not downloaded, stream from url
+        if !FileManager.default.fileExists(atPath: destination.path) {
+            configurePlayer(withURL: video!.url)
+        } else {
+            configurePlayer(withURL: destination)
+        }
+    }
+    
+    func configurePlayer(withURL url: URL) {
+        playerItem = AVPlayerItem(url: url)
         player = AVPlayer(playerItem: playerItem!)
         
         if defaults.bool(forKey: SettingsConstants.ResumePlayback) {
-            if let time = video?.lastPlayedTime  {
+            if let time = self.video!.lastPlayedTime  {
                 player!.seek(to: time)
             }
         }
+        
         playerItem!.addObserver(self, forKeyPath: "status", options: .new, context: nil)
         player!.addObserver(self, forKeyPath: "rate", options: .new, context: nil)
     }
@@ -87,3 +128,4 @@ class PlayerViewController: AVPlayerViewController {
         }
     }
 }
+

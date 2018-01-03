@@ -14,19 +14,24 @@ class Video: NSObject, NSCoding {
     var url: URL
     var filename: String
     var lastPlayedTime: CMTime?
+    var isYouTube: Bool
     
     static let documentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
     static let archiveURL = documentsDirectory.appendingPathComponent("videos")
+    static let validFormats = [".mp3", ".mp4", ".m3u8", ".avi", ".3gp"]
     
     struct PropertyKey {
         static let urlKey = "url"
         static let lastPlayedKey = "lastPlayedTime"
+        static let isYouTube = "isYouTube"
     }
     
     init(url: URL, lastPlayedTime: CMTime?) {
         self.url = url
         self.filename = url.lastPathComponent
         self.lastPlayedTime = lastPlayedTime
+        self.isYouTube = url.host!.contains("youtube") || url.host!.contains("youtu.be")
+            
         super.init()
     }
     
@@ -42,6 +47,19 @@ class Video: NSObject, NSCoding {
         
         // Must call designated initializer.
         self.init(url: url, lastPlayedTime: lastPlayedTime)
+    }
+    
+    func getYouTubeVideoIdentifier() -> String {
+        if !isYouTube { return "" }
+        if url.host!.contains("youtu.be") {
+            var identifier = url.path
+            identifier.removeFirst()
+            return identifier
+        } else {
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+            let identifier = components.queryItems?.first(where: { $0.name == "v" })?.value
+            return identifier!
+        }
     }
     
 }

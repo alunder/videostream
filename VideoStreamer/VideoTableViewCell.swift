@@ -35,10 +35,9 @@ class VideoTableViewCell: UITableViewCell {
         
         // Load video data
         guard let video = self.video else { return }
-        switch video.url.host! {
-        case "youtube.com", "m.youtube.com":
+        if video.isYouTube {
             loadYouTubeData(video: video)
-        default:
+        } else {
             loadVideoData(video: video)
         }
     }
@@ -48,7 +47,7 @@ class VideoTableViewCell: UITableViewCell {
         
         // Validate file format
         var savedFilename = video.filename
-        if !filenameIncludesFormat(filename: savedFilename) {
+        if !fileFormatInFilename(savedFilename) {
             savedFilename += ".mp4"
         }
         
@@ -74,6 +73,7 @@ class VideoTableViewCell: UITableViewCell {
                             self?.videoDownloadProgressView.isHidden = true
                             self?.durationLabel.isHidden = false
                             self?.downloadButton.isEnabled = false
+                            self?.downloadButton.setTitle("✓", for: .normal)
                             let alert = UIAlertController(title: "Download successful!", message: "\"\(video.filename)\" is now available offline", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                             UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
@@ -101,15 +101,17 @@ class VideoTableViewCell: UITableViewCell {
     func loadVideoData(video: Video) {
         titleLabel.text = video.filename.isEmpty ? "\(video.url)" : video.filename
         var savedFilename = video.filename
-        if !filenameIncludesFormat(filename: savedFilename) {
+        if !fileFormatInFilename(savedFilename) {
             savedFilename += ".mp4"
         }
         
         let destination = Video.documentsDirectory.appendingPathComponent(savedFilename)
         print(destination)
         
+        // Enable downloadButton
         if FileManager.default.fileExists(atPath: destination.path) || video.filename.range(of: ".m3u8") != nil {
             downloadButton.isEnabled = false
+            downloadButton.setTitle("✓", for: .normal)
         }
         
         imageLoadingIndicator.startAnimating()
@@ -196,12 +198,65 @@ class VideoTableViewCell: UITableViewCell {
     
     func loadYouTubeData(video: Video) {
         print("Loading YouTube vid")
+        XCDYouTubeClient.default().getVideoWithIdentifier(video.getYouTubeVideoIdentifier()) { (video, error) in
+            DispatchQueue.main.async {
+                guard let video = video else { return }
+                self.titleLabel.text = video.title
+                let savedFilename = video.identifier
+                let destination = Video.documentsDirectory.appendingPathComponent(savedFilename)
+                
+                // Enable downloadButton
+                if FileManager.default.fileExists(atPath: destination.path) {
+                    self.downloadButton.isEnabled = false
+                    self.downloadButton.setTitle("✓", for: .normal)
+                }
+                
+                let durationInSeconds = video.duration
+                if durationInSeconds.isFinite {
+                    let seconds = Int(durationInSeconds.truncatingRemainder(dividingBy: 60))
+                    let totalMinutes = Int(durationInSeconds / 60)
+                    let minutes = Int(Double(totalMinutes).truncatingRemainder(dividingBy: 60))
+                    let hours = Int(Double(totalMinutes) / 60)
+                    
+                    //  Set duration label
+                    if hours <= 0 {
+                        self.durationLabel.text = String(format: "%02d:%02d", minutes, seconds)
+                    } else {
+                        self.durationLabel.text = String(format: "%d:%02d:%02d", hours, minutes, seconds)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.durationLabel.text = "Live Broadcast"
+                        self.thumbnail.image = UIImage(named: "Broadcast")
+                        self.imageLoadingIndicator.stopAnimating()
+                        self.downloadButton.isHidden = true // Disable download for streams
+                    }
+                }
+                
+                // Load thumbnail image
+                self.imageLoadingIndicator.startAnimating()
+                DispatchQueue.global(qos: .userInitiated).async {
+                    do {
+                        let imageData = try Data(contentsOf: video.smallThumbnailURL!)
+                        DispatchQueue.main.async {
+                            self.thumbnail.image = UIImage(data: imageData)
+                            self.imageLoadingIndicator.stopAnimating()
+                        }
+                    } catch {
+                        print(error.localizedDescription)
+                        DispatchQueue.main.async {
+                            self.thumbnail.image = UIImage(named: "Generic Video")
+                            self.imageLoadingIndicator.stopAnimating()
+                        }
+                    }
+                }
+            }
+        }
     }
     
-    func filenameIncludesFormat(filename: String) -> Bool {
-        for format in AVURLAsset.audiovisualTypes() {
-            print(format.rawValue)
-            if filename.contains(format.rawValue) { return true }
+    func fileFormatInFilename(_ filename: String) -> Bool {
+        for format in Video.validFormats {
+            if filename.contains(format) { return true }
         }
         return false
     }

@@ -27,6 +27,11 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
         self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        saveVideos()
+    }
+    
     struct Storyboard {
         static let VideoCellIdentifier = "VideoCell"
         static let AVPlayerVCSegue = "ShowPlayer"
@@ -35,7 +40,6 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     enum AlertType {
         case unplayableFileType
     }
-    
     
     fileprivate func loadSampleVideos() {
         saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
