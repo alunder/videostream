@@ -178,9 +178,8 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let infoAction = UITableViewRowAction(style: .normal, title: "Info") { (action, indexPath) in
-            print("hi")
+            // TODO: Segue to new vc
         }
-
         let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.deleteVideo(forRowAt: indexPath)
         }
@@ -195,11 +194,9 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     func deleteVideo(forRowAt indexPath: IndexPath) {
         let video = videos[indexPath.row]
-        deleteThumbnail(forVideo: video)
         videos.remove(at: indexPath.row)
-        
-        let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let destination = documentsDirectoryURL.appendingPathComponent(video.filename)
+        deleteThumbnail(forVideo: video)
+        let destination = Video.documentsDirectory.appendingPathComponent(video.filename)
         
         do {
             try FileManager.default.removeItem(at: destination)

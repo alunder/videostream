@@ -12,6 +12,10 @@ import AVFoundation
 import XCDYouTubeKit
 import SDWebImage
 
+enum DownloadState {
+    case notDownloaded, inProgress, paused, downloaded, disabled
+}
+
 class VideoTableViewCell: UITableViewCell {
     
     // MARK: Properties
@@ -25,13 +29,33 @@ class VideoTableViewCell: UITableViewCell {
     var video: Video? {
         didSet { updateUI() }
     }
+    var downloadState: DownloadState = .notDownloaded {
+        didSet {
+            switch downloadState {
+            case .notDownloaded:
+                downloadButton.setTitle("⇩", for: .normal)
+                downloadButton.isEnabled = true
+            case .inProgress:
+                downloadButton.setTitle("✕", for: .normal)
+                downloadButton.isEnabled = true
+            case .paused:
+                break // not implemented
+            case .downloaded:
+                downloadButton.setTitle("✓", for: .normal)
+                downloadButton.isEnabled = false
+            case .disabled:
+                downloadButton.isHidden = true
+            }
+        }
+    }
+    var downloadTask: DownloadTask?
     
     fileprivate func updateUI() {
         // Reset any existing data
         thumbnail.image = nil
         titleLabel.text = nil
         durationLabel.text = "00:00"
-        downloadButton.isEnabled = true
+        downloadState = .notDownloaded
         videoDownloadProgressView.isHidden = true
         
         // Load video data
@@ -51,50 +75,61 @@ class VideoTableViewCell: UITableViewCell {
         if !fileFormatInFilename(savedFilename) {
             savedFilename += ".mp4"
         }
+        // TODO: savedfilename is different for youtube: getIdentifier + .mp4
         
         let destination = Video.documentsDirectory.appendingPathComponent(savedFilename)
         
         if !FileManager.default.fileExists(atPath: destination.path) {
-            downloadButton.isEnabled = false
-            durationLabel.isHidden = true
-            videoDownloadProgressView.isHidden = false
-            
-            let request = URLRequest(url: video.url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
-            var downloadTask = DownloadService.shared.download(request: request)
-            downloadTask.completionHandler = { [weak self] in
-                switch $0 {
-                case .failure(let error):
-                    print(error.localizedDescription)
-                case .success(let data):
-                    print("Number of bytes: \(data.count)")
-                    // Save to disk
-                    do {
-                        try data.write(to: URL(fileURLWithPath: destination.path), options: [.atomic])
-                        DispatchQueue.main.async {
-                            self?.videoDownloadProgressView.isHidden = true
-                            self?.durationLabel.isHidden = false
-                            self?.downloadButton.isEnabled = false
-                            self?.downloadButton.setTitle("✓", for: .normal)
-                            let alert = UIAlertController(title: "Download successful!", message: "\"\(video.filename)\" is now available offline", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                            UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+            switch downloadState {
+            case .notDownloaded:
+                downloadState = .inProgress
+                durationLabel.isHidden = true
+                videoDownloadProgressView.isHidden = false
+                
+                let request = URLRequest(url: video.url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
+                downloadTask = DownloadService.shared.download(request: request)
+                downloadTask?.completionHandler = { [weak self] in
+                    switch $0 {
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    case .success(let data):
+                        print("Number of bytes: \(data.count)")
+                        // Save to disk
+                        do {
+                            try data.write(to: URL(fileURLWithPath: destination.path), options: [.atomic])
+                            DispatchQueue.main.async {
+                                self?.videoDownloadProgressView.isHidden = true
+                                self?.durationLabel.isHidden = false
+                                self?.downloadState = .downloaded
+                                let alert = UIAlertController(title: "Download successful!", message: "\"\(video.filename)\" is now available offline", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                                UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+                            }
+                        } catch let error {
+                            self?.downloadState = .notDownloaded
+                            print(error)
                         }
-                    } catch let error {
-                        print(error)
                     }
                 }
+                downloadTask?.progressHandler = { [weak self] in
+                    self?.videoDownloadProgressView.progress = Float($0)
+                }
+                
+                videoDownloadProgressView.progress = 0
+                downloadTask?.resume()
+            case .inProgress:
+                downloadState = .notDownloaded
+                self.durationLabel.isHidden = false
+                self.videoDownloadProgressView.isHidden = true
+                downloadTask?.cancel()
+            default:
+                break
             }
-            downloadTask.progressHandler = { [weak self] in
-                self?.videoDownloadProgressView.progress = Float($0)
-            }
-            
-            videoDownloadProgressView.progress = 0
-            downloadTask.resume()
         } else {
+            downloadState = .downloaded
             let downloadAlert = UIAlertController(title: "Video already downloaded!", message: nil, preferredStyle: .alert)
             let action = UIAlertAction(title: "OK", style: .default, handler: nil)
             downloadAlert.addAction(action)
-            
             UIApplication.shared.keyWindow?.rootViewController?.present(downloadAlert, animated: true, completion: nil)
         }
     }
@@ -107,17 +142,22 @@ class VideoTableViewCell: UITableViewCell {
         }
         
         let destination = Video.documentsDirectory.appendingPathComponent(savedFilename)
-        print(destination)
         
-        // Enable downloadButton
+        // Check if file download exists
         if FileManager.default.fileExists(atPath: destination.path) || video.filename.range(of: ".m3u8") != nil {
-            downloadButton.isEnabled = false
-            downloadButton.setTitle("✓", for: .normal)
+            downloadState = .downloaded
         }
         
         imageLoadingIndicator.startAnimating()
         DispatchQueue.global(qos: .userInitiated).async {
-            let asset = AVAsset(url: video.url)
+            let asset = self.downloadState == .downloaded ? AVAsset(url: destination) : AVAsset(url: video.url)
+            if !asset.isPlayable {
+                if self.downloadState != .downloaded {
+                    DispatchQueue.main.async {
+                        self.downloadState = .disabled
+                    }
+                }
+            }
             let durationInSeconds = CMTimeGetSeconds(asset.duration)
             
             // If video file has title metadata set titleLabel to it, otherwise keep filename
@@ -178,7 +218,7 @@ class VideoTableViewCell: UITableViewCell {
                             } else {
                                 DispatchQueue.main.async {
                                     print("Failed to load thumbnail for \(video.filename)")
-                                    print(error!.localizedDescription, "\n")
+                                    print(error!.localizedDescription)
                                     self.thumbnail.image = UIImage(named: "Generic Video")!
                                     self.imageLoadingIndicator.stopAnimating()
                                 }
@@ -191,7 +231,7 @@ class VideoTableViewCell: UITableViewCell {
                     self.durationLabel.text = "Live Broadcast"
                     self.thumbnail.image = UIImage(named: "Broadcast")
                     self.imageLoadingIndicator.stopAnimating()
-                    self.downloadButton.isHidden = true // Disable download for streams
+                    self.downloadState = .disabled
                 }
             }
         }
@@ -199,19 +239,27 @@ class VideoTableViewCell: UITableViewCell {
     
     func loadYouTubeData(video: Video) {
         self.imageLoadingIndicator.startAnimating()
+        // TODO: Use stored title and save thumbnail
+        // TODO: Reenable download check
+        //                let savedFilename = video.identifier + ".mp4"
+        //                let destination = Video.documentsDirectory.appendingPathComponent(savedFilename)
+        //
+        //                // Check if file download exists
+        //                if FileManager.default.fileExists(atPath: destination.path) {
+        //                    self.downloadState = .downloaded
+        //                }
+        //
+        // TODO: add this in else statement when checking with download
         XCDYouTubeClient.default().getVideoWithIdentifier(video.getYouTubeVideoIdentifier()) { (video, error) in
             DispatchQueue.main.async {
                 guard let video = video else {
                     self.imageLoadingIndicator.stopAnimating()
                     self.titleLabel.text = "Untitled Video"
-                    self.downloadButton.isEnabled = false
+                    self.thumbnail.image = UIImage(named: "Generic Video")
+                    self.downloadState = .disabled
                     return
                 }
                 self.titleLabel.text = video.title
-                let savedFilename = video.identifier
-                
-                // TODO: Enable downloading file
-                self.downloadButton.isEnabled = false
                 
                 let durationInSeconds = video.duration
                 if durationInSeconds.isFinite {
@@ -231,7 +279,7 @@ class VideoTableViewCell: UITableViewCell {
                         self.durationLabel.text = "Live Broadcast"
                         self.thumbnail.image = UIImage(named: "Broadcast")
                         self.imageLoadingIndicator.stopAnimating()
-                        self.downloadButton.isHidden = true // Disable download for streams
+                        self.downloadState = .disabled
                     }
                 }
                 

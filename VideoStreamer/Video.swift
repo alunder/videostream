@@ -16,7 +16,7 @@ class Video: NSObject, NSCoding {
     var lastPlayedTime: CMTime?
     var isYouTube: Bool
     
-    static let documentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+    static let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     static let archiveURL = documentsDirectory.appendingPathComponent("videos")
     static let validFormats = [".mp3", ".mp4", ".m3u8", ".avi", ".3gp"]
     
