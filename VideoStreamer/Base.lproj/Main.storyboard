@@ -108,6 +108,9 @@
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Videos" id="9Pg-8q-3Y7"/>
+                    <connections>
+                        <segue destination="fQy-Aa-PSI" kind="showDetail" identifier="ShowVideoInfo" id="zha-rl-Zvy"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RbQ-D4-Fxb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -119,7 +122,77 @@
                 <avPlayerViewController videoGravity="AVLayerVideoGravityResizeAspect" id="xUF-Ct-fxA" customClass="PlayerViewController" customModule="VideoStreamer" customModuleProvider="target" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HzY-1y-I22" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1913" y="324"/>
+            <point key="canvasLocation" x="1913" y="322"/>
+        </scene>
+        <!--Video Info-->
+        <scene sceneID="Ziz-9m-J9e">
+            <objects>
+                <viewController storyboardIdentifier="VideoInfoViewController" id="fQy-Aa-PSI" customClass="VideoInfoViewController" customModule="VideoStreamer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Y06-hB-Dfv"/>
+                        <viewControllerLayoutGuide type="bottom" id="Fab-XA-NeR"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="JOM-hB-PPK">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhW-6O-aH5">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nWe-Nb-VbM">
+                                        <rect key="frame" x="16" y="16" width="343" height="36"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                        <size key="shadowOffset" width="0.0" height="0.0"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="nWe-Nb-VbM" firstAttribute="top" secondItem="xhW-6O-aH5" secondAttribute="top" constant="16" id="E8K-zo-deT"/>
+                                    <constraint firstAttribute="bottom" secondItem="nWe-Nb-VbM" secondAttribute="bottom" id="bM5-me-PEM"/>
+                                    <constraint firstItem="nWe-Nb-VbM" firstAttribute="centerX" secondItem="xhW-6O-aH5" secondAttribute="centerX" id="iQj-4x-f83"/>
+                                    <constraint firstAttribute="trailing" secondItem="nWe-Nb-VbM" secondAttribute="trailing" constant="16" id="qPB-zz-WUc"/>
+                                    <constraint firstItem="nWe-Nb-VbM" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="usy-Pz-ybO"/>
+                                </constraints>
+                            </scrollView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dqm-yM-et9">
+                                <rect key="frame" x="8" y="23" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="26U-Dg-WSK"/>
+                                    <constraint firstAttribute="height" constant="44" id="ymx-sw-kA4"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="✕">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="donePressed:" destination="fQy-Aa-PSI" eventType="touchUpInside" id="FVa-lc-3jk"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Dqm-yM-et9" firstAttribute="top" secondItem="Y06-hB-Dfv" secondAttribute="bottom" constant="3" id="3eb-1E-ObV"/>
+                            <constraint firstItem="xhW-6O-aH5" firstAttribute="bottom" secondItem="Fab-XA-NeR" secondAttribute="top" id="990-xK-c7g"/>
+                            <constraint firstItem="xhW-6O-aH5" firstAttribute="top" secondItem="JOM-hB-PPK" secondAttribute="top" id="VQZ-or-ScI"/>
+                            <constraint firstItem="xhW-6O-aH5" firstAttribute="leading" secondItem="JOM-hB-PPK" secondAttribute="leading" id="cIP-rE-BYG"/>
+                            <constraint firstItem="Dqm-yM-et9" firstAttribute="leading" secondItem="JOM-hB-PPK" secondAttribute="leading" constant="8" id="fjh-H4-oAC"/>
+                            <constraint firstAttribute="trailing" secondItem="xhW-6O-aH5" secondAttribute="trailing" id="hlm-Vr-9Dz"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Video Info" id="YFy-Ju-gbD">
+                        <barButtonItem key="leftBarButtonItem" systemItem="stop" id="qnY-Ch-rpz"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="doneButton" destination="Dqm-yM-et9" id="9Ot-rg-lF2"/>
+                        <outlet property="infoScrollView" destination="xhW-6O-aH5" id="dSN-Wv-Ipp"/>
+                        <outlet property="titleLabel" destination="nWe-Nb-VbM" id="MeP-K9-Ci6"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XQb-fS-7nE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1912.8" y="-381.85907046476763"/>
         </scene>
         <!--Settings-->
         <scene sceneID="wNi-9P-nif">
@@ -159,7 +232,7 @@
                                             <segue destination="AO3-BK-Fzd" kind="show" id="nnV-9u-7Ra"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="GfW-oM-7FQ">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="GfW-oM-7FQ">
                                         <rect key="frame" x="0.0" y="99.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="GfW-oM-7FQ" id="zQr-aH-tbP">
@@ -196,7 +269,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Settings" id="qbm-SG-CTq">
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="TZA-gZ-odF">
+                        <barButtonItem key="leftBarButtonItem" systemItem="stop" id="TZA-gZ-odF">
                             <connections>
                                 <action selector="done:" destination="GSx-Q8-tiL" id="ENt-K8-rhh"/>
                             </connections>
@@ -247,12 +320,11 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2uG-Lk-vdL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2680" y="1041"/>
+            <point key="canvasLocation" x="2679" y="1093"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="mmf-dp-v5b">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2SB-Gy-9ZV" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" toolbarHidden="NO" id="wW1-vA-Rra" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="L1g-Sc-vrf">
@@ -268,13 +340,13 @@
                         <segue destination="Dyf-ye-uf4" kind="relationship" relationship="rootViewController" id="Wh7-Le-U1K"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2SB-Gy-9ZV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="289" y="324"/>
+            <point key="canvasLocation" x="230" y="323"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="dSb-V0-GHN">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="YLF-VD-b01" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="zg2-OS-9du" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="aSS-o3-aN1">
@@ -286,6 +358,7 @@
                         <segue destination="GSx-Q8-tiL" kind="relationship" relationship="rootViewController" id="mgx-bM-i9J"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="YLF-VD-b01" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1098" y="1095"/>
         </scene>

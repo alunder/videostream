@@ -39,6 +39,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     struct Storyboard {
         static let VideoCellIdentifier = "VideoCell"
         static let AVPlayerVCSegue = "ShowPlayer"
+        static let VideoInfoSegue = "ShowVideoInfo"
     }
     
     enum AlertType {
@@ -178,7 +179,8 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let infoAction = UITableViewRowAction(style: .normal, title: "Info") { (action, indexPath) in
-            // TODO: Segue to new vc
+            let cell = tableView.cellForRow(at: indexPath) as? VideoTableViewCell
+            self.performSegue(withIdentifier: Storyboard.VideoInfoSegue, sender: cell)
         }
         let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.deleteVideo(forRowAt: indexPath)
@@ -215,7 +217,16 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
                     playervc.video = videoCell.video
                 }
             }
+        } else if segue.identifier == Storyboard.VideoInfoSegue {
+            if let infovc = segue.destination as? VideoInfoViewController {
+                if let videoCell = sender as? VideoTableViewCell {
+                    infovc.video = videoCell.video
+                    infovc.videoTitle = videoCell.titleLabel.text
+                    infovc.thumbnailImage = videoCell.thumbnail.image
+                }
+            }
         }
+        
     }
     
 }

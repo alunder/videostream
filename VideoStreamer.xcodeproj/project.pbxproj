@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		18C8D01EF2EDDAE983E985C9 /* Pods_VideoStreamer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BCC2787EFF68F9CF5BEF797 /* Pods_VideoStreamer.framework */; };
+		2029B7571FFE9AA9009CA1E2 /* VideoInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2029B7561FFE9AA9009CA1E2 /* VideoInfoViewController.swift */; };
 		20373F7A1F54B04A0043A4DA /* ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20373F761F54B04A0043A4DA /* ResultType.swift */; };
 		20373F7B1F54B04A0043A4DA /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20373F771F54B04A0043A4DA /* DownloadTask.swift */; };
 		20373F7C1F54B04A0043A4DA /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20373F781F54B04A0043A4DA /* DownloadService.swift */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2029B7561FFE9AA9009CA1E2 /* VideoInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoInfoViewController.swift; sourceTree = "<group>"; };
 		20373F761F54B04A0043A4DA /* ResultType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultType.swift; sourceTree = "<group>"; };
 		20373F771F54B04A0043A4DA /* DownloadTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
 		20373F781F54B04A0043A4DA /* DownloadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				205B6ABC1D6F662E002879BF /* AppDelegate.swift */,
 				2055AA9E1D79E23000FCAAFB /* PlayerViewController.swift */,
 				20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */,
+				2029B7561FFE9AA9009CA1E2 /* VideoInfoViewController.swift */,
 				20B774C41D724D4B0024B35E /* Video.swift */,
 				205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */,
 				205B6AC01D6F662E002879BF /* Main.storyboard */,
@@ -276,6 +279,7 @@
 				2055AA9F1D79E23000FCAAFB /* PlayerViewController.swift in Sources */,
 				20B65FEC1D78950700118586 /* SettingsConstants.swift in Sources */,
 				20373F7D1F54B04A0043A4DA /* GenericDownloadTask.swift in Sources */,
+				2029B7571FFE9AA9009CA1E2 /* VideoInfoViewController.swift in Sources */,
 				20631E471D77C7DA00173ACA /* SettingsTableViewController.swift in Sources */,
 				20373F7A1F54B04A0043A4DA /* ResultType.swift in Sources */,
 				20B774C51D724D4B0024B35E /* Video.swift in Sources */,

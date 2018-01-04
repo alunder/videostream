@@ -284,7 +284,8 @@ class VideoTableViewCell: UITableViewCell {
                 }
                 
                 // Load thumbnail image
-                self.thumbnail.sd_setImage(with: video.smallThumbnailURL!, placeholderImage: UIImage(named: "Generic Video"), completed: { (image, error, cacheType, url) in
+                let thumbnailURL = URL(string: "https://i.ytimg.com/vi/\(video.identifier)/maxresdefault.jpg") ?? video.smallThumbnailURL
+                self.thumbnail.sd_setImage(with: thumbnailURL, placeholderImage: UIImage(named: "Generic Video"), completed: { (image, error, cacheType, url) in
                     DispatchQueue.main.async {
                         self.imageLoadingIndicator.stopAnimating()
                     }
