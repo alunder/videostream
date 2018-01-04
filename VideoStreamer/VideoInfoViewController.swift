@@ -10,9 +10,9 @@ import UIKit
 import MXParallaxHeader
 
 class VideoInfoViewController: UIViewController {
-
+    
     var video: Video?
-    var videoInfo: [String: String]?
+    var videoInfo: [String: Any]?
     var thumbnailImage: UIImage?
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -20,6 +20,7 @@ class VideoInfoViewController: UIViewController {
     
     @IBOutlet weak var infoScrollView: UIScrollView!
     @IBOutlet weak var doneButton: UIButton!
+    @IBOutlet weak var downloadButton: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var filenameLabel: UILabel!
     @IBOutlet weak var urlLabel: UILabel!
@@ -34,11 +35,19 @@ class VideoInfoViewController: UIViewController {
         let headerView = UIImageView()
         headerView.image = imageWithGradient(img: thumbnailImage!)
         headerView.contentMode = .scaleAspectFill
-
+        
         doneButton.layer.shadowColor = UIColor.darkGray.cgColor
         doneButton.layer.shadowOpacity = 0.8;
         doneButton.layer.shadowRadius = 3;
         doneButton.layer.shadowOffset = CGSize(width: 0, height: 1.0)
+        
+        // TODO: remove
+        downloadButton.isHidden = true
+        downloadButton.backgroundColor = UIView().tintColor
+        downloadButton.tintColor = .white
+        downloadButton.layer.cornerRadius = 5
+        downloadButton.layer.masksToBounds = true
+        downloadButton.setBackgroundColor(color: .darkGray, forState: .highlighted)
         
         infoScrollView.parallaxHeader.view = headerView
         infoScrollView.parallaxHeader.mode = .fill
@@ -46,20 +55,24 @@ class VideoInfoViewController: UIViewController {
         infoScrollView.parallaxHeader.minimumHeight = infoScrollView.parallaxHeader.height
         
         if let videoInfo = videoInfo {
-            titleLabel.text = videoInfo[VideoInfoKeys.Title]
+            titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
             let filenameTitle = (video?.isYouTube)! ? "YouTube ID" : "Filename"
             filenameLabel.attributedText = attributedString(withTitle: filenameTitle,
-                                                       value: videoInfo[VideoInfoKeys.Filename]!)
+                                                            value: videoInfo[VideoInfoKeys.Filename]! as! String)
             urlLabel.attributedText = attributedString(withTitle: VideoInfoKeys.URL,
-                                                       value: videoInfo[VideoInfoKeys.URL]!)
+                                                       value: videoInfo[VideoInfoKeys.URL]! as! String )
             durationLabel.attributedText = attributedString(withTitle: VideoInfoKeys.Duration,
-                                                  value: videoInfo[VideoInfoKeys.Duration]!)
+                                                            value: videoInfo[VideoInfoKeys.Duration] as! String)
         }
     }
     
     
     @IBAction func donePressed(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func downloadPressed(_ sender: UIButton) {
+        print("tapped")
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -106,5 +119,15 @@ class VideoInfoViewController: UIViewController {
         
         labelString.append(valueString)
         return labelString
+    }
+    
+    func deleteVideo() {
+        let destination = Video.documentsDirectory.appendingPathComponent(video!.filename)
+        
+        do {
+            try FileManager.default.removeItem(at: destination)
+        } catch {
+            print(error.localizedDescription)
+        }
     }
 }

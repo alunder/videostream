@@ -26,7 +26,8 @@ class VideoTableViewCell: UITableViewCell {
     @IBOutlet weak var downloadButton: UIButton!
     @IBOutlet weak var videoDownloadProgressView: UIProgressView!
     
-    var videoInfo = [String: String]() // For segue to info view controller
+    var videoInfo = [String: Any]() // For segue to info view controller
+    var cachedDataAvailable = false // TableView caches on first load
     var video: Video? {
         didSet { updateUI() }
     }
@@ -54,7 +55,7 @@ class VideoTableViewCell: UITableViewCell {
     fileprivate func updateUI() {
         // Reset any existing data
         thumbnail.image = nil
-        titleLabel.text = nil
+        titleLabel.text = "Untitled Video"
         durationLabel.text = "00:00"
         downloadState = .notDownloaded
         videoDownloadProgressView.isHidden = true
@@ -137,14 +138,11 @@ class VideoTableViewCell: UITableViewCell {
     
     func loadVideoData(video: Video) {
         titleLabel.text = video.filename.isEmpty ? "\(video.url)" : video.filename
-        var savedFilename = video.filename
-        if !fileFormatInFilename(savedFilename) {
-            savedFilename += ".mp4"
-        }
-        
-        let destination = Video.documentsDirectory.appendingPathComponent(savedFilename)
         
         // Check if file download exists
+        var savedFilename = video.filename
+        if !fileFormatInFilename(savedFilename) { savedFilename += ".mp4" }
+        let destination = Video.documentsDirectory.appendingPathComponent(savedFilename)
         if FileManager.default.fileExists(atPath: destination.path) || video.filename.range(of: ".m3u8") != nil {
             downloadState = .downloaded
         }

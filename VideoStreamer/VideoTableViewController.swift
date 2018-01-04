@@ -11,6 +11,7 @@ import UIKit
 class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     var videos = [Video]()
+    var cachedVideoData = [URL : [String: Any]]() // associate video URL with videoInfo dictionary
     static let unsupportedFileTypes = ["flv"]
     
     override func viewDidLoad() {
@@ -191,9 +192,9 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        if sourceIndexPath != destinationIndexPath {
-            swap(&videos[(sourceIndexPath as NSIndexPath).row], &videos[(destinationIndexPath as NSIndexPath).row])
-        }
+        let movedObject = self.videos[sourceIndexPath.row]
+        videos.remove(at: sourceIndexPath.row)
+        videos.insert(movedObject, at: destinationIndexPath.row)
     }
     
     func deleteVideo(forRowAt indexPath: IndexPath) {
