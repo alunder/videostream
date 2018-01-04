@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             do {
                 try FileManager.default.createDirectory(atPath: imagesDirectoryPath, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                print("Something went wrong while creating a new folder")
+                print(error.localizedDescription)
             }
         }
         

@@ -11,18 +11,11 @@ import UIKit
 class SpeedTableViewController: UITableViewController {
     
     let defaults = UserDefaults.standard
-    var rowForSelectedSpeed: Int = 2 { // Row index 2 corresponds with Normal speed
+    let speeds: [Float] = [0.25, 0.5, 1.0, 1.25, 1.5, 2.0]
+    var speedIndex: Int = 2 { // Row index 2 corresponds with Normal speed
         didSet {
-            if oldValue != rowForSelectedSpeed {
-                switch rowForSelectedSpeed {
-                case 0: defaults.set(0.25, forKey: SettingsConstants.Speed)
-                case 1: defaults.set(0.5, forKey: SettingsConstants.Speed)
-                case 2: defaults.set(1.0, forKey: SettingsConstants.Speed)
-                case 3: defaults.set(1.25, forKey: SettingsConstants.Speed)
-                case 4: defaults.set(1.5, forKey: SettingsConstants.Speed)
-                case 5: defaults.set(2.0, forKey: SettingsConstants.Speed)
-                default: defaults.set(1.0, forKey: SettingsConstants.Speed)
-                }
+            if oldValue != speedIndex {
+                defaults.set(speeds[speedIndex], forKey: SettingsConstants.Speed)
             }
         }
     }
@@ -31,25 +24,17 @@ class SpeedTableViewController: UITableViewController {
         super.viewDidLoad()
         title = "Speed"
         if let speed = defaults.object(forKey: SettingsConstants.Speed) as? Float {
-            switch speed {
-            case 0.25: rowForSelectedSpeed = 0
-            case 0.5: rowForSelectedSpeed = 1
-            case 1.0: rowForSelectedSpeed = 2
-            case 1.25: rowForSelectedSpeed = 3
-            case 1.5: rowForSelectedSpeed = 4
-            case 2.0: rowForSelectedSpeed = 5
-            default: rowForSelectedSpeed = 2
-            }
+            speedIndex = speeds.index(of: speed)!
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        tableView.cellForRow(at: IndexPath(row: rowForSelectedSpeed, section: 0))!.accessoryType = .checkmark
+        super.viewWillAppear(animated)
+        tableView.cellForRow(at: IndexPath(row: speedIndex, section: 0))!.accessoryType = .checkmark
     }
     
     fileprivate func resetChecks() {
-        for row in 0...5 {
+        for row in 0..<speeds.count {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) {
                 cell.accessoryType = .none
             }
@@ -58,10 +43,21 @@ class SpeedTableViewController: UITableViewController {
     
     // MARK: - Table view data source
     
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return speeds.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let identifier = "SpeedCell"
+        let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+        cell.textLabel?.text = String(speeds[indexPath.row])
+        return cell
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         resetChecks()
-        rowForSelectedSpeed = indexPath.row
-        tableView.cellForRow(at: IndexPath(row: rowForSelectedSpeed, section: 0))!.accessoryType = .checkmark
+        speedIndex = indexPath.row
+        tableView.cellForRow(at: IndexPath(row: speedIndex, section: 0))!.accessoryType = .checkmark
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

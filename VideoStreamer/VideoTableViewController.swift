@@ -108,7 +108,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
             try fileManager.removeItem(atPath: imagePath)
         }
         catch {
-            print("Failed to delete thumbnail\n \(error)")
+            print(error.localizedDescription)
         }
     }
     
@@ -168,29 +168,43 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let video = videos[indexPath.row]
-            deleteThumbnail(forVideo: video)
-            videos.remove(at: indexPath.row)
-            
-            let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-            let destination = documentsDirectoryURL.appendingPathComponent(video.filename)
-            
-            do {
-                try FileManager.default.removeItem(at: destination)
-            } catch {
-                print("Unable to delete file")
-            }
-            
-            saveVideos()
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            deleteVideo(forRowAt: indexPath)
         }
     }
     
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let infoAction = UITableViewRowAction(style: .normal, title: "Info") { (action, indexPath) in
+            print("hi")
+        }
+
+        let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
+            self.deleteVideo(forRowAt: indexPath)
+        }
+        return [deleteAction, infoAction]
+    }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         if sourceIndexPath != destinationIndexPath {
             swap(&videos[(sourceIndexPath as NSIndexPath).row], &videos[(destinationIndexPath as NSIndexPath).row])
         }
+    }
+    
+    func deleteVideo(forRowAt indexPath: IndexPath) {
+        let video = videos[indexPath.row]
+        deleteThumbnail(forVideo: video)
+        videos.remove(at: indexPath.row)
+        
+        let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let destination = documentsDirectoryURL.appendingPathComponent(video.filename)
+        
+        do {
+            try FileManager.default.removeItem(at: destination)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        saveVideos()
+        tableView.deleteRows(at: [indexPath], with: .fade)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

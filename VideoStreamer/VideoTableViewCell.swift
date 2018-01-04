@@ -10,6 +10,7 @@ import UIKit
 import Photos
 import AVFoundation
 import XCDYouTubeKit
+import SDWebImage
 
 class VideoTableViewCell: UITableViewCell {
     
@@ -29,7 +30,7 @@ class VideoTableViewCell: UITableViewCell {
         // Reset any existing data
         thumbnail.image = nil
         titleLabel.text = nil
-        durationLabel.text = nil
+        durationLabel.text = "00:00"
         downloadButton.isEnabled = true
         videoDownloadProgressView.isHidden = true
         
@@ -197,19 +198,20 @@ class VideoTableViewCell: UITableViewCell {
     }
     
     func loadYouTubeData(video: Video) {
-        print("Loading YouTube vid")
+        self.imageLoadingIndicator.startAnimating()
         XCDYouTubeClient.default().getVideoWithIdentifier(video.getYouTubeVideoIdentifier()) { (video, error) in
             DispatchQueue.main.async {
-                guard let video = video else { return }
+                guard let video = video else {
+                    self.imageLoadingIndicator.stopAnimating()
+                    self.titleLabel.text = "Untitled Video"
+                    self.downloadButton.isEnabled = false
+                    return
+                }
                 self.titleLabel.text = video.title
                 let savedFilename = video.identifier
-                let destination = Video.documentsDirectory.appendingPathComponent(savedFilename)
                 
-                // Enable downloadButton
-                if FileManager.default.fileExists(atPath: destination.path) {
-                    self.downloadButton.isEnabled = false
-                    self.downloadButton.setTitle("✓", for: .normal)
-                }
+                // TODO: Enable downloading file
+                self.downloadButton.isEnabled = false
                 
                 let durationInSeconds = video.duration
                 if durationInSeconds.isFinite {
@@ -234,22 +236,11 @@ class VideoTableViewCell: UITableViewCell {
                 }
                 
                 // Load thumbnail image
-                self.imageLoadingIndicator.startAnimating()
-                DispatchQueue.global(qos: .userInitiated).async {
-                    do {
-                        let imageData = try Data(contentsOf: video.smallThumbnailURL!)
-                        DispatchQueue.main.async {
-                            self.thumbnail.image = UIImage(data: imageData)
-                            self.imageLoadingIndicator.stopAnimating()
-                        }
-                    } catch {
-                        print(error.localizedDescription)
-                        DispatchQueue.main.async {
-                            self.thumbnail.image = UIImage(named: "Generic Video")
-                            self.imageLoadingIndicator.stopAnimating()
-                        }
+                self.thumbnail.sd_setImage(with: video.smallThumbnailURL!, placeholderImage: UIImage(named: "Generic Video"), completed: { (image, error, cacheType, url) in
+                    DispatchQueue.main.async {
+                        self.imageLoadingIndicator.stopAnimating()
                     }
-                }
+                })
             }
         }
     }

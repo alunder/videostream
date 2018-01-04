@@ -38,8 +38,7 @@ class PlayerViewController: AVPlayerViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        playerItem!.removeObserver(self, forKeyPath: "status")
-        player!.removeObserver(self, forKeyPath: "rate")
+        NotificationCenter.default.removeObserver(self)
     }
     
     fileprivate func setupPlayerForVideo() {
