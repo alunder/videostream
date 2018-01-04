@@ -7,10 +7,8 @@
 //
 
 import UIKit
-import AVKit
-import AVFoundation
 
-class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPlayerViewControllerDelegate {
+class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     var videos = [Video]()
     static let unsupportedFileTypes = ["flv"]
@@ -22,6 +20,12 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
             videos += savedVideos
         } else {
             loadSampleVideos()
+        }
+        
+        if #available(iOS 11.0, *) {
+            self.navigationController?.navigationBar.prefersLargeTitles = true
+        } else {
+            // Fallback on earlier versions
         }
         
         self.navigationItem.rightBarButtonItem = self.editButtonItem
@@ -62,12 +66,12 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate, AVPl
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         videoLinkAlert.addAction(cancelAction)
-        let downloadAction = UIAlertAction(title: "Download", style: .default) { (action) in
+        let addAction = UIAlertAction(title: "Add", style: .default) { (action) in
             self.saveVideoFromString(linkField.text!)
         }
         
-        videoLinkAlert.addAction(downloadAction)
-        downloadAction.isEnabled = false
+        videoLinkAlert.addAction(addAction)
+        addAction.isEnabled = false
         
         present(videoLinkAlert, animated: true, completion: nil)
     }
