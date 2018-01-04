@@ -40,6 +40,8 @@ class PlayerViewController: AVPlayerViewController {
         }
         playerItem = nil
         player = nil
+        rateToken?.invalidate()
+        statusToken?.invalidate()
     }
     
     fileprivate func setupPlayerForVideo() {
