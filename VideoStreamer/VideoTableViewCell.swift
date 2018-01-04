@@ -26,6 +26,7 @@ class VideoTableViewCell: UITableViewCell {
     @IBOutlet weak var downloadButton: UIButton!
     @IBOutlet weak var videoDownloadProgressView: UIProgressView!
     
+    var videoInfo = [String: String]() // For segue to info view controller
     var video: Video? {
         didSet { updateUI() }
     }
@@ -234,6 +235,7 @@ class VideoTableViewCell: UITableViewCell {
                     self.downloadState = .disabled
                 }
             }
+            self.updateVideoDict()
         }
     }
     
@@ -290,6 +292,7 @@ class VideoTableViewCell: UITableViewCell {
                         self.imageLoadingIndicator.stopAnimating()
                     }
                 })
+                self.updateVideoDict()
             }
         }
     }
@@ -299,6 +302,15 @@ class VideoTableViewCell: UITableViewCell {
             if filename.contains(format) { return true }
         }
         return false
+    }
+    
+    func updateVideoDict() {
+        DispatchQueue.main.async {
+            self.videoInfo[VideoInfoKeys.Title] = self.titleLabel.text
+            self.videoInfo[VideoInfoKeys.Duration] = self.durationLabel.text
+            self.videoInfo[VideoInfoKeys.URL] = self.video?.url.absoluteString
+            self.videoInfo[VideoInfoKeys.Filename] = self.video?.filename
+        }
     }
     
 }

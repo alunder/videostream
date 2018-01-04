@@ -146,13 +146,49 @@
                                         <nil key="highlightedColor"/>
                                         <size key="shadowOffset" width="0.0" height="0.0"/>
                                     </label>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="tO0-n1-nlf">
+                                        <rect key="frame" x="16" y="68" width="343" height="85.5"/>
+                                        <subviews>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bhV-eQ-AXX" customClass="SRCopyableLabel" customModule="VideoStreamer" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="343" height="20.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q90-GW-p9c" customClass="SRCopyableLabel" customModule="VideoStreamer" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="32.5" width="343" height="20.5"/>
+                                                <attributedString key="attributedText">
+                                                    <fragment content="Label">
+                                                        <attributes>
+                                                            <font key="NSFont" metaFont="system" size="17"/>
+                                                        </attributes>
+                                                    </fragment>
+                                                </attributedString>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RIL-hf-X8V" customClass="SRCopyableLabel" customModule="VideoStreamer" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="65" width="343" height="20.5"/>
+                                                <attributedString key="attributedText">
+                                                    <fragment content="Label">
+                                                        <attributes>
+                                                            <font key="NSFont" metaFont="system" size="17"/>
+                                                        </attributes>
+                                                    </fragment>
+                                                </attributedString>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstItem="tO0-n1-nlf" firstAttribute="top" secondItem="nWe-Nb-VbM" secondAttribute="bottom" constant="16" id="0Sg-02-dXh"/>
                                     <constraint firstItem="nWe-Nb-VbM" firstAttribute="top" secondItem="xhW-6O-aH5" secondAttribute="top" constant="16" id="E8K-zo-deT"/>
-                                    <constraint firstAttribute="bottom" secondItem="nWe-Nb-VbM" secondAttribute="bottom" id="bM5-me-PEM"/>
+                                    <constraint firstAttribute="bottom" secondItem="tO0-n1-nlf" secondAttribute="bottom" id="bvq-Nt-03U"/>
                                     <constraint firstItem="nWe-Nb-VbM" firstAttribute="centerX" secondItem="xhW-6O-aH5" secondAttribute="centerX" id="iQj-4x-f83"/>
+                                    <constraint firstItem="tO0-n1-nlf" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="l7f-0Z-yVa"/>
                                     <constraint firstAttribute="trailing" secondItem="nWe-Nb-VbM" secondAttribute="trailing" constant="16" id="qPB-zz-WUc"/>
                                     <constraint firstItem="nWe-Nb-VbM" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="usy-Pz-ybO"/>
+                                    <constraint firstAttribute="trailing" secondItem="tO0-n1-nlf" secondAttribute="trailing" constant="16" id="zGX-fY-fbF"/>
                                 </constraints>
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dqm-yM-et9">
@@ -186,8 +222,11 @@
                     </navigationItem>
                     <connections>
                         <outlet property="doneButton" destination="Dqm-yM-et9" id="9Ot-rg-lF2"/>
+                        <outlet property="durationLabel" destination="RIL-hf-X8V" id="Sdi-wE-Gcy"/>
+                        <outlet property="filenameLabel" destination="bhV-eQ-AXX" id="UTw-pe-ANJ"/>
                         <outlet property="infoScrollView" destination="xhW-6O-aH5" id="dSN-Wv-Ipp"/>
                         <outlet property="titleLabel" destination="nWe-Nb-VbM" id="MeP-K9-Ci6"/>
+                        <outlet property="urlLabel" destination="q90-GW-p9c" id="Pyv-qj-zER"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XQb-fS-7nE" userLabel="First Responder" sceneMemberID="firstResponder"/>

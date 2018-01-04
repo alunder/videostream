@@ -180,7 +180,9 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let infoAction = UITableViewRowAction(style: .normal, title: "Info") { (action, indexPath) in
             let cell = tableView.cellForRow(at: indexPath) as? VideoTableViewCell
-            self.performSegue(withIdentifier: Storyboard.VideoInfoSegue, sender: cell)
+            if !((cell?.videoInfo.isEmpty)!) {
+                self.performSegue(withIdentifier: Storyboard.VideoInfoSegue, sender: cell)
+            }
         }
         let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.deleteVideo(forRowAt: indexPath)
@@ -221,7 +223,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
             if let infovc = segue.destination as? VideoInfoViewController {
                 if let videoCell = sender as? VideoTableViewCell {
                     infovc.video = videoCell.video
-                    infovc.videoTitle = videoCell.titleLabel.text
+                    infovc.videoInfo = videoCell.videoInfo
                     infovc.thumbnailImage = videoCell.thumbnail.image
                 }
             }

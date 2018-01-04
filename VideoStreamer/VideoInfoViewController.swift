@@ -12,7 +12,7 @@ import MXParallaxHeader
 class VideoInfoViewController: UIViewController {
 
     var video: Video?
-    var videoTitle: String?
+    var videoInfo: [String: String]?
     var thumbnailImage: UIImage?
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -21,6 +21,9 @@ class VideoInfoViewController: UIViewController {
     @IBOutlet weak var infoScrollView: UIScrollView!
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var filenameLabel: UILabel!
+    @IBOutlet weak var urlLabel: UILabel!
+    @IBOutlet weak var durationLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +45,16 @@ class VideoInfoViewController: UIViewController {
         infoScrollView.parallaxHeader.height = view.frame.height/3
         infoScrollView.parallaxHeader.minimumHeight = infoScrollView.parallaxHeader.height
         
-        titleLabel.text = videoTitle
+        if let videoInfo = videoInfo {
+            titleLabel.text = videoInfo[VideoInfoKeys.Title]
+            let filenameTitle = (video?.isYouTube)! ? "YouTube ID" : "Filename"
+            filenameLabel.attributedText = attributedString(withTitle: filenameTitle,
+                                                       value: videoInfo[VideoInfoKeys.Filename]!)
+            urlLabel.attributedText = attributedString(withTitle: VideoInfoKeys.URL,
+                                                       value: videoInfo[VideoInfoKeys.URL]!)
+            durationLabel.attributedText = attributedString(withTitle: VideoInfoKeys.Duration,
+                                                  value: videoInfo[VideoInfoKeys.Duration]!)
+        }
     }
     
     
@@ -81,5 +93,18 @@ class VideoInfoViewController: UIViewController {
         UIGraphicsEndImageContext()
         
         return image!
+    }
+    
+    func attributedString(withTitle title: String, value: String) -> NSMutableAttributedString {
+        let boldFont = UIFont.boldSystemFont(ofSize: 17.0)
+        let labelString = NSMutableAttributedString(string: title + "\n", attributes: [.font : boldFont])
+        
+        let regularFont = UIFont.systemFont(ofSize: 17.0)
+        let regularAttributes: Dictionary<NSAttributedStringKey, Any> = [.font : regularFont,
+                                                                         .foregroundColor : UIColor.darkGray]
+        let valueString = NSMutableAttributedString(string: value, attributes: regularAttributes)
+        
+        labelString.append(valueString)
+        return labelString
     }
 }

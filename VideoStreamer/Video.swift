@@ -9,6 +9,13 @@
 import Foundation
 import AVFoundation
 
+struct VideoInfoKeys {
+    static let Title = "Title"
+    static let Duration = "Duration"
+    static let URL = "URL"
+    static let Filename = "Filename"
+}
+
 class Video: NSObject, NSCoding {
     
     var url: URL
