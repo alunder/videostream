@@ -18,12 +18,6 @@ class PlayerViewController: AVPlayerViewController {
     var rateToken: NSKeyValueObservation?
     var statusToken: NSKeyValueObservation?
     
-    struct YouTubeVideoQuality {
-        static let hd720 = NSNumber(value: XCDYouTubeVideoQuality.HD720.rawValue)
-        static let medium360 = NSNumber(value: XCDYouTubeVideoQuality.medium360.rawValue)
-        static let small240 = NSNumber(value: XCDYouTubeVideoQuality.small240.rawValue)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupPlayerForVideo()
@@ -62,7 +56,10 @@ class PlayerViewController: AVPlayerViewController {
     }
     
     func playYouTubeVideo(_ video: Video) {
-        // TODO: check for downloaded video
+        if FileManager.default.fileExists(atPath: video.getFilePath().path) {
+            configurePlayer(withURL: video.getFilePath())
+            return
+        }
         
         let identifier = video.getYouTubeID()
         XCDYouTubeClient.default().getVideoWithIdentifier(identifier) { (video, error) in

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		18C8D01EF2EDDAE983E985C9 /* Pods_VideoStreamer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BCC2787EFF68F9CF5BEF797 /* Pods_VideoStreamer.framework */; };
+		201744381FFFF3DD0088AC9E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201744371FFFF3DD0088AC9E /* Constants.swift */; };
 		2029B7571FFE9AA9009CA1E2 /* VideoInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2029B7561FFE9AA9009CA1E2 /* VideoInfoViewController.swift */; };
 		202BF0A41FFEC08B00A7FC8D /* SRCopyableLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202BF0A31FFEC08B00A7FC8D /* SRCopyableLabel.swift */; };
 		202BF0A61FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202BF0A51FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift */; };
@@ -24,12 +25,12 @@
 		205B6AD11D6F74F9002879BF /* VideoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */; };
 		20631E471D77C7DA00173ACA /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20631E461D77C7DA00173ACA /* SettingsTableViewController.swift */; };
 		20B65FE61D77CD6100118586 /* SpeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */; };
-		20B65FEC1D78950700118586 /* SettingsConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B65FEB1D78950700118586 /* SettingsConstants.swift */; };
 		20B774C51D724D4B0024B35E /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B774C41D724D4B0024B35E /* Video.swift */; };
 		20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		201744371FFFF3DD0088AC9E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		2029B7561FFE9AA9009CA1E2 /* VideoInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoInfoViewController.swift; sourceTree = "<group>"; };
 		202BF0A31FFEC08B00A7FC8D /* SRCopyableLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRCopyableLabel.swift; sourceTree = "<group>"; };
 		202BF0A51FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+BackgroundColor.swift"; sourceTree = "<group>"; };
@@ -48,7 +49,6 @@
 		205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTableViewCell.swift; sourceTree = "<group>"; };
 		20631E461D77C7DA00173ACA /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeedTableViewController.swift; sourceTree = "<group>"; };
-		20B65FEB1D78950700118586 /* SettingsConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsConstants.swift; sourceTree = "<group>"; };
 		20B774C41D724D4B0024B35E /* Video.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
 		20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTableViewController.swift; sourceTree = "<group>"; };
 		8BA9D99023B195345B45757C /* Pods-VideoStreamer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoStreamer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VideoStreamer/Pods-VideoStreamer.debug.xcconfig"; sourceTree = "<group>"; };
@@ -139,7 +139,6 @@
 			children = (
 				20631E461D77C7DA00173ACA /* SettingsTableViewController.swift */,
 				20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */,
-				20B65FEB1D78950700118586 /* SettingsConstants.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -147,6 +146,7 @@
 		20B65FE81D77CD7500118586 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				201744371FFFF3DD0088AC9E /* Constants.swift */,
 				205B6AC31D6F662E002879BF /* Assets.xcassets */,
 				205B6AC51D6F662E002879BF /* LaunchScreen.storyboard */,
 				205B6AC81D6F662E002879BF /* Info.plist */,
@@ -292,9 +292,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				20373F7B1F54B04A0043A4DA /* DownloadTask.swift in Sources */,
+				201744381FFFF3DD0088AC9E /* Constants.swift in Sources */,
 				205B6AD11D6F74F9002879BF /* VideoTableViewCell.swift in Sources */,
 				2055AA9F1D79E23000FCAAFB /* PlayerViewController.swift in Sources */,
-				20B65FEC1D78950700118586 /* SettingsConstants.swift in Sources */,
 				202BF0A41FFEC08B00A7FC8D /* SRCopyableLabel.swift in Sources */,
 				202BF0A61FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift in Sources */,
 				202BF0A91FFEE89400A7FC8D /* VideoInfoManager.swift in Sources */,

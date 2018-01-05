@@ -9,20 +9,16 @@
 import Foundation
 import AVFoundation
 
-struct VideoInfoKeys {
-    static let Title = "Title"
-    static let Duration = "Duration"
-    static let URL = "URL"
-    static let Filename = "Filename"
-    static let Thumbnail = "Thumbnail"
-}
-
 class Video: NSObject, NSCoding {
     
     var url: URL
     var filename: String
     var lastPlayedTime: CMTime?
     var isYouTube: Bool
+    
+    // Set later in tableView
+    var title: String?
+    var durationInSeconds: Float64?
     
     static let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     static let archiveURL = documentsDirectory.appendingPathComponent("videos")
@@ -32,6 +28,8 @@ class Video: NSObject, NSCoding {
         static let urlKey = "url"
         static let lastPlayedKey = "lastPlayedTime"
         static let isYouTube = "isYouTube"
+        static let title = "title"
+        static let duration = "duration"
     }
     
     init(url: URL, lastPlayedTime: CMTime?) {
@@ -42,18 +40,32 @@ class Video: NSObject, NSCoding {
         super.init()
     }
     
+    init(url: URL, lastPlayedTime: CMTime?, title: String?, duration: Float64?) {
+        self.url = url
+        self.filename = url.lastPathComponent
+        self.lastPlayedTime = lastPlayedTime
+        self.isYouTube = url.host!.contains("youtube") || url.host!.contains("youtu.be")
+        self.title = title
+        self.durationInSeconds = duration
+        super.init()
+    }
+    
     // MARK: NSCoding
     func encode(with aCoder: NSCoder) {
         aCoder.encode(url, forKey: PropertyKey.urlKey)
         aCoder.encode(lastPlayedTime, forKey: PropertyKey.lastPlayedKey)
+        aCoder.encode(title, forKey: PropertyKey.title)
+        aCoder.encode(durationInSeconds, forKey: PropertyKey.duration)
     }
 
     required convenience init?(coder aDecoder: NSCoder) {
         let url = aDecoder.decodeObject(forKey: PropertyKey.urlKey) as! URL
         let lastPlayedTime = aDecoder.decodeObject(forKey: PropertyKey.lastPlayedKey) as? CMTime
+        let title = aDecoder.decodeObject(forKey: PropertyKey.title) as? String
+        let duration = aDecoder.decodeObject(forKey: PropertyKey.duration) as? Float64
         
         // Must call designated initializer.
-        self.init(url: url, lastPlayedTime: lastPlayedTime)
+        self.init(url: url, lastPlayedTime: lastPlayedTime, title: title, duration: duration)
     }
     
     func getYouTubeID() -> String {

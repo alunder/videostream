@@ -54,7 +54,7 @@ class VideoTableViewCell: UITableViewCell {
     func updateUI() {
         // Reset any existing data
         thumbnail.image = nil
-        titleLabel.text = "Untitled Video"
+        titleLabel.text = nil
         durationLabel.text = "00:00"
         downloadState = .notDownloaded
         videoDownloadProgressView.isHidden = true
@@ -95,38 +95,55 @@ class VideoTableViewCell: UITableViewCell {
                 downloadState = .inProgress
                 durationLabel.isHidden = true
                 videoDownloadProgressView.isHidden = false
+                videoDownloadProgressView.progress = 0
                 
-                let request = URLRequest(url: video.url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
-                downloadTask = DownloadService.shared.download(request: request)
-                downloadTask?.completionHandler = { [weak self] in
-                    switch $0 {
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                    case .success(let data):
-                        print("Number of bytes: \(data.count)")
-                        // Save to disk
-                        do {
-                            try data.write(to: URL(fileURLWithPath: destination.path), options: [.atomic])
-                            DispatchQueue.main.async {
-                                self?.videoDownloadProgressView.isHidden = true
-                                self?.durationLabel.isHidden = false
-                                self?.downloadState = .downloaded
-                                let alert = UIAlertController(title: "Download successful!", message: "\"\(video.filename)\" is now available offline", preferredStyle: .alert)
-                                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                                UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
-                            }
-                        } catch let error {
-                            self?.downloadState = .notDownloaded
-                            print(error)
+                var downloadUrl = video.url
+                let dispatchGroup = DispatchGroup()
+                if video.isYouTube {
+                    dispatchGroup.enter()
+                    XCDYouTubeClient.default().getVideoWithIdentifier(video.getYouTubeID()) { (video, error) in
+                        if let streamURLs = video?.streamURLs, let streamURL = (streamURLs[XCDYouTubeVideoQualityHTTPLiveStreaming] ?? streamURLs[YouTubeVideoQuality.hd720] ?? streamURLs[YouTubeVideoQuality.medium360] ?? streamURLs[YouTubeVideoQuality.small240]) {
+                            downloadUrl = streamURL
+                        } else {
+                            print("Failed to download YouTube video")
                         }
+                        dispatchGroup.leave()
                     }
                 }
-                downloadTask?.progressHandler = { [weak self] in
-                    self?.videoDownloadProgressView.progress = Float($0)
-                }
                 
-                videoDownloadProgressView.progress = 0
-                downloadTask?.resume()
+                dispatchGroup.notify(queue: .global(qos: .background)) {
+                    let request = URLRequest(url: downloadUrl, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
+                    self.downloadTask = DownloadService.shared.download(request: request)
+                    self.downloadTask?.completionHandler = { [weak self] in
+                        switch $0 {
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                        case .success(let data):
+                            print("Number of bytes: \(data.count)")
+                            // Save to disk
+                            do {
+                                try data.write(to: destination, options: [.atomic])
+                                DispatchQueue.main.async {
+                                    self?.videoDownloadProgressView.isHidden = true
+                                    self?.durationLabel.isHidden = false
+                                    self?.downloadState = .downloaded
+                                    let alert = UIAlertController(title: "Download successful!", message: "\"\(video.title ?? video.filename)\" is now available offline", preferredStyle: .alert)
+                                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                                    UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+                                }
+                            } catch let error {
+                                self?.downloadState = .notDownloaded
+                                print(error)
+                            }
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        self.downloadTask?.progressHandler = { [weak self] in
+                            self?.videoDownloadProgressView.progress = Float($0)
+                        }
+                    }
+                    self.downloadTask?.resume()
+                }
             case .inProgress:
                 downloadState = .notDownloaded
                 self.durationLabel.isHidden = false
@@ -145,7 +162,9 @@ class VideoTableViewCell: UITableViewCell {
     }
     
     func loadVideoData(video: Video) {
-        titleLabel.text = video.filename.isEmpty ? "\(video.url)" : video.filename
+        if titleLabel.text == nil {
+            titleLabel.text = video.title ?? (video.filename.isEmpty ? video.url.absoluteString : video.filename)
+        }
         
         // Check if file download exists
         let destination = video.getFilePath()
@@ -163,9 +182,11 @@ class VideoTableViewCell: UITableViewCell {
                     }
                 }
             }
-            let durationInSeconds = CMTimeGetSeconds(asset.duration)
             
-            // If video file has title metadata set titleLabel to it, otherwise keep filename
+            let durationInSeconds = CMTimeGetSeconds(asset.duration)
+            video.durationInSeconds = durationInSeconds
+            
+            // If video file has title metadata set titleLabel to it
             let titles = AVMetadataItem.metadataItems(from: asset.commonMetadata,
                                                       withKey: AVMetadataKey.commonKeyTitle,
                                                       keySpace: AVMetadataKeySpace.common)
@@ -174,27 +195,15 @@ class VideoTableViewCell: UITableViewCell {
                     DispatchQueue.main.async {
                         self.titleLabel.text = title as? String
                     }
+                    video.title = title as? String
                 }
             }
             
             if durationInSeconds.isFinite {
-                // Format duration into readable time
-                let seconds = Int(durationInSeconds.truncatingRemainder(dividingBy: 60))
-                let totalMinutes = Int(durationInSeconds / 60)
-                let minutes = Int(Double(totalMinutes).truncatingRemainder(dividingBy: 60))
-                let hours = Int(Double(totalMinutes) / 60)
-                
-                //  Set duration label
                 DispatchQueue.main.async {
-                    if hours <= 0 {
-                        self.durationLabel.text = String(format: "%02d:%02d", minutes, seconds)
-                    } else {
-                        self.durationLabel.text = String(format: "%d:%02d:%02d", hours, minutes, seconds)
-                    }
-                }
-                
-                // Load thumbnail image
-                DispatchQueue.main.async {
+                    self.durationLabel.text = self.getStringFrom(durationInSeconds: durationInSeconds)
+                    
+                    // Load thumbnail image
                     let imagePath = video.getThumbnailPath()
                     
                     // Check if thumbnail already exists
@@ -243,17 +252,14 @@ class VideoTableViewCell: UITableViewCell {
     }
     
     func loadYouTubeData(video: Video) {
-        self.imageLoadingIndicator.startAnimating()
-        // TODO: Reenable download check
-        //                let savedFilename = video.identifier + ".mp4"
-        //                let destination = Video.documentsDirectory.appendingPathComponent(savedFilename)
-        //
-        //                // Check if file download exists
-        //                if FileManager.default.fileExists(atPath: destination.path) {
-        //                    self.downloadState = .downloaded
-        //                }
-        //
-        // TODO: add this in else statement when checking with download
+        if FileManager.default.fileExists(atPath: video.getFilePath().path) {
+            downloadState = .downloaded
+            self.titleLabel.text = video.title
+            loadVideoData(video: video)
+            return
+        }
+        
+        imageLoadingIndicator.startAnimating()
         XCDYouTubeClient.default().getVideoWithIdentifier(video.getYouTubeID()) { (video, error) in
             DispatchQueue.main.async {
                 guard let video = video else {
@@ -264,20 +270,13 @@ class VideoTableViewCell: UITableViewCell {
                     return
                 }
                 self.titleLabel.text = video.title
+                self.video?.title = video.title
                 
                 let durationInSeconds = video.duration
+                self.video?.durationInSeconds = durationInSeconds
+                
                 if durationInSeconds.isFinite {
-                    let seconds = Int(durationInSeconds.truncatingRemainder(dividingBy: 60))
-                    let totalMinutes = Int(durationInSeconds / 60)
-                    let minutes = Int(Double(totalMinutes).truncatingRemainder(dividingBy: 60))
-                    let hours = Int(Double(totalMinutes) / 60)
-                    
-                    //  Set duration label
-                    if hours <= 0 {
-                        self.durationLabel.text = String(format: "%02d:%02d", minutes, seconds)
-                    } else {
-                        self.durationLabel.text = String(format: "%d:%02d:%02d", hours, minutes, seconds)
-                    }
+                    self.durationLabel.text = self.getStringFrom(durationInSeconds: durationInSeconds)
                 } else {
                     self.durationLabel.text = "Live Broadcast"
                     self.thumbnail.image = UIImage(named: "Broadcast")
@@ -302,6 +301,19 @@ class VideoTableViewCell: UITableViewCell {
         }
     }
     
+    func getStringFrom(durationInSeconds duration: TimeInterval) -> String {
+        let seconds = Int(duration.truncatingRemainder(dividingBy: 60))
+        let totalMinutes = Int(duration / 60)
+        let minutes = Int(Double(totalMinutes).truncatingRemainder(dividingBy: 60))
+        let hours = Int(Double(totalMinutes) / 60)
+        
+        if hours <= 0 {
+            return String(format: "%02d:%02d", minutes, seconds)
+        } else {
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        }
+    }
+    
     func updateVideoDict() {
         DispatchQueue.main.async {
             self.videoInfo[VideoInfoKeys.Title] = self.titleLabel.text
@@ -317,6 +329,7 @@ class VideoTableViewCell: UITableViewCell {
             
             let manager = VideoInfoManager.shared
             manager.cache[self.video!.url] = self.videoInfo
+            manager.saveVideos()
         }
     }
     

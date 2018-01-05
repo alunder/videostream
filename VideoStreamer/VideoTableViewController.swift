@@ -10,27 +10,15 @@ import UIKit
 
 class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
-    var videos = [Video]()
+    let videoManager = VideoInfoManager.shared
     override var canBecomeFirstResponder : Bool {
         return true
     }
     
     static let unsupportedFileTypes = ["flv"]
     
-    struct Storyboard {
-        static let VideoCellIdentifier = "VideoCell"
-        static let AVPlayerVCSegue = "ShowPlayer"
-        static let VideoInfoSegue = "ShowVideoInfo"
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let savedVideos = loadVideos() {
-            videos += savedVideos
-        } else {
-            loadSampleVideos()
-        }
         
         if #available(iOS 11.0, *) {
             self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -41,12 +29,6 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         saveVideos()
-    }
-    
-    func loadSampleVideos() {
-        saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
-        saveVideoFromString("http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4")
-        saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
     }
     
     @IBAction func addStream(_ sender: UIBarButtonItem) {
@@ -84,22 +66,6 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         self.resignFirstResponder()
     }
     
-    func saveVideoFromString(_ urlString: String) {
-        if let url = URL(string: urlString), isValidURL(url) {
-            if VideoInfoManager.shared.cache[url] != nil {
-                showAlert(for: .videoAlreadyExists)
-                return
-            }
-            let video = Video(url: url, lastPlayedTime: nil)
-            self.videos.insert(video, at: 0)
-            let indexPath = IndexPath(row: videos.startIndex, section: 0)
-            tableView.insertRows(at: [indexPath], with: .automatic)
-            saveVideos()
-        } else {
-            showAlert(for: .invalidUrl)
-        }
-    }
-    
     func isValidURL(_ url: URL) -> Bool {
         return UIApplication.shared.canOpenURL(url)
     }
@@ -127,21 +93,30 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         present(alert, animated: true, completion: nil)
     }
     
-    // MARK: NSCoding
-    func saveVideos() {
-        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(videos, toFile: Video.archiveURL.path)
-        if !isSuccessfulSave {
-            print("Failed to save videos")
+    // MARK: Video Management
+    func saveVideoFromString(_ urlString: String) {
+        if let url = URL(string: urlString), isValidURL(url) {
+            if VideoInfoManager.shared.cache[url] != nil {
+                showAlert(for: .videoAlreadyExists)
+                return
+            }
+            let video = Video(url: url, lastPlayedTime: nil)
+            videoManager.addVideo(video, at: 0)
+            let indexPath = IndexPath(row: videoManager.videos.startIndex, section: 0)
+            tableView.insertRows(at: [indexPath], with: .automatic)
+            saveVideos()
+        } else {
+            showAlert(for: .invalidUrl)
         }
     }
     
-    func loadVideos() -> [Video]? {
-        return NSKeyedUnarchiver.unarchiveObject(withFile: Video.archiveURL.path) as? [Video]
+    func saveVideos() {
+        videoManager.saveVideos()
     }
     
     func deleteVideo(forRowAt indexPath: IndexPath) {
-        let video = videos[indexPath.row]
-        videos.remove(at: indexPath.row)
+        let video = videoManager.videos[indexPath.row]
+        videoManager.deleteVideo(at: indexPath.row)
         deleteThumbnail(forVideo: video)
         VideoInfoManager.shared.cache.removeValue(forKey: video.url)
         
@@ -166,13 +141,13 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     // MARK: - TableView
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return videos.count
+        return videoManager.videos.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Storyboard.VideoCellIdentifier, for: indexPath)
         if let videoCell = cell as? VideoTableViewCell {
-            let video = videos[indexPath.row]
+            let video = videoManager.videos[indexPath.row]
             videoCell.video = video
         }
         return cell
@@ -199,9 +174,9 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let movedObject = self.videos[sourceIndexPath.row]
-        videos.remove(at: sourceIndexPath.row)
-        videos.insert(movedObject, at: destinationIndexPath.row)
+        let movedObject = videoManager.videos[sourceIndexPath.row]
+        videoManager.deleteVideo(at: sourceIndexPath.row)
+        videoManager.addVideo(movedObject, at: destinationIndexPath.row)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
