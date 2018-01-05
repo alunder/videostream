@@ -33,7 +33,7 @@ class SpeedTableViewController: UITableViewController {
         tableView.cellForRow(at: IndexPath(row: speedIndex, section: 0))!.accessoryType = .checkmark
     }
     
-    fileprivate func resetChecks() {
+    func resetChecks() {
         for row in 0..<speeds.count {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) {
                 cell.accessoryType = .none

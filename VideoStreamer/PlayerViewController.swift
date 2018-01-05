@@ -23,14 +23,14 @@ class PlayerViewController: AVPlayerViewController {
         static let medium360 = NSNumber(value: XCDYouTubeVideoQuality.medium360.rawValue)
         static let small240 = NSNumber(value: XCDYouTubeVideoQuality.small240.rawValue)
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
         setupPlayerForVideo()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         if let player = player {
             if defaults.bool(forKey: SettingsConstants.ResumePlayback) {
                 video?.lastPlayedTime = player.currentTime()
@@ -38,13 +38,17 @@ class PlayerViewController: AVPlayerViewController {
                 video?.lastPlayedTime = nil
             }
         }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
         playerItem = nil
+        player?.pause()
         player = nil
         rateToken?.invalidate()
         statusToken?.invalidate()
     }
     
-    fileprivate func setupPlayerForVideo() {
+    func setupPlayerForVideo() {
         guard let video = video else {
             displayPlaybackErrorAlert()
             return
@@ -60,7 +64,7 @@ class PlayerViewController: AVPlayerViewController {
     func playYouTubeVideo(_ video: Video) {
         // TODO: check for downloaded video
         
-        let identifier = video.getYouTubeVideoIdentifier()
+        let identifier = video.getYouTubeID()
         XCDYouTubeClient.default().getVideoWithIdentifier(identifier) { (video, error) in
             if let streamURLs = video?.streamURLs, let streamURL = (streamURLs[XCDYouTubeVideoQualityHTTPLiveStreaming] ?? streamURLs[YouTubeVideoQuality.hd720] ?? streamURLs[YouTubeVideoQuality.medium360] ?? streamURLs[YouTubeVideoQuality.small240]) {
                 self.configurePlayer(withURL: streamURL)
@@ -73,13 +77,11 @@ class PlayerViewController: AVPlayerViewController {
     }
     
     func playVideo(_ video: Video) {
-        let destination = Video.documentsDirectory.appendingPathComponent(video.filename)
-        
         // If video not downloaded, stream from url
-        if !FileManager.default.fileExists(atPath: destination.path) {
+        if !FileManager.default.fileExists(atPath: video.getFilePath().path) {
             configurePlayer(withURL: video.url)
         } else {
-            configurePlayer(withURL: destination)
+            configurePlayer(withURL: video.getFilePath())
         }
     }
     
@@ -95,9 +97,10 @@ class PlayerViewController: AVPlayerViewController {
             })
             
             self.player = AVPlayer(playerItem: self.playerItem)
-            self.rateToken = self.player?.observe(\.rate, options: .new, changeHandler: { (player, change) in
-                let userRate = self.defaults.float(forKey: SettingsConstants.Speed)
-                if player.rate != 0 && player.rate != userRate  {
+            let userRate = self.defaults.float(forKey: SettingsConstants.Speed)
+            self.rateToken = self.player?.observe(\.rate, options: [.old, .new], changeHandler: { (player, change) in
+                print("RATE old: \(change.oldValue!), new: \(change.newValue!)")
+                if change.oldValue == 0.0 && change.newValue != userRate {
                     player.rate = userRate
                 }
             })
@@ -111,7 +114,7 @@ class PlayerViewController: AVPlayerViewController {
         }
     }
     
-    fileprivate func displayPlaybackErrorAlert() {
+    func displayPlaybackErrorAlert() {
         let playbackError = UIAlertController(title: "An error occurred loading this video", message: nil, preferredStyle: .alert)
         let dismissAction = UIAlertAction(title: "Close", style: .default, handler: { (action) in
             self.dismiss(animated: true, completion: nil)

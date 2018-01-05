@@ -14,6 +14,7 @@ struct VideoInfoKeys {
     static let Duration = "Duration"
     static let URL = "URL"
     static let Filename = "Filename"
+    static let Thumbnail = "Thumbnail"
 }
 
 class Video: NSObject, NSCoding {
@@ -38,7 +39,6 @@ class Video: NSObject, NSCoding {
         self.filename = url.lastPathComponent
         self.lastPlayedTime = lastPlayedTime
         self.isYouTube = url.host!.contains("youtube") || url.host!.contains("youtu.be")
-            
         super.init()
     }
     
@@ -56,7 +56,7 @@ class Video: NSObject, NSCoding {
         self.init(url: url, lastPlayedTime: lastPlayedTime)
     }
     
-    func getYouTubeVideoIdentifier() -> String {
+    func getYouTubeID() -> String {
         if !isYouTube { return "" }
         if url.host!.contains("youtu.be") {
             var identifier = url.path
@@ -69,4 +69,31 @@ class Video: NSObject, NSCoding {
         }
     }
     
+    func getFilePath() -> URL {
+        var savedFilename = isYouTube ? getYouTubeID() : filename
+        if !fileFormatInFilename(savedFilename) {
+            savedFilename += ".mp4"
+        }
+        print(Video.documentsDirectory.appendingPathComponent(savedFilename))
+        return Video.documentsDirectory.appendingPathComponent(savedFilename)
+    }
+    
+    private func fileFormatInFilename(_ filename: String) -> Bool {
+        for format in Video.validFormats {
+            if filename.contains(format) { return true }
+        }
+        return false
+    }
+    
+    func getThumbnailPath() -> String {
+        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+        let cachesDirectoryPath = paths[0] as String
+        let imagesDirectoryPath = cachesDirectoryPath + "/Thumbnails"
+        
+        if self.isYouTube {
+            return imagesDirectoryPath + "/\(self.getYouTubeID()).jpg"
+        } else {
+            return imagesDirectoryPath + "/\(self.filename).png"
+        }
+    }
 }

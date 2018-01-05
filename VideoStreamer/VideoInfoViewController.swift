@@ -80,7 +80,6 @@ class VideoInfoViewController: UIViewController {
     }
     
     func imageWithGradient(img: UIImage) -> UIImage {
-        
         UIGraphicsBeginImageContext(img.size)
         let context = UIGraphicsGetCurrentContext()
         
@@ -88,12 +87,9 @@ class VideoInfoViewController: UIViewController {
         
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let locations:[CGFloat] = [0.0, 1.0]
-        
         let top = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5).cgColor
         let bottom = UIColor(red: 0, green: 0, blue: 0, alpha: 0).cgColor
-        
         let colors = [top, bottom] as CFArray
-        
         let gradient = CGGradient(colorsSpace: colorSpace, colors: colors, locations: locations)
         
         let startPoint = CGPoint(x: img.size.width/2, y: 0)
@@ -102,9 +98,7 @@ class VideoInfoViewController: UIViewController {
         context!.drawLinearGradient(gradient!, start: startPoint, end: endPoint, options: CGGradientDrawingOptions(rawValue: UInt32(0)))
         
         let image = UIGraphicsGetImageFromCurrentImageContext()
-        
         UIGraphicsEndImageContext()
-        
         return image!
     }
     
@@ -122,10 +116,8 @@ class VideoInfoViewController: UIViewController {
     }
     
     func deleteVideo() {
-        let destination = Video.documentsDirectory.appendingPathComponent(video!.filename)
-        
         do {
-            try FileManager.default.removeItem(at: destination)
+            try FileManager.default.removeItem(at: video!.getFilePath())
         } catch {
             print(error.localizedDescription)
         }
