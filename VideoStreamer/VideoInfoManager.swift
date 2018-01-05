@@ -26,7 +26,8 @@ class VideoInfoManager {
     }
     
     func deleteVideo(at index: Int) {
-        videos.remove(at: index)
+        let video = videos.remove(at: index)
+        cache.removeValue(forKey: video.url)
     }
     
     func saveVideos() {

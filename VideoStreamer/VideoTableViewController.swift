@@ -19,7 +19,6 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         if #available(iOS 11.0, *) {
             self.navigationController?.navigationBar.prefersLargeTitles = true
         }
@@ -74,19 +73,21 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         case unplayableFileType, videoAlreadyExists, invalidUrl
     }
     
-    func showAlert(for type: AlertType) {
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+    func showAlert(for type: AlertType, message: String?) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         let dismissAction = UIAlertAction(title: "Dismiss", style: .default) { (action) in
             self.dismiss(animated: true, completion: nil)
         }
         
         switch type {
         case .unplayableFileType:
-            alert.title = "File type cannot be played!"
+            alert.title = "File type cannot be played"
         case .videoAlreadyExists:
-            alert.title = "Video from URL already added"
+            alert.title = "Video already added"
+            alert.message = "URL with video is already found in your collection"
         case .invalidUrl:
-            alert.title = "URL was not in a valid format."
+            alert.title = "Invalid URL format"
+            alert.message = "Video stream must be a valid URL"
         }
         
         alert.addAction(dismissAction)
@@ -96,8 +97,8 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     // MARK: Video Management
     func saveVideoFromString(_ urlString: String) {
         if let url = URL(string: urlString), isValidURL(url) {
-            if VideoInfoManager.shared.cache[url] != nil {
-                showAlert(for: .videoAlreadyExists)
+            if videoManager.cache[url] != nil {
+                showAlert(for: .videoAlreadyExists, message: nil)
                 return
             }
             let video = Video(url: url, lastPlayedTime: nil)
@@ -106,7 +107,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
             tableView.insertRows(at: [indexPath], with: .automatic)
             saveVideos()
         } else {
-            showAlert(for: .invalidUrl)
+            showAlert(for: .invalidUrl, message: nil)
         }
     }
     
@@ -118,7 +119,6 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         let video = videoManager.videos[indexPath.row]
         videoManager.deleteVideo(at: indexPath.row)
         deleteThumbnail(forVideo: video)
-        VideoInfoManager.shared.cache.removeValue(forKey: video.url)
         
         do {
             try FileManager.default.removeItem(at: video.getFilePath())
@@ -190,7 +190,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
             if let infovc = segue.destination as? VideoInfoViewController {
                 if let videoCell = sender as? VideoTableViewCell {
                     infovc.video = videoCell.video
-                    infovc.videoInfo = VideoInfoManager.shared.cache[infovc.video!.url]
+                    infovc.videoInfo = videoManager.cache[infovc.video!.url]
                     infovc.thumbnailImage = videoCell.thumbnail.image
                 }
             }

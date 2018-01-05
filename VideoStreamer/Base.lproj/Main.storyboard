@@ -186,33 +186,48 @@
                                             </label>
                                         </subviews>
                                     </stackView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qih-ng-Hzp">
-                                        <rect key="frame" x="16" y="185.5" width="343" height="44"/>
-                                        <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="5eN-nb-ZAo">
+                                        <rect key="frame" x="16" y="185" width="343" height="50"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qih-ng-Hzp">
+                                                <rect key="frame" x="0.0" y="0.0" width="163.5" height="50"/>
+                                                <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                                <state key="normal" title="Play">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <segue destination="xUF-Ct-fxA" kind="presentation" identifier="ShowPlayerFromInfo" id="JS8-ws-IUU"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WY0-U4-hTL">
+                                                <rect key="frame" x="179.5" y="0.0" width="163.5" height="50"/>
+                                                <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                                <state key="normal" title="Download">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="downloadPressed:" destination="fQy-Aa-PSI" eventType="touchUpInside" id="I7w-s3-vgJ"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="44" id="gl7-id-IJ8"/>
+                                            <constraint firstAttribute="height" constant="50" id="TZj-uu-Uka"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                        <state key="normal" title="Download">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="downloadPressed:" destination="fQy-Aa-PSI" eventType="touchUpInside" id="p4m-AR-lrS"/>
-                                        </connections>
-                                    </button>
+                                    </stackView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="tO0-n1-nlf" firstAttribute="top" secondItem="nWe-Nb-VbM" secondAttribute="bottom" constant="16" id="0Sg-02-dXh"/>
-                                    <constraint firstItem="Qih-ng-Hzp" firstAttribute="top" secondItem="tO0-n1-nlf" secondAttribute="bottom" constant="32" id="E5i-wn-EIT"/>
                                     <constraint firstItem="nWe-Nb-VbM" firstAttribute="top" secondItem="xhW-6O-aH5" secondAttribute="top" constant="16" id="E8K-zo-deT"/>
-                                    <constraint firstItem="Qih-ng-Hzp" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="WYS-3w-xkC"/>
-                                    <constraint firstAttribute="bottom" secondItem="Qih-ng-Hzp" secondAttribute="bottom" constant="8" id="ci2-2Y-h0F"/>
+                                    <constraint firstAttribute="trailing" secondItem="5eN-nb-ZAo" secondAttribute="trailing" constant="16" id="EY0-hu-EYX"/>
+                                    <constraint firstItem="5eN-nb-ZAo" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="H3f-kk-ZHX"/>
+                                    <constraint firstItem="5eN-nb-ZAo" firstAttribute="top" secondItem="tO0-n1-nlf" secondAttribute="bottom" constant="32" id="KAv-GA-LOi"/>
+                                    <constraint firstAttribute="bottom" secondItem="5eN-nb-ZAo" secondAttribute="bottom" constant="16" id="ZG1-rc-7j2"/>
                                     <constraint firstItem="nWe-Nb-VbM" firstAttribute="centerX" secondItem="xhW-6O-aH5" secondAttribute="centerX" id="iQj-4x-f83"/>
                                     <constraint firstItem="tO0-n1-nlf" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="l7f-0Z-yVa"/>
-                                    <constraint firstItem="Qih-ng-Hzp" firstAttribute="centerX" secondItem="xhW-6O-aH5" secondAttribute="centerX" id="mgP-aE-HKu"/>
                                     <constraint firstAttribute="trailing" secondItem="nWe-Nb-VbM" secondAttribute="trailing" constant="16" id="qPB-zz-WUc"/>
                                     <constraint firstItem="nWe-Nb-VbM" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="usy-Pz-ybO"/>
-                                    <constraint firstAttribute="trailing" secondItem="Qih-ng-Hzp" secondAttribute="trailing" constant="16" id="yJ5-VR-ZwZ"/>
                                     <constraint firstAttribute="trailing" secondItem="tO0-n1-nlf" secondAttribute="trailing" constant="16" id="zGX-fY-fbF"/>
                                 </constraints>
                             </scrollView>
@@ -247,10 +262,11 @@
                     </navigationItem>
                     <connections>
                         <outlet property="doneButton" destination="Dqm-yM-et9" id="9Ot-rg-lF2"/>
-                        <outlet property="downloadButton" destination="Qih-ng-Hzp" id="I9w-9s-QJw"/>
+                        <outlet property="downloadButton" destination="WY0-U4-hTL" id="557-CT-xOY"/>
                         <outlet property="durationLabel" destination="RIL-hf-X8V" id="Sdi-wE-Gcy"/>
                         <outlet property="filenameLabel" destination="bhV-eQ-AXX" id="UTw-pe-ANJ"/>
                         <outlet property="infoScrollView" destination="xhW-6O-aH5" id="dSN-Wv-Ipp"/>
+                        <outlet property="playButton" destination="Qih-ng-Hzp" id="ERA-ie-fuc"/>
                         <outlet property="titleLabel" destination="nWe-Nb-VbM" id="MeP-K9-Ci6"/>
                         <outlet property="urlLabel" destination="q90-GW-p9c" id="Pyv-qj-zER"/>
                     </connections>
@@ -428,4 +444,7 @@
             <point key="canvasLocation" x="1098" y="1095"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="JS8-ws-IUU"/>
+    </inferredMetricsTieBreakers>
 </document>

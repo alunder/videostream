@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-let themeColor = UIColor.red
+let themeColor = UIColor.orange //UIColor(red: 199/255, green: 0/255, blue: 57/255, alpha: 1.0)
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

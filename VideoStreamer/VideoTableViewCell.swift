@@ -26,6 +26,7 @@ class VideoTableViewCell: UITableViewCell {
     @IBOutlet weak var downloadButton: UIButton!
     @IBOutlet weak var videoDownloadProgressView: UIProgressView!
     
+    let videoManager = VideoInfoManager.shared
     var videoInfo = [String: Any]() // For segue to info view controller
     var video: Video? {
         didSet { updateUI() }
@@ -61,9 +62,8 @@ class VideoTableViewCell: UITableViewCell {
         
         // Load video data
         guard let video = self.video else { return }
-        let manager = VideoInfoManager.shared
         
-        if let videoInfo = manager.cache[video.url] {
+        if let videoInfo = videoManager.cache[video.url] {
             self.titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
             self.durationLabel.text = videoInfo[VideoInfoKeys.Duration] as? String
             let imagePath = videoInfo[VideoInfoKeys.Thumbnail] as? String
@@ -327,9 +327,8 @@ class VideoTableViewCell: UITableViewCell {
                 self.videoInfo[VideoInfoKeys.Thumbnail] = self.video?.getThumbnailPath()
             }
             
-            let manager = VideoInfoManager.shared
-            manager.cache[self.video!.url] = self.videoInfo
-            manager.saveVideos()
+            self.videoManager.cache[self.video!.url] = self.videoInfo
+            self.videoManager.saveVideos()
         }
     }
     

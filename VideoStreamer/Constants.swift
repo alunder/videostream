@@ -27,6 +27,7 @@ struct Storyboard {
     static let VideoCellIdentifier = "VideoCell"
     static let AVPlayerVCSegue = "ShowPlayer"
     static let VideoInfoSegue = "ShowVideoInfo"
+    static let PlayerFromInfoSegue = "ShowPlayerFromInfo"
 }
 
 struct SettingsConstants {
