@@ -321,8 +321,8 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="Resume Playback" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Sk-WG-D4Y">
-                                                    <rect key="frame" x="16" y="11" width="135" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <rect key="frame" x="16" y="12" width="128" height="19.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -357,13 +357,14 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="labelLeadingConstraint" destination="g2a-cu-nuI" id="4jn-lg-rCE"/>
                         <outlet property="resumePlaybackSwitch" destination="2ue-W7-9Hl" id="K1n-kb-4re"/>
                         <outlet property="speedValueLabel" destination="sTj-gF-6ox" id="nGL-XF-hto"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="im6-eZ-wg8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1913" y="1094"/>
+            <point key="canvasLocation" x="1912.8" y="1093.4032983508246"/>
         </scene>
         <!--Speed Table View Controller-->
         <scene sceneID="khy-mg-86n">

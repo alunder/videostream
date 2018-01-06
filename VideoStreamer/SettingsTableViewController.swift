@@ -12,11 +12,17 @@ class SettingsTableViewController: UITableViewController {
 
     @IBOutlet weak var speedValueLabel: UILabel!
     @IBOutlet weak var resumePlaybackSwitch: UISwitch!
+    @IBOutlet weak var labelLeadingConstraint: NSLayoutConstraint!
     
     let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if #available(iOS 11.0, *) {
+            labelLeadingConstraint.constant = 0
+        } else {
+            labelLeadingConstraint.constant = 13
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -81,14 +81,6 @@ class PlayerViewController: AVPlayerViewController {
     func configurePlayer(withURL url: URL) {
         DispatchQueue.main.async {
             let playerItem = AVPlayerItem(url: url)
-//            self.statusToken = playerItem.observe(\.status, options: .new, changeHandler: { (playerItem, change) in
-//                if playerItem.status == .readyToPlay {
-//                    self.player?.play()
-//                } else {
-//                    self.displayPlaybackErrorAlert()
-//                }
-//            })
-//
             self.player = AVPlayer(playerItem: playerItem)
             self.rateToken = self.player?.observe(\.rate, options: [.old, .new], changeHandler: { (player, change) in
                 print("RATE old: \(change.oldValue!), new: \(change.newValue!)")

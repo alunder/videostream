@@ -9,7 +9,7 @@
 import UIKit
 import MXParallaxHeader
 
-class VideoInfoViewController: UIViewController {
+class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     
     var video: Video?
     var videoInfo: [String: Any]?
@@ -17,6 +17,8 @@ class VideoInfoViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
+    var initialOffsetIgnored = false
+    var top: CGFloat?
     
     @IBOutlet weak var infoScrollView: UIScrollView!
     @IBOutlet weak var doneButton: UIButton!
@@ -34,6 +36,7 @@ class VideoInfoViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         infoScrollView.delaysContentTouches = false
+        infoScrollView.delegate = self
         
         doneButton.layer.shadowColor = UIColor.darkGray.cgColor
         doneButton.layer.shadowOpacity = 0.8;
@@ -94,6 +97,7 @@ class VideoInfoViewController: UIViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         infoScrollView.parallaxHeader.height = size.height/3
         infoScrollView.parallaxHeader.minimumHeight = infoScrollView.parallaxHeader.height
+        top = infoScrollView.contentOffset.y + infoScrollView.contentInset.top
     }
     
     func imageWithGradient(img: UIImage) -> UIImage {
@@ -137,6 +141,23 @@ class VideoInfoViewController: UIViewController {
             try FileManager.default.removeItem(at: video!.getFilePath())
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    // MARK: UIScrollView
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let relativeYOffset = scrollView.contentOffset.y + scrollView.contentInset.top
+        if !initialOffsetIgnored {
+            initialOffsetIgnored = true
+            return
+        }
+        
+        if top == nil {
+            top = relativeYOffset
+        } else {
+            if relativeYOffset < top! - 60 {
+                self.dismiss(animated: true, completion: nil)
+            }
         }
     }
 }
