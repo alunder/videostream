@@ -53,7 +53,6 @@ class VideoTableViewCell: UITableViewCell {
     var downloadTask: DownloadTask?
     
     func updateUI() {
-        // Reset any existing data
         thumbnail.image = nil
         titleLabel.text = nil
         durationLabel.text = "00:00"
@@ -258,7 +257,7 @@ class VideoTableViewCell: UITableViewCell {
             loadVideoData(video: video)
             return
         }
-        
+        titleLabel.text = "Untitled Video"
         imageLoadingIndicator.startAnimating()
         XCDYouTubeClient.default().getVideoWithIdentifier(video.getYouTubeID()) { (video, error) in
             DispatchQueue.main.async {

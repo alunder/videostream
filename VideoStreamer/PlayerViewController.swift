@@ -13,7 +13,6 @@ import XCDYouTubeKit
 class PlayerViewController: AVPlayerViewController {
     
     var video: Video?
-    var playerItem: AVPlayerItem?
     let defaults = UserDefaults.standard
     var rateToken: NSKeyValueObservation?
     var statusToken: NSKeyValueObservation?
@@ -35,11 +34,8 @@ class PlayerViewController: AVPlayerViewController {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        playerItem = nil
         player?.pause()
-        player = nil
-        rateToken?.invalidate()
-        statusToken?.invalidate()
+        player?.replaceCurrentItem(with: nil)
     }
     
     func setupPlayerForVideo() {
@@ -84,8 +80,24 @@ class PlayerViewController: AVPlayerViewController {
     
     func configurePlayer(withURL url: URL) {
         DispatchQueue.main.async {
-            self.playerItem = AVPlayerItem(url: url)
-            self.statusToken = self.playerItem?.observe(\.status, options: .new, changeHandler: { (playerItem, change) in
+            let playerItem = AVPlayerItem(url: url)
+//            self.statusToken = playerItem.observe(\.status, options: .new, changeHandler: { (playerItem, change) in
+//                if playerItem.status == .readyToPlay {
+//                    self.player?.play()
+//                } else {
+//                    self.displayPlaybackErrorAlert()
+//                }
+//            })
+//
+            self.player = AVPlayer(playerItem: playerItem)
+            self.rateToken = self.player?.observe(\.rate, options: [.old, .new], changeHandler: { (player, change) in
+                print("RATE old: \(change.oldValue!), new: \(change.newValue!)")
+                let userRate = self.defaults.float(forKey: SettingsConstants.Speed)
+                if change.oldValue == 0.0 && change.newValue != userRate {
+                    player.rate = userRate
+                }
+            })
+            self.statusToken = self.player?.observe(\.status, options: .new, changeHandler: { (playerItem, change) in
                 if playerItem.status == .readyToPlay {
                     self.player?.play()
                 } else {
@@ -93,19 +105,9 @@ class PlayerViewController: AVPlayerViewController {
                 }
             })
             
-            self.player = AVPlayer(playerItem: self.playerItem)
-            let userRate = self.defaults.float(forKey: SettingsConstants.Speed)
-            self.rateToken = self.player?.observe(\.rate, options: [.old, .new], changeHandler: { (player, change) in
-                print("RATE old: \(change.oldValue!), new: \(change.newValue!)")
-                if change.oldValue == 0.0 && change.newValue != userRate {
-                    player.rate = userRate
-                }
-            })
-            
-            
             if self.defaults.bool(forKey: SettingsConstants.ResumePlayback) {
                 if let time = self.video?.lastPlayedTime  {
-                    self.player?.seek(to: time)
+                    self.player?.seek(to: time, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
                 }
             }
         }

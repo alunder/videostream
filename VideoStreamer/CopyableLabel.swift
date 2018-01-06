@@ -1,19 +1,15 @@
 //
-//  SRCopyableLabel.swift
+//  CopyableLabel.swift
 //
-//  Created by Stephen Radford on 08/09/2015.
-//  Copyright (c) 2015 Cocoon Development Ltd. All rights reserved.
+//  Created by Ritam Sarmah on 1/4/18.
+//  Copyright © 2018 Ritam Sarmah. All rights reserved.
 //
 
 import UIKit
 
-class SRCopyableLabel: UILabel {
+class CopyableLabel: UILabel {
     
-    override public var canBecomeFirstResponder: Bool {
-        get {
-            return true
-        }
-    }
+    override var canBecomeFirstResponder: Bool { return true }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,6 +26,10 @@ class SRCopyableLabel: UILabel {
         addGestureRecognizer(UILongPressGestureRecognizer(
             target: self,
             action: #selector(showMenu(sender:))
+        ))
+        addGestureRecognizer(UITapGestureRecognizer(
+            target: self,
+            action: #selector(hideMenu(sender:))
         ))
     }
     
@@ -48,6 +48,15 @@ class SRCopyableLabel: UILabel {
         if !menu.isMenuVisible {
             menu.setTargetRect(bounds, in: self)
             menu.setMenuVisible(true, animated: true)
+        }
+    }
+    
+    @objc func hideMenu(sender: Any?) {
+        becomeFirstResponder()
+        let menu = UIMenuController.shared
+        if menu.isMenuVisible {
+            menu.setTargetRect(bounds, in: self)
+            menu.setMenuVisible(false, animated: true)
         }
     }
     

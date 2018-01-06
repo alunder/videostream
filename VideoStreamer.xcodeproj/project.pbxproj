@@ -10,7 +10,6 @@
 		18C8D01EF2EDDAE983E985C9 /* Pods_VideoStreamer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BCC2787EFF68F9CF5BEF797 /* Pods_VideoStreamer.framework */; };
 		201744381FFFF3DD0088AC9E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201744371FFFF3DD0088AC9E /* Constants.swift */; };
 		2029B7571FFE9AA9009CA1E2 /* VideoInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2029B7561FFE9AA9009CA1E2 /* VideoInfoViewController.swift */; };
-		202BF0A41FFEC08B00A7FC8D /* SRCopyableLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202BF0A31FFEC08B00A7FC8D /* SRCopyableLabel.swift */; };
 		202BF0A61FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202BF0A51FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift */; };
 		202BF0A91FFEE89400A7FC8D /* VideoInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202BF0A81FFEE89400A7FC8D /* VideoInfoManager.swift */; };
 		20373F7A1F54B04A0043A4DA /* ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20373F761F54B04A0043A4DA /* ResultType.swift */; };
@@ -24,6 +23,7 @@
 		205B6AC71D6F662E002879BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 205B6AC51D6F662E002879BF /* LaunchScreen.storyboard */; };
 		205B6AD11D6F74F9002879BF /* VideoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */; };
 		20631E471D77C7DA00173ACA /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20631E461D77C7DA00173ACA /* SettingsTableViewController.swift */; };
+		20ACD7BF20015C2200C8DBF0 /* CopyableLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20ACD7BE20015C2200C8DBF0 /* CopyableLabel.swift */; };
 		20B65FE61D77CD6100118586 /* SpeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */; };
 		20B774C51D724D4B0024B35E /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B774C41D724D4B0024B35E /* Video.swift */; };
 		20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */; };
@@ -32,7 +32,6 @@
 /* Begin PBXFileReference section */
 		201744371FFFF3DD0088AC9E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		2029B7561FFE9AA9009CA1E2 /* VideoInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoInfoViewController.swift; sourceTree = "<group>"; };
-		202BF0A31FFEC08B00A7FC8D /* SRCopyableLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRCopyableLabel.swift; sourceTree = "<group>"; };
 		202BF0A51FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+BackgroundColor.swift"; sourceTree = "<group>"; };
 		202BF0A81FFEE89400A7FC8D /* VideoInfoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoInfoManager.swift; sourceTree = "<group>"; };
 		20373F761F54B04A0043A4DA /* ResultType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultType.swift; sourceTree = "<group>"; };
@@ -48,6 +47,7 @@
 		205B6AC81D6F662E002879BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTableViewCell.swift; sourceTree = "<group>"; };
 		20631E461D77C7DA00173ACA /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
+		20ACD7BE20015C2200C8DBF0 /* CopyableLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CopyableLabel.swift; sourceTree = "<group>"; };
 		20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeedTableViewController.swift; sourceTree = "<group>"; };
 		20B774C41D724D4B0024B35E /* Video.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
 		20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTableViewController.swift; sourceTree = "<group>"; };
@@ -81,7 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				202BF0A51FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift */,
-				202BF0A31FFEC08B00A7FC8D /* SRCopyableLabel.swift */,
+				20ACD7BE20015C2200C8DBF0 /* CopyableLabel.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -295,7 +295,6 @@
 				201744381FFFF3DD0088AC9E /* Constants.swift in Sources */,
 				205B6AD11D6F74F9002879BF /* VideoTableViewCell.swift in Sources */,
 				2055AA9F1D79E23000FCAAFB /* PlayerViewController.swift in Sources */,
-				202BF0A41FFEC08B00A7FC8D /* SRCopyableLabel.swift in Sources */,
 				202BF0A61FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift in Sources */,
 				202BF0A91FFEE89400A7FC8D /* VideoInfoManager.swift in Sources */,
 				20373F7D1F54B04A0043A4DA /* GenericDownloadTask.swift in Sources */,
@@ -304,6 +303,7 @@
 				20373F7A1F54B04A0043A4DA /* ResultType.swift in Sources */,
 				20B774C51D724D4B0024B35E /* Video.swift in Sources */,
 				20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */,
+				20ACD7BF20015C2200C8DBF0 /* CopyableLabel.swift in Sources */,
 				205B6ABD1D6F662E002879BF /* AppDelegate.swift in Sources */,
 				20B65FE61D77CD6100118586 /* SpeedTableViewController.swift in Sources */,
 				20373F7C1F54B04A0043A4DA /* DownloadService.swift in Sources */,

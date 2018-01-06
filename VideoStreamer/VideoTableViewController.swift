@@ -118,8 +118,9 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     func deleteVideo(forRowAt indexPath: IndexPath) {
         let video = videoManager.videos[indexPath.row]
         videoManager.deleteVideo(at: indexPath.row)
+        videoManager.cache.removeValue(forKey: video.url)
         deleteThumbnail(forVideo: video)
-        
+
         do {
             try FileManager.default.removeItem(at: video.getFilePath())
         } catch {

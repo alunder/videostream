@@ -22,12 +22,11 @@ class VideoInfoManager {
     }
     
     func addVideo(_ video: Video, at index: Int) {
-        videos.insert(video, at: 0)
+        videos.insert(video, at: index)
     }
     
     func deleteVideo(at index: Int) {
-        let video = videos.remove(at: index)
-        cache.removeValue(forKey: video.url)
+        videos.remove(at: index)
     }
     
     func saveVideos() {
