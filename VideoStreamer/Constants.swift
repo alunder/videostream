@@ -34,3 +34,7 @@ struct SettingsConstants {
     static let Speed = "playbackSpeed"
     static let ResumePlayback = "doesResumePlayback"
 }
+
+enum DownloadState {
+    case notDownloaded, inProgress, paused, downloaded, disabled
+}

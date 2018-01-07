@@ -27,6 +27,10 @@ final class DownloadService: NSObject {
         downloadTasks.append(downloadTask)
         return downloadTask
     }
+    
+    func getDownloads(withId id: String) -> [DownloadTask]? {
+        return downloadTasks.filter { ($0 as GenericDownloadTask).id == id }
+    }
 }
 
 

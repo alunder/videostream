@@ -27,6 +27,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        tableView.reloadData()
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
         saveVideos()
     }
@@ -115,7 +116,6 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
             videoManager.addVideo(video, at: 0)
             let indexPath = IndexPath(row: videoManager.videos.startIndex, section: 0)
             tableView.insertRows(at: [indexPath], with: .automatic)
-            saveVideos()
         } else {
             showAlert(for: .invalidUrl, message: nil)
         }
@@ -129,25 +129,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         let video = videoManager.videos[indexPath.row]
         videoManager.deleteVideo(at: indexPath.row)
         videoManager.cache.removeValue(forKey: video.url)
-        deleteThumbnail(forVideo: video)
-
-        do {
-            try FileManager.default.removeItem(at: video.getFilePath())
-        } catch {
-            print(error.localizedDescription)
-        }
-        
-        saveVideos()
         tableView.deleteRows(at: [indexPath], with: .fade)
-    }
-    
-    func deleteThumbnail(forVideo video: Video) {
-        let fileManager = FileManager.default
-        do {
-            try fileManager.removeItem(atPath: video.getThumbnailPath())
-        } catch {
-            print(error.localizedDescription)
-        }
     }
     
     // MARK: - TableView
@@ -185,9 +167,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let movedObject = videoManager.videos[sourceIndexPath.row]
-        videoManager.deleteVideo(at: sourceIndexPath.row)
-        videoManager.addVideo(movedObject, at: destinationIndexPath.row)
+        videoManager.moveVideo(at: sourceIndexPath.row, to: destinationIndexPath.row)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -203,6 +183,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
                     infovc.video = videoCell.video
                     infovc.videoInfo = videoManager.cache[infovc.video!.url]
                     infovc.thumbnailImage = videoCell.thumbnail.image
+                    infovc.downloadState = videoCell.downloadState
                 }
             }
         }

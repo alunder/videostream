@@ -7,18 +7,24 @@
 //
 
 import UIKit
+import XCDYouTubeKit
 import MXParallaxHeader
 
 class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     
     var video: Video?
     var videoInfo: [String: Any]?
+    var downloadState: DownloadState?
+    var downloadTask: DownloadTask?
     var thumbnailImage: UIImage?
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     var initialOffsetIgnored = false
     var top: CGFloat?
+    
+    let buttonColor = UIColor(red: 229/255, green: 229/255, blue: 239/255, alpha: 1.0)
+    var progressLayer: CAGradientLayer?
     
     @IBOutlet weak var infoScrollView: UIScrollView!
     @IBOutlet weak var doneButton: UIButton!
@@ -35,6 +41,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        print(downloadState.debugDescription)
         infoScrollView.delaysContentTouches = false
         infoScrollView.delegate = self
         
@@ -43,22 +50,27 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         doneButton.layer.shadowRadius = 3;
         doneButton.layer.shadowOffset = CGSize(width: 0, height: 1.0)
         
-        let backgroundColor = UIColor(red: 229/255, green: 229/255, blue: 239/255, alpha: 1.0)
-        playButton.backgroundColor = backgroundColor
+        playButton.backgroundColor = buttonColor
         playButton.setTitleColor(themeColor, for: .normal)
         playButton.layer.cornerRadius = 5
         playButton.layer.masksToBounds = true
         playButton.setBackgroundColor(color: .darkGray, forState: .highlighted)
         
-        downloadButton.backgroundColor = backgroundColor
-        downloadButton.setTitleColor(themeColor, for: .normal)
+        downloadButton.backgroundColor = buttonColor
         downloadButton.layer.cornerRadius = 5
         downloadButton.layer.masksToBounds = true
         downloadButton.setBackgroundColor(color: .darkGray, forState: .highlighted)
+        setDownloadButton()
         
         let headerView = UIImageView()
         headerView.image = imageWithGradient(img: thumbnailImage!)
         headerView.contentMode = .scaleAspectFill
+        
+        if let task = DownloadService.shared.getDownloads(withId: video!.url.absoluteString)?.first {
+            downloadTask = task
+            setDownloadProgress()
+            setDownloadCompletion()
+        }
         
         infoScrollView.parallaxHeader.view = headerView
         infoScrollView.parallaxHeader.mode = .fill
@@ -85,13 +97,136 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    
     @IBAction func donePressed(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
     }
     
+    func setDownloadButtonProgress(progress: Float) {
+        progressLayer?.removeFromSuperlayer()
+        
+        let layer = CAGradientLayer()
+        layer.frame.size = downloadButton.frame.size
+        layer.startPoint = CGPoint.zero
+        layer.endPoint = CGPoint(x: 1, y: 0)
+        
+        let progressColor = UIColor(red: 210/255, green: 210/255, blue: 220/255, alpha: 1.0).cgColor
+        let backgroundColor = buttonColor.cgColor
+        
+        layer.colors = [progressColor, progressColor, backgroundColor, backgroundColor]
+        layer.locations = [0.0, NSNumber(value: progress), NSNumber(value: progress), 1.0]
+        
+        progressLayer = layer
+        downloadButton.layer.insertSublayer(layer, at: 0)
+    }
+    
+    func setDownloadProgress() {
+        downloadState = .inProgress
+        self.downloadTask?.progressHandler = { [weak self] in
+            self?.setDownloadButtonProgress(progress: Float($0))
+        }
+    }
+    
+    func setDownloadButton() {
+        downloadButton.setTitleColor(themeColor, for: .normal)
+        progressLayer?.removeFromSuperlayer()
+        if let downloadState = self.downloadState {
+            switch downloadState {
+            case .notDownloaded:
+                downloadButton.setTitle("Download", for: .normal)
+            case .inProgress:
+                downloadButton.setTitle("Cancel", for: .normal)
+            case .paused:
+                break
+            case .downloaded:
+                downloadButton.setTitle("Remove", for: .normal)
+                downloadButton.setTitleColor(UIColor.red, for: .normal)
+            case .disabled:
+                downloadButton.isEnabled = false
+            }
+        }
+    }
+    
+    func setDownloadCompletion() {
+        guard let video = self.video else { return }
+        downloadTask?.completionHandler = { [weak self] in
+            switch $0 {
+            case .failure(let error):
+                self?.downloadState = .notDownloaded
+                self?.setDownloadButton()
+                print("Video download failed: \(error.localizedDescription)")
+            case .success(let data):
+                do {
+                    try data.write(to: video.getFilePath(), options: [.atomic])
+                    DispatchQueue.main.async {
+                        self?.downloadState = .downloaded
+                        self?.setDownloadButton()
+                        let alert = UIAlertController(title: "Download successful!", message: "\"\(video.title ?? video.filename)\" is now available offline", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                        UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+                    }
+                } catch let error {
+                    self?.downloadState = .notDownloaded
+                    self?.setDownloadButton()
+                    print("Video file save failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
     @IBAction func downloadPressed(_ sender: UIButton) {
-        print("download tapped")
+        guard let video = video else { return }
+        
+        switch downloadState! {
+        case .notDownloaded:
+            let destination = video.getFilePath()
+            if FileManager.default.fileExists(atPath: destination.path) {
+                downloadState = .downloaded
+                let downloadAlert = UIAlertController(title: "Video already downloaded!", message: nil, preferredStyle: .alert)
+                let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+                downloadAlert.addAction(action)
+                present(downloadAlert, animated: true, completion: nil)
+            } else {
+                downloadButton.isUserInteractionEnabled = false
+                downloadState = .inProgress
+                setDownloadButton()
+                var downloadUrl = video.url
+                let dispatchGroup = DispatchGroup()
+                if video.isYouTube {
+                    dispatchGroup.enter()
+                    XCDYouTubeClient.default().getVideoWithIdentifier(video.getYouTubeID()) { (video, error) in
+                        if let streamURLs = video?.streamURLs, let streamURL = (streamURLs[XCDYouTubeVideoQualityHTTPLiveStreaming] ?? streamURLs[YouTubeVideoQuality.hd720] ?? streamURLs[YouTubeVideoQuality.medium360] ?? streamURLs[YouTubeVideoQuality.small240]) {
+                            downloadUrl = streamURL
+                        } else {
+                            print("Failed to download YouTube video")
+                        }
+                        dispatchGroup.leave()
+                    }
+                }
+                
+                self.downloadButton.isUserInteractionEnabled = false
+                dispatchGroup.notify(queue: .global(qos: .background)) {
+                    let request = URLRequest(url: downloadUrl, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
+                    self.downloadTask = DownloadService.shared.download(request: request, withId: video.url.absoluteString)
+                    self.setDownloadCompletion()
+                    DispatchQueue.main.async {
+                        self.downloadButton.isUserInteractionEnabled = true
+                        self.setDownloadProgress()
+                        self.setDownloadButton()
+                    }
+                    self.downloadTask?.resume()
+                }
+            }
+        case .inProgress:
+            downloadState = .notDownloaded
+            setDownloadButton()
+            downloadTask?.cancel()
+        case .downloaded:
+            downloadState = .notDownloaded
+            VideoInfoManager.shared.deleteDownload(forVideo: self.video!)
+            setDownloadButton()
+        default:
+            break
+        }
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

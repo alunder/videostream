@@ -12,10 +12,6 @@ import AVFoundation
 import XCDYouTubeKit
 import SDWebImage
 
-enum DownloadState {
-    case notDownloaded, inProgress, paused, downloaded, disabled
-}
-
 class VideoTableViewCell: UITableViewCell {
     
     // MARK: Properties
@@ -64,8 +60,7 @@ class VideoTableViewCell: UITableViewCell {
         guard let video = self.video else { return }
         
         // Check for ongoing download task to update progressview
-        let matchingTasks = DownloadService.shared.downloadTasks.filter { ($0 as GenericDownloadTask).id == video.url.absoluteString }
-        if let task = matchingTasks.first {
+        if let task = DownloadService.shared.getDownloads(withId: video.url.absoluteString)?.first {
             self.downloadTask = task
             setDownloadProgress()
             setDownloadCompletion()
@@ -110,6 +105,7 @@ class VideoTableViewCell: UITableViewCell {
         downloadTask?.completionHandler = { [weak self] in
             switch $0 {
             case .failure(let error):
+                self?.downloadState = .notDownloaded
                 print("Video download failed: \(error.localizedDescription)")
             case .success(let data):
                 do {

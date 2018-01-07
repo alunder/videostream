@@ -21,12 +21,43 @@ class VideoInfoManager {
         }
     }
     
+    func moveVideo(at sourceIndex: Int, to destinationIndex: Int) {
+        let movedObject = videos.remove(at: sourceIndex)
+        addVideo(movedObject, at: destinationIndex)
+    }
+    
     func addVideo(_ video: Video, at index: Int) {
         videos.insert(video, at: index)
+        saveVideos()
     }
     
     func deleteVideo(at index: Int) {
-        videos.remove(at: index)
+        let video = videos.remove(at: index)
+        deleteDownload(forVideo: video)
+        deleteThumbnail(forVideo: video)
+        
+        // Cancel potential download
+        if let task = DownloadService.shared.getDownloads(withId: video.url.absoluteString)?.first {
+            task.cancel()
+        }
+        saveVideos()
+    }
+    
+    func deleteThumbnail(forVideo video: Video) {
+        let fileManager = FileManager.default
+        do {
+            try fileManager.removeItem(atPath: video.getThumbnailPath())
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func deleteDownload(forVideo video: Video) {
+        do {
+            try FileManager.default.removeItem(at: video.getFilePath())
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     func saveVideos() {

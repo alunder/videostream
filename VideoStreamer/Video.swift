@@ -15,8 +15,6 @@ class Video: NSObject, NSCoding {
     var filename: String
     var lastPlayedTime: CMTime?
     var isYouTube: Bool
-    
-    // Set later in tableView
     var title: String?
     var durationInSeconds: Float64?
     
