@@ -97,7 +97,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         infoScrollView.parallaxHeader.height = size.height/3
         infoScrollView.parallaxHeader.minimumHeight = infoScrollView.parallaxHeader.height
-        top = infoScrollView.contentOffset.y + infoScrollView.contentInset.top
+        top = infoScrollView.contentOffset.y + infoScrollView.contentInset.top // TODO: switch to size value
     }
     
     func imageWithGradient(img: UIImage) -> UIImage {

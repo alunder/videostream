@@ -56,16 +56,28 @@ class VideoTableViewCell: UITableViewCell {
         thumbnail.image = nil
         titleLabel.text = nil
         durationLabel.text = "00:00"
+        durationLabel.isHidden = false
         downloadState = .notDownloaded
         videoDownloadProgressView.isHidden = true
         
         // Load video data
         guard let video = self.video else { return }
         
+        // Check for ongoing download task to update progressview
+        let matchingTasks = DownloadService.shared.downloadTasks.filter { ($0 as GenericDownloadTask).id == video.url.absoluteString }
+        if let task = matchingTasks.first {
+            self.downloadTask = task
+            setDownloadProgress()
+            setDownloadCompletion()
+        }
+        
         if let videoInfo = videoManager.cache[video.url] {
             self.titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
             self.durationLabel.text = videoInfo[VideoInfoKeys.Duration] as? String
             let imagePath = videoInfo[VideoInfoKeys.Thumbnail] as? String
+            if FileManager.default.fileExists(atPath: video.getFilePath().path) {
+                downloadState = .downloaded
+            }
             if FileManager.default.fileExists(atPath: imagePath!) {
                 let data = FileManager.default.contents(atPath: imagePath!)
                 let image = UIImage(data: data!)
@@ -83,19 +95,50 @@ class VideoTableViewCell: UITableViewCell {
         }
     }
     
+    func setDownloadProgress() {
+        downloadState = .inProgress
+        durationLabel.isHidden = true
+        videoDownloadProgressView.isHidden = false
+        videoDownloadProgressView.progress = 0
+        self.downloadTask?.progressHandler = { [weak self] in
+            self?.videoDownloadProgressView.progress = Float($0)
+        }
+    }
+    
+    func setDownloadCompletion() {
+        guard let video = self.video else { return }
+        downloadTask?.completionHandler = { [weak self] in
+            switch $0 {
+            case .failure(let error):
+                print("Video download failed: \(error.localizedDescription)")
+            case .success(let data):
+                do {
+                    try data.write(to: video.getFilePath(), options: [.atomic])
+                    DispatchQueue.main.async {
+                        self?.videoDownloadProgressView.isHidden = true
+                        self?.durationLabel.isHidden = false
+                        self?.downloadState = .downloaded
+                        let alert = UIAlertController(title: "Download successful!", message: "\"\(video.title ?? video.filename)\" is now available offline", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                        UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+                    }
+                } catch let error {
+                    self?.downloadState = .notDownloaded
+                    print("Video file save failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
     @IBAction func setupAssetDownload(_ sender: UIButton) {
         guard let video = video else { return }
         
         let destination = video.getFilePath()
+        print(destination)
         
         if !FileManager.default.fileExists(atPath: destination.path) {
             switch downloadState {
             case .notDownloaded:
-                downloadState = .inProgress
-                durationLabel.isHidden = true
-                videoDownloadProgressView.isHidden = false
-                videoDownloadProgressView.progress = 0
-                
                 var downloadUrl = video.url
                 let dispatchGroup = DispatchGroup()
                 if video.isYouTube {
@@ -112,34 +155,10 @@ class VideoTableViewCell: UITableViewCell {
                 
                 dispatchGroup.notify(queue: .global(qos: .background)) {
                     let request = URLRequest(url: downloadUrl, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
-                    self.downloadTask = DownloadService.shared.download(request: request)
-                    self.downloadTask?.completionHandler = { [weak self] in
-                        switch $0 {
-                        case .failure(let error):
-                            print(error.localizedDescription)
-                        case .success(let data):
-                            print("Number of bytes: \(data.count)")
-                            // Save to disk
-                            do {
-                                try data.write(to: destination, options: [.atomic])
-                                DispatchQueue.main.async {
-                                    self?.videoDownloadProgressView.isHidden = true
-                                    self?.durationLabel.isHidden = false
-                                    self?.downloadState = .downloaded
-                                    let alert = UIAlertController(title: "Download successful!", message: "\"\(video.title ?? video.filename)\" is now available offline", preferredStyle: .alert)
-                                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                                    UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
-                                }
-                            } catch let error {
-                                self?.downloadState = .notDownloaded
-                                print(error)
-                            }
-                        }
-                    }
+                    self.downloadTask = DownloadService.shared.download(request: request, withId: video.url.absoluteString)
+                    self.setDownloadCompletion()
                     DispatchQueue.main.async {
-                        self.downloadTask?.progressHandler = { [weak self] in
-                            self?.videoDownloadProgressView.progress = Float($0)
-                        }
+                        self.setDownloadProgress()
                     }
                     self.downloadTask?.resume()
                 }

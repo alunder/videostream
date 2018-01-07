@@ -1,6 +1,5 @@
 //
 //  ResultType.swift
-//  DownloadTest
 //
 //  Created by Ritam Sarmah on 8/28/17.
 //  Copyright © 2017 Ritam Sarmah. All rights reserved.

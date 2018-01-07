@@ -1,12 +1,11 @@
 //
 //  DownloadService.swift
-//  DownloadTest
 //
 //  Created by Ritam Sarmah on 8/28/17.
 //  Copyright © 2017 Ritam Sarmah. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 final class DownloadService: NSObject {
     
@@ -22,9 +21,9 @@ final class DownloadService: NSObject {
                              delegate: self, delegateQueue: nil)
     }
     
-    func download(request: URLRequest) -> DownloadTask {
+    func download(request: URLRequest, withId id: String?) -> DownloadTask {
         let task = session.dataTask(with: request)
-        let downloadTask = GenericDownloadTask(task: task)
+        let downloadTask = GenericDownloadTask(task: task, id: id)
         downloadTasks.append(downloadTask)
         return downloadTask
     }
@@ -68,4 +67,5 @@ extension DownloadService: URLSessionDataDelegate {
             }
         }
     }
+    
 }

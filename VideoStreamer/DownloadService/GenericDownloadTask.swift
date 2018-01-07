@@ -1,6 +1,5 @@
 //
 //  GenericDownloadTask.swift
-//  DownloadTest
 //
 //  Created by Ritam Sarmah on 8/28/17.
 //  Copyright © 2017 Ritam Sarmah. All rights reserved.
@@ -16,9 +15,11 @@ class GenericDownloadTask {
     private(set) var task: URLSessionDataTask
     var expectedContentLength: Int64 = 0
     var buffer = Data()
+    var id: String?
     
-    init(task: URLSessionDataTask) {
+    init(task: URLSessionDataTask, id: String?) {
         self.task = task
+        self.id = id
     }
     
     deinit {
