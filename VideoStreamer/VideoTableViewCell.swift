@@ -69,12 +69,12 @@ class VideoTableViewCell: UITableViewCell {
         if let videoInfo = videoManager.cache[video.url] {
             self.titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
             self.durationLabel.text = videoInfo[VideoInfoKeys.Duration] as? String
-            let imagePath = videoInfo[VideoInfoKeys.Thumbnail] as? String
-            if FileManager.default.fileExists(atPath: video.getFilePath().path) {
+            let imagePath = videoInfo[VideoInfoKeys.Thumbnail] as! URL
+            if FileManager.default.fileExists(atPath: video.filePath.path) {
                 downloadState = .downloaded
             }
-            if FileManager.default.fileExists(atPath: imagePath!) {
-                let data = FileManager.default.contents(atPath: imagePath!)
+            if FileManager.default.fileExists(atPath: imagePath.path) {
+                let data = FileManager.default.contents(atPath: imagePath.path)
                 let image = UIImage(data: data!)
                 self.thumbnail.image = image
             } else {
@@ -82,10 +82,11 @@ class VideoTableViewCell: UITableViewCell {
             }
             self.imageLoadingIndicator.stopAnimating()
         } else {
-            if video.isYouTube {
-                loadYouTubeData(video: video)
-            } else {
+            switch video.type {
+            case .url:
                 loadVideoData(video: video)
+            case .youtube:
+                loadYouTubeData(video: video)
             }
         }
     }
@@ -109,7 +110,7 @@ class VideoTableViewCell: UITableViewCell {
                 print("Video download failed: \(error.localizedDescription)")
             case .success(let data):
                 do {
-                    try data.write(to: video.getFilePath(), options: [.atomic])
+                    try data.write(to: video.filePath, options: [.atomic])
                     DispatchQueue.main.async {
                         self?.videoDownloadProgressView.isHidden = true
                         self?.durationLabel.isHidden = false
@@ -129,7 +130,7 @@ class VideoTableViewCell: UITableViewCell {
     @IBAction func setupAssetDownload(_ sender: UIButton) {
         guard let video = video else { return }
         
-        let destination = video.getFilePath()
+        let destination = video.filePath
         print(destination)
         
         if !FileManager.default.fileExists(atPath: destination.path) {
@@ -137,9 +138,9 @@ class VideoTableViewCell: UITableViewCell {
             case .notDownloaded:
                 var downloadUrl = video.url
                 let dispatchGroup = DispatchGroup()
-                if video.isYouTube {
+                if video.type == .youtube {
                     dispatchGroup.enter()
-                    XCDYouTubeClient.default().getVideoWithIdentifier(video.getYouTubeID()) { (video, error) in
+                    XCDYouTubeClient.default().getVideoWithIdentifier(video.youtubeID!) { (video, error) in
                         if let streamURLs = video?.streamURLs, let streamURL = (streamURLs[XCDYouTubeVideoQualityHTTPLiveStreaming] ?? streamURLs[YouTubeVideoQuality.hd720] ?? streamURLs[YouTubeVideoQuality.medium360] ?? streamURLs[YouTubeVideoQuality.small240]) {
                             downloadUrl = streamURL
                         } else {
@@ -181,7 +182,7 @@ class VideoTableViewCell: UITableViewCell {
         }
         
         // Check if file download exists
-        let destination = video.getFilePath()
+        let destination = video.filePath
         if FileManager.default.fileExists(atPath: destination.path) {
             downloadState = .downloaded
         }
@@ -218,7 +219,8 @@ class VideoTableViewCell: UITableViewCell {
                     self.durationLabel.text = self.getStringFrom(durationInSeconds: durationInSeconds)
                     
                     // Load thumbnail image
-                    let imagePath = video.getThumbnailPath()
+                    
+                    let imagePath = video.thumbnailPath.path
                     
                     // Check if thumbnail already exists
                     if FileManager.default.fileExists(atPath: imagePath) {
@@ -266,7 +268,7 @@ class VideoTableViewCell: UITableViewCell {
     }
     
     func loadYouTubeData(video: Video) {
-        if FileManager.default.fileExists(atPath: video.getFilePath().path) {
+        if FileManager.default.fileExists(atPath: video.filePath.path) {
             downloadState = .downloaded
             self.titleLabel.text = video.title
             loadVideoData(video: video)
@@ -274,7 +276,7 @@ class VideoTableViewCell: UITableViewCell {
         }
         titleLabel.text = "Untitled Video"
         imageLoadingIndicator.startAnimating()
-        XCDYouTubeClient.default().getVideoWithIdentifier(video.getYouTubeID()) { (video, error) in
+        XCDYouTubeClient.default().getVideoWithIdentifier(video.youtubeID) { (video, error) in
             DispatchQueue.main.async {
                 guard let video = video else {
                     self.imageLoadingIndicator.stopAnimating()
@@ -299,7 +301,7 @@ class VideoTableViewCell: UITableViewCell {
                 }
                 
                 // Load thumbnail image
-                let imagePath = self.video!.getThumbnailPath()
+                let imagePath = self.video!.thumbnailPath.path
                 let thumbnailURL = URL(string: "https://i.ytimg.com/vi/\(video.identifier)/maxresdefault.jpg")
                 self.imageLoadingIndicator.stopAnimating()
                 self.thumbnail.sd_setImage(with: thumbnailURL, placeholderImage: UIImage(named: "Generic Video"), completed: { (image, error, cacheType, url) in
@@ -333,12 +335,14 @@ class VideoTableViewCell: UITableViewCell {
             self.videoInfo[VideoInfoKeys.Title] = self.titleLabel.text
             self.videoInfo[VideoInfoKeys.Duration] = self.durationLabel.text
             self.videoInfo[VideoInfoKeys.URL] = self.video?.url.absoluteString
-            if self.video!.isYouTube {
-                self.videoInfo[VideoInfoKeys.Filename] = self.video?.getYouTubeID()
-                self.videoInfo[VideoInfoKeys.Thumbnail] = self.video?.getThumbnailPath()
-            } else {
+            
+            switch self.video!.type {
+            case .url:
                 self.videoInfo[VideoInfoKeys.Filename] = self.video?.filename
-                self.videoInfo[VideoInfoKeys.Thumbnail] = self.video?.getThumbnailPath()
+                self.videoInfo[VideoInfoKeys.Thumbnail] = self.video?.thumbnailPath
+            case .youtube:
+                self.videoInfo[VideoInfoKeys.Filename] = self.video?.youtubeID
+                self.videoInfo[VideoInfoKeys.Thumbnail] = self.video?.thumbnailPath
             }
             
             self.videoManager.cache[self.video!.url] = self.videoInfo

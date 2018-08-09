@@ -18,8 +18,8 @@ class PlayerViewController: AVPlayerViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupPlayerForVideo()
-        addLongPressMenu()
+        addPlaybackMenu()
+        configurePlayer()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -34,52 +34,42 @@ class PlayerViewController: AVPlayerViewController {
         player?.replaceCurrentItem(with: nil)
     }
     
-    func setupPlayerForVideo() {
+    func configurePlayer() {
         guard let video = video else {
             displayPlaybackErrorAlert()
             return
         }
         
-        if video.isYouTube {
-            playYouTubeVideo(video)
-        } else {
-            playVideo(video)
-        }
-    }
-    
-    func playYouTubeVideo(_ video: Video) {
-        if FileManager.default.fileExists(atPath: video.getFilePath().path) {
-            configurePlayer(withURL: video.getFilePath())
-            return
-        }
-        
-        let identifier = video.getYouTubeID()
-        XCDYouTubeClient.default().getVideoWithIdentifier(identifier) { (video, error) in
-            if let streamURLs = video?.streamURLs, let streamURL = (streamURLs[XCDYouTubeVideoQualityHTTPLiveStreaming] ?? streamURLs[YouTubeVideoQuality.hd720] ?? streamURLs[YouTubeVideoQuality.medium360] ?? streamURLs[YouTubeVideoQuality.small240]) {
-                self.configurePlayer(withURL: streamURL)
+        switch video.type {
+        case .url:
+            if !FileManager.default.fileExists(atPath: video.filePath.path) {
+                playVideo(withURL: video.url)
             } else {
-                DispatchQueue.main.async {
-                    self.displayPlaybackErrorAlert()
+                playVideo(withURL: video.filePath)
+            }
+        case .youtube:
+            if FileManager.default.fileExists(atPath: video.filePath.path) {
+                playVideo(withURL: video.filePath)
+                return
+            }
+            
+            XCDYouTubeClient.default().getVideoWithIdentifier(video.youtubeID) { (video, error) in
+                if let streamURLs = video?.streamURLs, let streamURL = (streamURLs[XCDYouTubeVideoQualityHTTPLiveStreaming] ?? streamURLs[YouTubeVideoQuality.hd720] ?? streamURLs[YouTubeVideoQuality.medium360] ?? streamURLs[YouTubeVideoQuality.small240]) {
+                    self.playVideo(withURL: streamURL)
+                } else {
+                    DispatchQueue.main.async {
+                        self.displayPlaybackErrorAlert()
+                    }
                 }
             }
         }
     }
     
-    func playVideo(_ video: Video) {
-        // If video not downloaded, stream from url
-        if !FileManager.default.fileExists(atPath: video.getFilePath().path) {
-            configurePlayer(withURL: video.url)
-        } else {
-            configurePlayer(withURL: video.getFilePath())
-        }
-    }
-    
-    func configurePlayer(withURL url: URL) {
+    func playVideo(withURL url: URL) {
         DispatchQueue.main.async {
             let playerItem = AVPlayerItem(url: url)
             self.player = AVPlayer(playerItem: playerItem)
             self.rateToken = self.player?.observe(\.rate, options: [.old, .new], changeHandler: { (player, change) in
-                print("RATE old: \(change.oldValue!), new: \(change.newValue!)")
                 let userRate = SettingsManager.shared.playbackSpeed
                 if change.oldValue == 0.0 && change.newValue != userRate {
                     player.rate = userRate
@@ -113,7 +103,7 @@ class PlayerViewController: AVPlayerViewController {
     
     // MARK:- Playback Settings
     
-    func addLongPressMenu() {
+    func addPlaybackMenu() {
         let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(openMenu))
         view.addGestureRecognizer(recognizer)
     }

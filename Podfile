@@ -7,7 +7,7 @@ target 'VideoStreamer' do
 
   # Pods for VideoStreamer
   pod 'XCDYouTubeKit'
-  pod 'SDWebImage', '~> 4.0'
+  pod 'SDWebImage'
   pod 'MXParallaxHeader'
 
 end

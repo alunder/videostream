@@ -7,14 +7,20 @@ PODS:
 
 DEPENDENCIES:
   - MXParallaxHeader
-  - SDWebImage (~> 4.0)
+  - SDWebImage
   - XCDYouTubeKit
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - MXParallaxHeader
+    - SDWebImage
+    - XCDYouTubeKit
 
 SPEC CHECKSUMS:
   MXParallaxHeader: 858c403532ed933b381556a81ce333d7065ad182
   SDWebImage: 89a9d32cd520bbb46eb14e541d5109b3564af198
   XCDYouTubeKit: dccfe0c17dd5c5187969ec27e93069573badb08f
 
-PODFILE CHECKSUM: 636eb0068e923bfb050fef726c259a9fac0afe67
+PODFILE CHECKSUM: 19b5d4ab356456ecc2ab0e7d046599bec8e54295
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.5.3

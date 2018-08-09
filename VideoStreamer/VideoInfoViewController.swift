@@ -10,6 +10,8 @@ import UIKit
 import XCDYouTubeKit
 import MXParallaxHeader
 
+// TODO: Refactor downloading of videos to some video download manager
+
 class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     
     var video: Video?
@@ -84,7 +86,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         infoScrollView.parallaxHeader.height = view.frame.height/3
         
         if UIDevice.current.userInterfaceIdiom == .phone {
-            switch (UIScreen.main.nativeBounds.size.height) {
+            switch UIScreen.main.nativeBounds.size.height {
             case 2436: // iPhone X Height
                 infoScrollView.parallaxHeader.minimumHeight = 88
                 break
@@ -93,16 +95,26 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
             }
         }
         
-        if let videoInfo = videoInfo {
-            titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
-            let filenameTitle = (video?.isYouTube)! ? "YouTube ID" : "Filename"
-            filenameLabel.attributedText = attributedString(withTitle: filenameTitle,
-                                                            value: videoInfo[VideoInfoKeys.Filename]! as! String)
-            urlLabel.attributedText = attributedString(withTitle: VideoInfoKeys.URL,
-                                                       value: videoInfo[VideoInfoKeys.URL]! as! String )
-            durationLabel.attributedText = attributedString(withTitle: VideoInfoKeys.Duration,
-                                                            value: videoInfo[VideoInfoKeys.Duration] as! String)
+        guard let videoInfo = videoInfo, let video = video else {
+            return
         }
+        
+        titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
+        
+        var filenameTitle: String
+        switch video.type {
+        case .url:
+            filenameTitle = "Filename"
+        case .youtube:
+            filenameTitle = "YouTube ID"
+        }
+        
+        filenameLabel.attributedText = attributedString(withTitle: filenameTitle,
+                                                        value: videoInfo[VideoInfoKeys.Filename]! as! String)
+        urlLabel.attributedText = attributedString(withTitle: VideoInfoKeys.URL,
+                                                   value: videoInfo[VideoInfoKeys.URL]! as! String )
+        durationLabel.attributedText = attributedString(withTitle: VideoInfoKeys.Duration,
+                                                        value: videoInfo[VideoInfoKeys.Duration] as! String)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -154,7 +166,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
                 print("Video download failed: \(error.localizedDescription)")
             case .success(let data):
                 do {
-                    try data.write(to: video.getFilePath(), options: [.atomic])
+                    try data.write(to: video.filePath, options: [.atomic])
                     DispatchQueue.main.async {
                         self?.downloadState = .downloaded
                         self?.setDownloadButton()
@@ -176,8 +188,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         
         switch downloadState! {
         case .notDownloaded:
-            let destination = video.getFilePath()
-            if FileManager.default.fileExists(atPath: destination.path) {
+            if FileManager.default.fileExists(atPath: video.filePath.path) {
                 downloadState = .downloaded
                 let downloadAlert = UIAlertController(title: "Video already downloaded!", message: nil, preferredStyle: .alert)
                 let action = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -189,9 +200,10 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
                 setDownloadButton()
                 var downloadUrl = video.url
                 let dispatchGroup = DispatchGroup()
-                if video.isYouTube {
+                
+                if video.type == .youtube {
                     dispatchGroup.enter()
-                    XCDYouTubeClient.default().getVideoWithIdentifier(video.getYouTubeID()) { (video, error) in
+                    XCDYouTubeClient.default().getVideoWithIdentifier(video.youtubeID!) { (video, error) in
                         if let streamURLs = video?.streamURLs, let streamURL = (streamURLs[XCDYouTubeVideoQualityHTTPLiveStreaming] ?? streamURLs[YouTubeVideoQuality.hd720] ?? streamURLs[YouTubeVideoQuality.medium360] ?? streamURLs[YouTubeVideoQuality.small240]) {
                             downloadUrl = streamURL
                         } else {
@@ -248,7 +260,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     
     func deleteVideo() {
         do {
-            try FileManager.default.removeItem(at: video!.getFilePath())
+            try FileManager.default.removeItem(at: video!.filePath)
         } catch {
             print(error.localizedDescription)
         }

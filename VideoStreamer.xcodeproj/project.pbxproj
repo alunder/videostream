@@ -83,13 +83,15 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		202BF0A71FFECEE500A7FC8D /* UI */ = {
+		202BF0A71FFECEE500A7FC8D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				205B6AC01D6F662E002879BF /* Main.storyboard */,
 				20ACD7BE20015C2200C8DBF0 /* CopyableLabel.swift */,
 				D033B35E211CADF100793A8D /* ProgressButton.swift */,
+				205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */,
 			);
-			name = UI;
+			name = Views;
 			sourceTree = "<group>";
 		};
 		20373F7E1F54B47F0043A4DA /* DownloadService */ = {
@@ -124,19 +126,12 @@
 		205B6ABB1D6F662E002879BF /* VideoStreamer */ = {
 			isa = PBXGroup;
 			children = (
-				205B6ABC1D6F662E002879BF /* AppDelegate.swift */,
-				2055AA9E1D79E23000FCAAFB /* PlayerViewController.swift */,
-				20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */,
-				202BF0A81FFEE89400A7FC8D /* VideoInfoManager.swift */,
-				2029B7561FFE9AA9009CA1E2 /* VideoInfoViewController.swift */,
-				20B774C41D724D4B0024B35E /* Video.swift */,
-				205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */,
-				205B6AC01D6F662E002879BF /* Main.storyboard */,
+				D0AF2D43211CFF1B00F0F023 /* Models */,
+				D0AF2D42211CFEF500F0F023 /* Controllers */,
 				20373F7E1F54B47F0043A4DA /* DownloadService */,
 				D0AF2C87211CBFDD00F0F023 /* Extensions */,
-				20B65FE71D77CD6500118586 /* Settings */,
 				20B65FE81D77CD7500118586 /* Supporting Files */,
-				202BF0A71FFECEE500A7FC8D /* UI */,
+				202BF0A71FFECEE500A7FC8D /* Views */,
 			);
 			path = VideoStreamer;
 			sourceTree = "<group>";
@@ -154,6 +149,7 @@
 		20B65FE81D77CD7500118586 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				205B6ABC1D6F662E002879BF /* AppDelegate.swift */,
 				201744371FFFF3DD0088AC9E /* Constants.swift */,
 				205B6AC31D6F662E002879BF /* Assets.xcassets */,
 				205B6AC51D6F662E002879BF /* LaunchScreen.storyboard */,
@@ -179,6 +175,26 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		D0AF2D42211CFEF500F0F023 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				2055AA9E1D79E23000FCAAFB /* PlayerViewController.swift */,
+				202BF0A81FFEE89400A7FC8D /* VideoInfoManager.swift */,
+				2029B7561FFE9AA9009CA1E2 /* VideoInfoViewController.swift */,
+				20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */,
+				20B65FE71D77CD6500118586 /* Settings */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		D0AF2D43211CFF1B00F0F023 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				20B774C41D724D4B0024B35E /* Video.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -191,7 +207,6 @@
 				205B6AB61D6F662E002879BF /* Frameworks */,
 				205B6AB71D6F662E002879BF /* Resources */,
 				28BAFB453154A9A3DBFA7E6C /* [CP] Embed Pods Frameworks */,
-				834483B8AFFFFE21C85CD9ED /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -262,9 +277,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-VideoStreamer/Pods-VideoStreamer-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/MXParallaxHeader/MXParallaxHeader.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/XCDYouTubeKit/XCDYouTubeKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MXParallaxHeader.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XCDYouTubeKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -277,28 +299,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-VideoStreamer-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		834483B8AFFFFE21C85CD9ED /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VideoStreamer/Pods-VideoStreamer-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

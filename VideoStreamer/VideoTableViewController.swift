@@ -10,12 +10,12 @@ import UIKit
 
 class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
+    static let unsupportedFileTypes = ["flv"]
     let videoManager = VideoInfoManager.shared
+    
     override var canBecomeFirstResponder : Bool {
         return true
     }
-    
-    static let unsupportedFileTypes = ["flv"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +42,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     @IBAction func addStream(_ sender: UIBarButtonItem) {
-        let videoLinkAlert = UIAlertController(title: "New Video Stream", message: nil, preferredStyle: .alert)
+        let videoLinkAlert = UIAlertController(title: "Add Video", message: nil, preferredStyle: .alert)
         var linkField: UITextField!
         
         videoLinkAlert.addTextField { (textField) in
@@ -105,7 +105,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         present(alert, animated: true, completion: nil)
     }
     
-    // MARK: Video Management
+    // MARK: - Video Management
     func saveVideoFromString(_ urlString: String) {
         if let url = URL(string: urlString), isValidURL(url) {
             if videoManager.cache[url] != nil {
