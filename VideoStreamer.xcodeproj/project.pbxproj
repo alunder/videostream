@@ -27,6 +27,8 @@
 		20B65FE61D77CD6100118586 /* SpeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */; };
 		20B774C51D724D4B0024B35E /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B774C41D724D4B0024B35E /* Video.swift */; };
 		20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */; };
+		D009EA20211D02F70053CB86 /* VideoDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D009EA1F211D02F70053CB86 /* VideoDownloadManager.swift */; };
+		D009EA24211D049F0053CB86 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D009EA23211D049F0053CB86 /* Alert.swift */; };
 		D033B35F211CADF100793A8D /* ProgressButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D033B35E211CADF100793A8D /* ProgressButton.swift */; };
 		D0AF2C89211CBFFC00F0F023 /* UIImage+Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AF2C88211CBFFC00F0F023 /* UIImage+Gradient.swift */; };
 		D0AF2C8B211CE84700F0F023 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AF2C8A211CE84700F0F023 /* SettingsManager.swift */; };
@@ -57,6 +59,8 @@
 		8BA9D99023B195345B45757C /* Pods-VideoStreamer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoStreamer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VideoStreamer/Pods-VideoStreamer.debug.xcconfig"; sourceTree = "<group>"; };
 		91A6FC631A6E1A0C38747486 /* Pods-VideoStreamer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoStreamer.release.xcconfig"; path = "Pods/Target Support Files/Pods-VideoStreamer/Pods-VideoStreamer.release.xcconfig"; sourceTree = "<group>"; };
 		9BCC2787EFF68F9CF5BEF797 /* Pods_VideoStreamer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VideoStreamer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D009EA1F211D02F70053CB86 /* VideoDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDownloadManager.swift; sourceTree = "<group>"; };
+		D009EA23211D049F0053CB86 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		D033B35E211CADF100793A8D /* ProgressButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressButton.swift; sourceTree = "<group>"; };
 		D0AF2C88211CBFFC00F0F023 /* UIImage+Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Gradient.swift"; sourceTree = "<group>"; };
 		D0AF2C8A211CE84700F0F023 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
@@ -127,6 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				D0AF2D43211CFF1B00F0F023 /* Models */,
+				D0B3936C211D02C900FC8531 /* Managers */,
 				D0AF2D42211CFEF500F0F023 /* Controllers */,
 				20373F7E1F54B47F0043A4DA /* DownloadService */,
 				D0AF2C87211CBFDD00F0F023 /* Extensions */,
@@ -141,7 +146,6 @@
 			children = (
 				20631E461D77C7DA00173ACA /* SettingsTableViewController.swift */,
 				20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */,
-				D0AF2C8A211CE84700F0F023 /* SettingsManager.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -179,7 +183,6 @@
 			isa = PBXGroup;
 			children = (
 				2055AA9E1D79E23000FCAAFB /* PlayerViewController.swift */,
-				202BF0A81FFEE89400A7FC8D /* VideoInfoManager.swift */,
 				2029B7561FFE9AA9009CA1E2 /* VideoInfoViewController.swift */,
 				20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */,
 				20B65FE71D77CD6500118586 /* Settings */,
@@ -190,9 +193,20 @@
 		D0AF2D43211CFF1B00F0F023 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				D009EA23211D049F0053CB86 /* Alert.swift */,
 				20B774C41D724D4B0024B35E /* Video.swift */,
 			);
 			name = Models;
+			sourceTree = "<group>";
+		};
+		D0B3936C211D02C900FC8531 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				D009EA1F211D02F70053CB86 /* VideoDownloadManager.swift */,
+				202BF0A81FFEE89400A7FC8D /* VideoInfoManager.swift */,
+				D0AF2C8A211CE84700F0F023 /* SettingsManager.swift */,
+			);
+			name = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -321,8 +335,10 @@
 				20373F7B1F54B04A0043A4DA /* DownloadTask.swift in Sources */,
 				D0AF2C89211CBFFC00F0F023 /* UIImage+Gradient.swift in Sources */,
 				201744381FFFF3DD0088AC9E /* Constants.swift in Sources */,
+				D009EA20211D02F70053CB86 /* VideoDownloadManager.swift in Sources */,
 				205B6AD11D6F74F9002879BF /* VideoTableViewCell.swift in Sources */,
 				2055AA9F1D79E23000FCAAFB /* PlayerViewController.swift in Sources */,
+				D009EA24211D049F0053CB86 /* Alert.swift in Sources */,
 				202BF0A61FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift in Sources */,
 				202BF0A91FFEE89400A7FC8D /* VideoInfoManager.swift in Sources */,
 				20373F7D1F54B04A0043A4DA /* GenericDownloadTask.swift in Sources */,

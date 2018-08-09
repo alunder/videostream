@@ -170,9 +170,9 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
                     DispatchQueue.main.async {
                         self?.downloadState = .downloaded
                         self?.setDownloadButton()
-                        let alert = UIAlertController(title: "Download successful!", message: "\"\(video.title ?? video.filename)\" is now available offline", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                        UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+                        if let vc = UIApplication.shared.keyWindow?.rootViewController {
+                            Alert.presentDownloadSuccess(on: vc, for: video)
+                        }
                     }
                 } catch let error {
                     self?.downloadState = .notDownloaded
@@ -190,10 +190,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         case .notDownloaded:
             if FileManager.default.fileExists(atPath: video.filePath.path) {
                 downloadState = .downloaded
-                let downloadAlert = UIAlertController(title: "Video already downloaded!", message: nil, preferredStyle: .alert)
-                let action = UIAlertAction(title: "OK", style: .default, handler: nil)
-                downloadAlert.addAction(action)
-                present(downloadAlert, animated: true, completion: nil)
+                Alert.presentDownloadExists(on: self)
             } else {
                 downloadButton.isUserInteractionEnabled = false
                 downloadState = .inProgress

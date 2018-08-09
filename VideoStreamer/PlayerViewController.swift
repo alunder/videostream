@@ -36,7 +36,7 @@ class PlayerViewController: AVPlayerViewController {
     
     func configurePlayer() {
         guard let video = video else {
-            displayPlaybackErrorAlert()
+            Alert.presentPlaybackError(on: self)
             return
         }
         
@@ -58,7 +58,7 @@ class PlayerViewController: AVPlayerViewController {
                     self.playVideo(withURL: streamURL)
                 } else {
                     DispatchQueue.main.async {
-                        self.displayPlaybackErrorAlert()
+                        Alert.presentPlaybackError(on: self)
                     }
                 }
             }
@@ -79,7 +79,7 @@ class PlayerViewController: AVPlayerViewController {
                 if playerItem.status == .readyToPlay {
                     self.player?.play()
                 } else {
-                    self.displayPlaybackErrorAlert()
+                    Alert.presentPlaybackError(on: self)
                 }
             })
             
@@ -91,17 +91,7 @@ class PlayerViewController: AVPlayerViewController {
         }
     }
     
-    func displayPlaybackErrorAlert() {
-        let playbackError = UIAlertController(title: "An error occurred loading this video", message: nil, preferredStyle: .alert)
-        let dismissAction = UIAlertAction(title: "Close", style: .default, handler: { (action) in
-            self.dismiss(animated: true, completion: nil)
-        })
-        playbackError.addAction(dismissAction)
-        
-        self.present(playbackError, animated: true, completion: nil)
-    }
-    
-    // MARK:- Playback Settings
+    // MARK: - Playback Settings
     
     func addPlaybackMenu() {
         let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(openMenu))

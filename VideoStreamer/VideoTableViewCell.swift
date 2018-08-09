@@ -115,9 +115,9 @@ class VideoTableViewCell: UITableViewCell {
                         self?.videoDownloadProgressView.isHidden = true
                         self?.durationLabel.isHidden = false
                         self?.downloadState = .downloaded
-                        let alert = UIAlertController(title: "Download successful!", message: "\"\(video.title ?? video.filename)\" is now available offline", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                        UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+                        if let vc = UIApplication.shared.keyWindow?.rootViewController {
+                            Alert.presentDownloadSuccess(on: vc, for: video)
+                        }
                     }
                 } catch let error {
                     self?.downloadState = .notDownloaded
