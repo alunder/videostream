@@ -23,13 +23,10 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     var initialOffsetIgnored = false
     var top: CGFloat?
     
-    let buttonColor = UIColor(red: 229/255, green: 229/255, blue: 239/255, alpha: 1.0)
-    var progressLayer: CAGradientLayer?
-    
     @IBOutlet weak var infoScrollView: UIScrollView!
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var playButton: UIButton!
-    @IBOutlet weak var downloadButton: UIButton!
+    @IBOutlet weak var downloadButton: ProgressButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var filenameLabel: UILabel!
     @IBOutlet weak var urlLabel: UILabel!
@@ -37,11 +34,19 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        updateUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        print(downloadState.debugDescription)
+        super.viewWillAppear(animated)
+        if video?.lastPlayedTime != nil {
+            playButton.setTitle("Resume", for: .normal)
+        } else {
+            playButton.setTitle("Play", for: .normal)
+        }
+    }
+    
+    func updateUI() {
         infoScrollView.delaysContentTouches = false
         infoScrollView.delegate = self
         
@@ -50,20 +55,22 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         doneButton.layer.shadowRadius = 3;
         doneButton.layer.shadowOffset = CGSize(width: 0, height: 1.0)
         
-        playButton.backgroundColor = buttonColor
-        playButton.setTitleColor(themeColor, for: .normal)
+        playButton.backgroundColor = Colors.buttonColor
+        playButton.setTitleColor(Colors.themeColor, for: .normal)
         playButton.layer.cornerRadius = 5
         playButton.layer.masksToBounds = true
         playButton.setBackgroundColor(color: .darkGray, forState: .highlighted)
         
-        downloadButton.backgroundColor = buttonColor
+        downloadButton.backgroundColor = Colors.buttonColor
+        downloadButton.progressColor = Colors.progressColor
         downloadButton.layer.cornerRadius = 5
         downloadButton.layer.masksToBounds = true
         downloadButton.setBackgroundColor(color: .darkGray, forState: .highlighted)
         setDownloadButton()
         
         let headerView = UIImageView()
-        headerView.image = imageWithGradient(img: thumbnailImage!)
+        headerView.image = thumbnailImage!.verticalGradient(topColor: UIColor(red: 0, green: 0, blue: 0, alpha: 0.5),
+                                                            bottomColor: UIColor(red: 0, green: 0, blue: 0, alpha: 0))
         headerView.contentMode = .scaleAspectFill
         
         if let task = DownloadService.shared.getDownloads(withId: video!.url.absoluteString)?.first {
@@ -75,7 +82,16 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         infoScrollView.parallaxHeader.view = headerView
         infoScrollView.parallaxHeader.mode = .fill
         infoScrollView.parallaxHeader.height = view.frame.height/3
-        infoScrollView.parallaxHeader.minimumHeight = infoScrollView.parallaxHeader.height
+        
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            switch (UIScreen.main.nativeBounds.size.height) {
+            case 2436: // iPhone X Height
+                infoScrollView.parallaxHeader.minimumHeight = 88
+                break
+            default:
+                infoScrollView.parallaxHeader.minimumHeight = 64
+            }
+        }
         
         if let videoInfo = videoInfo {
             titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
@@ -101,34 +117,16 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         dismiss(animated: true, completion: nil)
     }
     
-    func setDownloadButtonProgress(progress: Float) {
-        progressLayer?.removeFromSuperlayer()
-        
-        let layer = CAGradientLayer()
-        layer.frame.size = downloadButton.frame.size
-        layer.startPoint = CGPoint.zero
-        layer.endPoint = CGPoint(x: 1, y: 0)
-        
-        let progressColor = UIColor(red: 210/255, green: 210/255, blue: 220/255, alpha: 1.0).cgColor
-        let backgroundColor = buttonColor.cgColor
-        
-        layer.colors = [progressColor, progressColor, backgroundColor, backgroundColor]
-        layer.locations = [0.0, NSNumber(value: progress), NSNumber(value: progress), 1.0]
-        
-        progressLayer = layer
-        downloadButton.layer.insertSublayer(layer, at: 0)
-    }
-    
     func setDownloadProgress() {
         downloadState = .inProgress
         self.downloadTask?.progressHandler = { [weak self] in
-            self?.setDownloadButtonProgress(progress: Float($0))
+            self?.downloadButton.progress = Float($0)
         }
     }
     
     func setDownloadButton() {
-        downloadButton.setTitleColor(themeColor, for: .normal)
-        progressLayer?.removeFromSuperlayer()
+        downloadButton.setTitleColor(Colors.themeColor, for: .normal)
+        downloadButton.resetProgress()
         if let downloadState = self.downloadState {
             switch downloadState {
             case .notDownloaded:
@@ -233,29 +231,6 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         infoScrollView.parallaxHeader.height = size.height/3
         infoScrollView.parallaxHeader.minimumHeight = infoScrollView.parallaxHeader.height
         top = infoScrollView.contentOffset.y + infoScrollView.contentInset.top // TODO: switch to size value
-    }
-    
-    func imageWithGradient(img: UIImage) -> UIImage {
-        UIGraphicsBeginImageContext(img.size)
-        let context = UIGraphicsGetCurrentContext()
-        
-        img.draw(at: CGPoint(x: 0, y: 0))
-        
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let locations: [CGFloat] = [0.0, 1.0]
-        let top = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5).cgColor
-        let bottom = UIColor(red: 0, green: 0, blue: 0, alpha: 0).cgColor
-        let colors = [top, bottom] as CFArray
-        let gradient = CGGradient(colorsSpace: colorSpace, colors: colors, locations: locations)
-        
-        let startPoint = CGPoint(x: img.size.width/2, y: 0)
-        let endPoint = CGPoint(x: img.size.width/2, y: img.size.height)
-        
-        context!.drawLinearGradient(gradient!, start: startPoint, end: endPoint, options: CGGradientDrawingOptions(rawValue: UInt32(0)))
-        
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return image!
     }
     
     func attributedString(withTitle title: String, value: String) -> NSMutableAttributedString {

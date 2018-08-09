@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="wW1-vA-Rra">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="wW1-vA-Rra">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -143,8 +143,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhW-6O-aH5">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" directionalLockEnabled="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhW-6O-aH5">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="587"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nWe-Nb-VbM">
                                         <rect key="frame" x="16" y="16" width="343" height="36"/>
@@ -186,45 +186,11 @@
                                             </label>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="5eN-nb-ZAo">
-                                        <rect key="frame" x="16" y="185" width="343" height="50"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qih-ng-Hzp">
-                                                <rect key="frame" x="0.0" y="0.0" width="163.5" height="50"/>
-                                                <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                                <state key="normal" title="Play">
-                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                </state>
-                                                <connections>
-                                                    <segue destination="xUF-Ct-fxA" kind="presentation" identifier="ShowPlayerFromInfo" id="JS8-ws-IUU"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WY0-U4-hTL">
-                                                <rect key="frame" x="179.5" y="0.0" width="163.5" height="50"/>
-                                                <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                                <state key="normal" title="Download">
-                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="downloadPressed:" destination="fQy-Aa-PSI" eventType="touchUpInside" id="I7w-s3-vgJ"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="TZj-uu-Uka"/>
-                                        </constraints>
-                                    </stackView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="tO0-n1-nlf" firstAttribute="top" secondItem="nWe-Nb-VbM" secondAttribute="bottom" constant="16" id="0Sg-02-dXh"/>
                                     <constraint firstItem="nWe-Nb-VbM" firstAttribute="top" secondItem="xhW-6O-aH5" secondAttribute="top" constant="16" id="E8K-zo-deT"/>
-                                    <constraint firstAttribute="trailing" secondItem="5eN-nb-ZAo" secondAttribute="trailing" constant="16" id="EY0-hu-EYX"/>
-                                    <constraint firstItem="5eN-nb-ZAo" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="H3f-kk-ZHX"/>
-                                    <constraint firstItem="5eN-nb-ZAo" firstAttribute="top" secondItem="tO0-n1-nlf" secondAttribute="bottom" constant="32" id="KAv-GA-LOi"/>
-                                    <constraint firstAttribute="bottom" secondItem="5eN-nb-ZAo" secondAttribute="bottom" constant="16" id="ZG1-rc-7j2"/>
-                                    <constraint firstItem="nWe-Nb-VbM" firstAttribute="centerX" secondItem="xhW-6O-aH5" secondAttribute="centerX" id="iQj-4x-f83"/>
+                                    <constraint firstItem="nWe-Nb-VbM" firstAttribute="centerX" secondItem="xhW-6O-aH5" secondAttribute="centerX" id="eIM-v4-aQk"/>
                                     <constraint firstItem="tO0-n1-nlf" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="l7f-0Z-yVa"/>
                                     <constraint firstAttribute="trailing" secondItem="nWe-Nb-VbM" secondAttribute="trailing" constant="16" id="qPB-zz-WUc"/>
                                     <constraint firstItem="nWe-Nb-VbM" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="usy-Pz-ybO"/>
@@ -246,14 +212,47 @@
                                     <action selector="donePressed:" destination="fQy-Aa-PSI" eventType="touchUpInside" id="FVa-lc-3jk"/>
                                 </connections>
                             </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="5eN-nb-ZAo">
+                                <rect key="frame" x="16" y="601" width="343" height="50"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qih-ng-Hzp">
+                                        <rect key="frame" x="0.0" y="0.0" width="163.5" height="50"/>
+                                        <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                        <state key="normal" title="Play">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <segue destination="xUF-Ct-fxA" kind="presentation" identifier="ShowPlayerFromInfo" id="JS8-ws-IUU"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WY0-U4-hTL" customClass="ProgressButton" customModule="VideoStreamer" customModuleProvider="target">
+                                        <rect key="frame" x="179.5" y="0.0" width="163.5" height="50"/>
+                                        <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                        <state key="normal" title="Download">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="downloadPressed:" destination="fQy-Aa-PSI" eventType="touchUpInside" id="I7w-s3-vgJ"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="TZj-uu-Uka"/>
+                                </constraints>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Dqm-yM-et9" firstAttribute="top" secondItem="Y06-hB-Dfv" secondAttribute="bottom" constant="3" id="3eb-1E-ObV"/>
-                            <constraint firstItem="xhW-6O-aH5" firstAttribute="bottom" secondItem="Fab-XA-NeR" secondAttribute="top" id="990-xK-c7g"/>
+                            <constraint firstItem="Fab-XA-NeR" firstAttribute="top" secondItem="5eN-nb-ZAo" secondAttribute="bottom" constant="16" id="6T2-0O-wFu"/>
+                            <constraint firstAttribute="trailing" secondItem="5eN-nb-ZAo" secondAttribute="trailing" constant="16" id="9ld-xf-tUC"/>
                             <constraint firstItem="xhW-6O-aH5" firstAttribute="top" secondItem="JOM-hB-PPK" secondAttribute="top" id="VQZ-or-ScI"/>
+                            <constraint firstItem="5eN-nb-ZAo" firstAttribute="leading" secondItem="JOM-hB-PPK" secondAttribute="leading" constant="16" id="a9f-iI-8jF"/>
                             <constraint firstItem="xhW-6O-aH5" firstAttribute="leading" secondItem="JOM-hB-PPK" secondAttribute="leading" id="cIP-rE-BYG"/>
                             <constraint firstItem="Dqm-yM-et9" firstAttribute="leading" secondItem="JOM-hB-PPK" secondAttribute="leading" constant="8" id="fjh-H4-oAC"/>
+                            <constraint firstItem="5eN-nb-ZAo" firstAttribute="top" secondItem="xhW-6O-aH5" secondAttribute="bottom" constant="16" id="gb8-1Q-Yte"/>
                             <constraint firstAttribute="trailing" secondItem="xhW-6O-aH5" secondAttribute="trailing" id="hlm-Vr-9Dz"/>
                         </constraints>
                     </view>
@@ -321,7 +320,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="Resume Playback" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Sk-WG-D4Y">
-                                                    <rect key="frame" x="16" y="12" width="128" height="19.5"/>
+                                                    <rect key="frame" x="16" y="12" width="286" height="19.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -338,6 +337,7 @@
                                                 <constraint firstItem="4Sk-WG-D4Y" firstAttribute="leading" secondItem="zQr-aH-tbP" secondAttribute="leadingMargin" id="g2a-cu-nuI"/>
                                                 <constraint firstItem="2ue-W7-9Hl" firstAttribute="centerY" secondItem="zQr-aH-tbP" secondAttribute="centerY" id="kzy-jj-vFz"/>
                                                 <constraint firstItem="2ue-W7-9Hl" firstAttribute="trailing" secondItem="zQr-aH-tbP" secondAttribute="trailingMargin" id="s1F-ts-SXa"/>
+                                                <constraint firstItem="2ue-W7-9Hl" firstAttribute="leading" secondItem="4Sk-WG-D4Y" secondAttribute="trailing" constant="8" symbolic="YES" id="uaY-FY-PuO"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>

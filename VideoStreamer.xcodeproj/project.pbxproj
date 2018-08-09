@@ -27,6 +27,9 @@
 		20B65FE61D77CD6100118586 /* SpeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */; };
 		20B774C51D724D4B0024B35E /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B774C41D724D4B0024B35E /* Video.swift */; };
 		20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */; };
+		D033B35F211CADF100793A8D /* ProgressButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D033B35E211CADF100793A8D /* ProgressButton.swift */; };
+		D0AF2C89211CBFFC00F0F023 /* UIImage+Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AF2C88211CBFFC00F0F023 /* UIImage+Gradient.swift */; };
+		D0AF2C8B211CE84700F0F023 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AF2C8A211CE84700F0F023 /* SettingsManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +57,9 @@
 		8BA9D99023B195345B45757C /* Pods-VideoStreamer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoStreamer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VideoStreamer/Pods-VideoStreamer.debug.xcconfig"; sourceTree = "<group>"; };
 		91A6FC631A6E1A0C38747486 /* Pods-VideoStreamer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoStreamer.release.xcconfig"; path = "Pods/Target Support Files/Pods-VideoStreamer/Pods-VideoStreamer.release.xcconfig"; sourceTree = "<group>"; };
 		9BCC2787EFF68F9CF5BEF797 /* Pods_VideoStreamer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VideoStreamer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D033B35E211CADF100793A8D /* ProgressButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressButton.swift; sourceTree = "<group>"; };
+		D0AF2C88211CBFFC00F0F023 /* UIImage+Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Gradient.swift"; sourceTree = "<group>"; };
+		D0AF2C8A211CE84700F0F023 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,8 +86,8 @@
 		202BF0A71FFECEE500A7FC8D /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				202BF0A51FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift */,
 				20ACD7BE20015C2200C8DBF0 /* CopyableLabel.swift */,
+				D033B35E211CADF100793A8D /* ProgressButton.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -127,6 +133,7 @@
 				205B6AD01D6F74F9002879BF /* VideoTableViewCell.swift */,
 				205B6AC01D6F662E002879BF /* Main.storyboard */,
 				20373F7E1F54B47F0043A4DA /* DownloadService */,
+				D0AF2C87211CBFDD00F0F023 /* Extensions */,
 				20B65FE71D77CD6500118586 /* Settings */,
 				20B65FE81D77CD7500118586 /* Supporting Files */,
 				202BF0A71FFECEE500A7FC8D /* UI */,
@@ -139,6 +146,7 @@
 			children = (
 				20631E461D77C7DA00173ACA /* SettingsTableViewController.swift */,
 				20B65FE51D77CD6100118586 /* SpeedTableViewController.swift */,
+				D0AF2C8A211CE84700F0F023 /* SettingsManager.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -160,6 +168,15 @@
 				9BCC2787EFF68F9CF5BEF797 /* Pods_VideoStreamer.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D0AF2C87211CBFDD00F0F023 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				202BF0A51FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift */,
+				D0AF2C88211CBFFC00F0F023 /* UIImage+Gradient.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -192,7 +209,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Ritam Sarmah";
 				TargetAttributes = {
 					205B6AB81D6F662E002879BF = {
@@ -292,14 +309,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				20373F7B1F54B04A0043A4DA /* DownloadTask.swift in Sources */,
+				D0AF2C89211CBFFC00F0F023 /* UIImage+Gradient.swift in Sources */,
 				201744381FFFF3DD0088AC9E /* Constants.swift in Sources */,
 				205B6AD11D6F74F9002879BF /* VideoTableViewCell.swift in Sources */,
 				2055AA9F1D79E23000FCAAFB /* PlayerViewController.swift in Sources */,
 				202BF0A61FFECCAD00A7FC8D /* UIButton+BackgroundColor.swift in Sources */,
 				202BF0A91FFEE89400A7FC8D /* VideoInfoManager.swift in Sources */,
 				20373F7D1F54B04A0043A4DA /* GenericDownloadTask.swift in Sources */,
+				D0AF2C8B211CE84700F0F023 /* SettingsManager.swift in Sources */,
 				2029B7571FFE9AA9009CA1E2 /* VideoInfoViewController.swift in Sources */,
 				20631E471D77C7DA00173ACA /* SettingsTableViewController.swift in Sources */,
+				D033B35F211CADF100793A8D /* ProgressButton.swift in Sources */,
 				20373F7A1F54B04A0043A4DA /* ResultType.swift in Sources */,
 				20B774C51D724D4B0024B35E /* Video.swift in Sources */,
 				20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */,
@@ -345,12 +365,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -399,12 +421,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;

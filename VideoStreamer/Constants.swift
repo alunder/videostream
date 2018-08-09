@@ -33,6 +33,14 @@ struct Storyboard {
 struct SettingsConstants {
     static let Speed = "playbackSpeed"
     static let ResumePlayback = "doesResumePlayback"
+    static let Speeds: [Float] = [0.25, 0.5, 1.0, 1.25, 1.5, 2.0]
+}
+
+struct Colors {
+    static let themeColor = UIColor.orange //UIColor(red: 199/255, green: 0/255, blue: 57/255, alpha: 1.0)
+//    static let buttonColor = UIColor(red: 0.898, green: 0.898, blue: 0.937, alpha: 1.0)
+    static let buttonColor = UIColor(red: 0.91, green: 0.91, blue: 0.91, alpha: 1.0)
+    static let progressColor = UIColor(red: 0.824, green: 0.824, blue: 0.863, alpha: 1.0)
 }
 
 enum DownloadState {

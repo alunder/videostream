@@ -14,8 +14,6 @@ class SettingsTableViewController: UITableViewController {
     @IBOutlet weak var resumePlaybackSwitch: UISwitch!
     @IBOutlet weak var labelLeadingConstraint: NSLayoutConstraint!
     
-    let defaults = UserDefaults.standard
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 11.0, *) {
@@ -27,14 +25,8 @@ class SettingsTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let speed = defaults.object(forKey: SettingsConstants.Speed)
-        speedValueLabel.text = String(describing: speed!)
-        let doesResume = defaults.bool(forKey: SettingsConstants.ResumePlayback)
-        resumePlaybackSwitch.isOn = doesResume
-    }
-
-    struct Storyboard {
-        static let SpeedCellIdentifier = "Speed"
+        speedValueLabel.text = "\(SettingsManager.shared.playbackSpeed)"
+        resumePlaybackSwitch.isOn = SettingsManager.shared.resumePlayback
     }
    
     // MARK: - Navigation
@@ -44,7 +36,7 @@ class SettingsTableViewController: UITableViewController {
     }
     
     @IBAction func resumePlaybackChanged(_ sender: UISwitch) {
-        defaults.set(sender.isOn, forKey: SettingsConstants.ResumePlayback)
+        SettingsManager.shared.resumePlayback = sender.isOn
     }
     
 }

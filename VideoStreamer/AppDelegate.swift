@@ -9,8 +9,6 @@
 import UIKit
 import AVFoundation
 
-let themeColor = UIColor.orange //UIColor(red: 199/255, green: 0/255, blue: 57/255, alpha: 1.0)
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
@@ -24,8 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Default settings
-        UserDefaults.standard.register(defaults: [SettingsConstants.Speed : 1.0])
-        UserDefaults.standard.register(defaults: [SettingsConstants.ResumePlayback : true])
+        SettingsManager.shared.registerDefaults()
         
         // Create thumbnails directory
         var objcBool: ObjCBool = true
@@ -38,9 +35,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // Color themes
-        UITableViewCell.appearance().tintColor = themeColor
-        UINavigationBar.appearance().tintColor = themeColor
-        UIToolbar.appearance().tintColor = themeColor
+        UITableViewCell.appearance().tintColor = Colors.themeColor
+        UINavigationBar.appearance().tintColor = Colors.themeColor
+        UIToolbar.appearance().tintColor = Colors.themeColor
         
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
         

@@ -13,23 +13,19 @@ import XCDYouTubeKit
 class PlayerViewController: AVPlayerViewController {
     
     var video: Video?
-    let defaults = UserDefaults.standard
     var rateToken: NSKeyValueObservation?
     var statusToken: NSKeyValueObservation?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupPlayerForVideo()
+        addLongPressMenu()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if let player = player {
-            if defaults.bool(forKey: SettingsConstants.ResumePlayback) {
-                video?.lastPlayedTime = player.currentTime()
-            } else {
-                video?.lastPlayedTime = nil
-            }
+            video?.lastPlayedTime = SettingsManager.shared.resumePlayback ? player.currentTime() : nil
         }
     }
     
@@ -84,7 +80,7 @@ class PlayerViewController: AVPlayerViewController {
             self.player = AVPlayer(playerItem: playerItem)
             self.rateToken = self.player?.observe(\.rate, options: [.old, .new], changeHandler: { (player, change) in
                 print("RATE old: \(change.oldValue!), new: \(change.newValue!)")
-                let userRate = self.defaults.float(forKey: SettingsConstants.Speed)
+                let userRate = SettingsManager.shared.playbackSpeed
                 if change.oldValue == 0.0 && change.newValue != userRate {
                     player.rate = userRate
                 }
@@ -97,7 +93,7 @@ class PlayerViewController: AVPlayerViewController {
                 }
             })
             
-            if self.defaults.bool(forKey: SettingsConstants.ResumePlayback) {
+            if SettingsManager.shared.resumePlayback {
                 if let time = self.video?.lastPlayedTime  {
                     self.player?.seek(to: time, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
                 }
@@ -114,5 +110,39 @@ class PlayerViewController: AVPlayerViewController {
         
         self.present(playbackError, animated: true, completion: nil)
     }
+    
+    // MARK:- Playback Settings
+    
+    func addLongPressMenu() {
+        let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(openMenu))
+        view.addGestureRecognizer(recognizer)
+    }
+
+    @objc func openMenu() {
+        let menu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        let speedAction = UIAlertAction(title: "Playback Speed", style: .default) { _ in
+            let submenu = UIAlertController(title: "Playback Speed", message: nil, preferredStyle: .actionSheet)
+            for speed in SettingsConstants.Speeds {
+                var actionTitle = "\(speed)"
+                if SettingsManager.shared.playbackSpeed == speed {
+                    actionTitle += "*"
+                }
+                submenu.addAction(UIAlertAction(title: actionTitle, style: .default, handler: { _ in
+                    SettingsManager.shared.playbackSpeed = speed
+                    self.player?.rate = speed
+                }))
+            }
+            submenu.addAction(cancelAction)
+            self.present(submenu, animated: true, completion: nil)
+        }
+        
+        menu.addAction(speedAction)
+        menu.addAction(cancelAction)
+        
+        present(menu, animated: true, completion: nil)
+    }
+    
 }
 
