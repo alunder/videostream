@@ -90,6 +90,10 @@ class Video: NSObject, NSCoding {
         }
     }
     
+    var isDownloaded: Bool {
+        return FileManager.default.fileExists(atPath: filePath.path)
+    }
+    
     // MARK: Initializers
     
     init(url: URL, lastPlayedTime: CMTime?, title: String? = nil, duration: Float64? = nil) {

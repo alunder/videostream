@@ -42,7 +42,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     @IBAction func addStream(_ sender: UIBarButtonItem) {
-        let videoLinkAlert = UIAlertController(title: "Add Video", message: nil, preferredStyle: .alert)
+        let videoLinkAlert = UIAlertController(title: "Add Video URL", message: nil, preferredStyle: .alert)
         var linkField: UITextField!
         
         videoLinkAlert.addTextField { (textField) in
@@ -60,9 +60,15 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         }
         
         videoLinkAlert.addAction(addAction)
-        addAction.isEnabled = false
+    
+        if UIPasteboard.general.hasURLs {
+            linkField.text = UIPasteboard.general.url?.absoluteString
+            addAction.isEnabled = true
+        } else {
+            addAction.isEnabled = false
+        }
         
-        present(videoLinkAlert, animated: true, completion: nil)
+        present(videoLinkAlert, animated: true)
     }
     
     @objc func textChanged(_ sender: UITextField) {

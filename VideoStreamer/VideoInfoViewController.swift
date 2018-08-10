@@ -25,6 +25,13 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     var initialOffsetIgnored = false
     var top: CGFloat?
     
+    override var shouldAutorotate: Bool {
+        return false
+    }
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+    
     @IBOutlet weak var infoScrollView: UIScrollView!
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var playButton: UIButton!
@@ -70,28 +77,27 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         downloadButton.setBackgroundColor(color: .darkGray, forState: .highlighted)
         setDownloadButton()
         
-        let headerView = UIImageView()
-        headerView.image = thumbnailImage!.verticalGradient(topColor: UIColor(red: 0, green: 0, blue: 0, alpha: 0.5),
-                                                            bottomColor: UIColor(red: 0, green: 0, blue: 0, alpha: 0))
-        headerView.contentMode = .scaleAspectFill
-        
         if let task = DownloadService.shared.getDownloads(withId: video!.url.absoluteString)?.first {
             downloadTask = task
             setDownloadProgress()
             setDownloadCompletion()
         }
         
+        let headerView = UIImageView()
+        headerView.image = thumbnailImage!.verticalGradient(topColor: UIColor(red: 0, green: 0, blue: 0, alpha: 0.5),
+                                                            bottomColor: UIColor(red: 0, green: 0, blue: 0, alpha: 0))
+        headerView.contentMode = .scaleAspectFill
         infoScrollView.parallaxHeader.view = headerView
         infoScrollView.parallaxHeader.mode = .fill
-        infoScrollView.parallaxHeader.height = view.frame.height/3
+        infoScrollView.parallaxHeader.height = (infoScrollView.frame.width) * (thumbnailImage!.size.height / thumbnailImage!.size.width)
         
         if UIDevice.current.userInterfaceIdiom == .phone {
             switch UIScreen.main.nativeBounds.size.height {
             case 2436: // iPhone X Height
-                infoScrollView.parallaxHeader.minimumHeight = 88
+                infoScrollView.parallaxHeader.minimumHeight = 94
                 break
             default:
-                infoScrollView.parallaxHeader.minimumHeight = 64
+                infoScrollView.parallaxHeader.minimumHeight = 70
             }
         }
         
@@ -234,12 +240,6 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         default:
             break
         }
-    }
-    
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        infoScrollView.parallaxHeader.height = size.height/3
-        infoScrollView.parallaxHeader.minimumHeight = infoScrollView.parallaxHeader.height
-        top = infoScrollView.contentOffset.y + infoScrollView.contentInset.top // TODO: switch to size value
     }
     
     func attributedString(withTitle title: String, value: String) -> NSMutableAttributedString {

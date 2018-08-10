@@ -29,6 +29,7 @@
 		20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3D79A1D6F818B00D812B8 /* VideoTableViewController.swift */; };
 		D009EA20211D02F70053CB86 /* VideoDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D009EA1F211D02F70053CB86 /* VideoDownloadManager.swift */; };
 		D009EA24211D049F0053CB86 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D009EA23211D049F0053CB86 /* Alert.swift */; };
+		D009EACB211E3BD10053CB86 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D009EACA211E3BD10053CB86 /* Reachability.swift */; };
 		D033B35F211CADF100793A8D /* ProgressButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D033B35E211CADF100793A8D /* ProgressButton.swift */; };
 		D0AF2C89211CBFFC00F0F023 /* UIImage+Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AF2C88211CBFFC00F0F023 /* UIImage+Gradient.swift */; };
 		D0AF2C8B211CE84700F0F023 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AF2C8A211CE84700F0F023 /* SettingsManager.swift */; };
@@ -61,6 +62,7 @@
 		9BCC2787EFF68F9CF5BEF797 /* Pods_VideoStreamer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VideoStreamer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D009EA1F211D02F70053CB86 /* VideoDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDownloadManager.swift; sourceTree = "<group>"; };
 		D009EA23211D049F0053CB86 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
+		D009EACA211E3BD10053CB86 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		D033B35E211CADF100793A8D /* ProgressButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressButton.swift; sourceTree = "<group>"; };
 		D0AF2C88211CBFFC00F0F023 /* UIImage+Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Gradient.swift"; sourceTree = "<group>"; };
 		D0AF2C8A211CE84700F0F023 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 			children = (
 				205B6ABC1D6F662E002879BF /* AppDelegate.swift */,
 				201744371FFFF3DD0088AC9E /* Constants.swift */,
+				D009EACA211E3BD10053CB86 /* Reachability.swift */,
 				205B6AC31D6F662E002879BF /* Assets.xcassets */,
 				205B6AC51D6F662E002879BF /* LaunchScreen.storyboard */,
 				205B6AC81D6F662E002879BF /* Info.plist */,
@@ -244,7 +247,7 @@
 					205B6AB81D6F662E002879BF = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = XXYXWGAW9Y;
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = 0940;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 0;
@@ -350,6 +353,7 @@
 				20B774C51D724D4B0024B35E /* Video.swift in Sources */,
 				20C3D79B1D6F818B00D812B8 /* VideoTableViewController.swift in Sources */,
 				20ACD7BF20015C2200C8DBF0 /* CopyableLabel.swift in Sources */,
+				D009EACB211E3BD10053CB86 /* Reachability.swift in Sources */,
 				205B6ABD1D6F662E002879BF /* AppDelegate.swift in Sources */,
 				20B65FE61D77CD6100118586 /* SpeedTableViewController.swift in Sources */,
 				20373F7C1F54B04A0043A4DA /* DownloadService.swift in Sources */,
@@ -489,14 +493,17 @@
 			baseConfigurationReference = 8BA9D99023B195345B45757C /* Pods-VideoStreamer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXYXWGAW9Y;
 				INFOPLIST_FILE = VideoStreamer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ritamsarmah.Streamer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
 			};
@@ -507,10 +514,12 @@
 			baseConfigurationReference = 91A6FC631A6E1A0C38747486 /* Pods-VideoStreamer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXYXWGAW9Y;
 				INFOPLIST_FILE = VideoStreamer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ritamsarmah.Streamer;
 				PRODUCT_NAME = "$(TARGET_NAME)";

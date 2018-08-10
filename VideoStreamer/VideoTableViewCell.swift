@@ -14,6 +14,7 @@ import SDWebImage
 
 class VideoTableViewCell: UITableViewCell {
     
+    
     // MARK: Properties
     @IBOutlet weak var thumbnail: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -22,6 +23,7 @@ class VideoTableViewCell: UITableViewCell {
     @IBOutlet weak var downloadButton: UIButton!
     @IBOutlet weak var videoDownloadProgressView: UIProgressView!
     
+    let reachability = Reachability()!
     let videoManager = VideoInfoManager.shared
     var videoInfo = [String: Any]() // For segue to info view controller
     var video: Video? {
@@ -31,7 +33,7 @@ class VideoTableViewCell: UITableViewCell {
         didSet {
             switch downloadState {
             case .notDownloaded:
-                downloadButton.setTitle("⇩", for: .normal)
+                downloadButton.setTitle("↓", for: .normal)
                 downloadButton.isEnabled = true
             case .inProgress:
                 downloadButton.setTitle("✕", for: .normal)
@@ -47,6 +49,19 @@ class VideoTableViewCell: UITableViewCell {
         }
     }
     var downloadTask: DownloadTask?
+    var disabled: Bool = false {
+        didSet {
+            if !video!.isDownloaded {
+                contentView.alpha = disabled ? 0.5 : 1
+                setDownloadUI()
+                
+                isUserInteractionEnabled = !disabled
+                titleLabel.isUserInteractionEnabled = !disabled
+                durationLabel.isUserInteractionEnabled = !disabled
+                downloadButton.isHidden = disabled
+            }
+        }
+    }
     
     func updateUI() {
         thumbnail.image = nil
@@ -59,17 +74,10 @@ class VideoTableViewCell: UITableViewCell {
         // Load video data
         guard let video = self.video else { return }
         
-        // Check for ongoing download task to update progressview
-        if let task = DownloadService.shared.getDownloads(withId: video.url.absoluteString)?.first {
-            self.downloadTask = task
-            setDownloadProgress()
-            setDownloadCompletion()
-        }
-        
         if let videoInfo = videoManager.cache[video.url] {
-            self.titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
-            self.durationLabel.text = videoInfo[VideoInfoKeys.Duration] as? String
-            if FileManager.default.fileExists(atPath: video.filePath.path) {
+            titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
+            durationLabel.text = videoInfo[VideoInfoKeys.Duration] as? String
+            if video.isDownloaded {
                 downloadState = .downloaded
             }
             if let imagePath = videoInfo[VideoInfoKeys.Thumbnail] as? URL, FileManager.default.fileExists(atPath: imagePath.path) {
@@ -87,6 +95,35 @@ class VideoTableViewCell: UITableViewCell {
             case .youtube:
                 loadYouTubeData(video: video)
             }
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(notification:)), name: .reachabilityChanged, object: reachability)
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Could not start reachability notifier")
+        }
+       
+        disabled = reachability.connection == .none && !video.isDownloaded
+    }
+    
+    @objc func reachabilityChanged(notification: Notification) {
+        let reachability = notification.object as! Reachability
+        
+        switch reachability.connection {
+        case .none:
+            disabled = true
+        default:
+            updateUI()
+        }
+    }
+    
+    func setDownloadUI() {
+        // Check for ongoing download task to update progressview
+        if let task = DownloadService.shared.getDownloads(withId: video!.url.absoluteString)?.first {
+            self.downloadTask = task
+            setDownloadProgress()
+            setDownloadCompletion()
         }
     }
     

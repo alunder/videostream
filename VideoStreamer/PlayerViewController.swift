@@ -40,19 +40,15 @@ class PlayerViewController: AVPlayerViewController {
             return
         }
         
+        if video.isDownloaded {
+            playVideo(withURL: video.filePath)
+            return
+        }
+        
         switch video.type {
         case .url:
-            if !FileManager.default.fileExists(atPath: video.filePath.path) {
-                playVideo(withURL: video.url)
-            } else {
-                playVideo(withURL: video.filePath)
-            }
+            playVideo(withURL: video.url)
         case .youtube:
-            if FileManager.default.fileExists(atPath: video.filePath.path) {
-                playVideo(withURL: video.filePath)
-                return
-            }
-            
             XCDYouTubeClient.default().getVideoWithIdentifier(video.youtubeID) { (video, error) in
                 if let streamURLs = video?.streamURLs, let streamURL = (streamURLs[XCDYouTubeVideoQualityHTTPLiveStreaming] ?? streamURLs[YouTubeVideoQuality.hd720] ?? streamURLs[YouTubeVideoQuality.medium360] ?? streamURLs[YouTubeVideoQuality.small240]) {
                     self.playVideo(withURL: streamURL)
@@ -97,7 +93,7 @@ class PlayerViewController: AVPlayerViewController {
         let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(openMenu))
         view.addGestureRecognizer(recognizer)
     }
-
+    
     @objc func openMenu() {
         let menu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -118,7 +114,17 @@ class PlayerViewController: AVPlayerViewController {
             self.present(submenu, animated: true, completion: nil)
         }
         
+        let restartAction = UIAlertAction(title: "Restart", style: .default) { _ in
+            self.player?.seek(to: CMTime(seconds: 0, preferredTimescale: 1), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
+        }
+        
+        let musicModeAction = UIAlertAction(title: "Enable Music Mode", style: .default) { _ in
+            
+        }
+        
         menu.addAction(speedAction)
+        menu.addAction(restartAction)
+        menu.addAction(musicModeAction)
         menu.addAction(cancelAction)
         
         present(menu, animated: true, completion: nil)
