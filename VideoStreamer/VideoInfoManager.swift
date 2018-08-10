@@ -46,7 +46,9 @@ class VideoInfoManager {
     func deleteThumbnail(forVideo video: Video) {
         let fileManager = FileManager.default
         do {
-            try fileManager.removeItem(atPath: video.thumbnailPath.path)
+            if let thumbnail = video.thumbnailPath?.path {
+                try fileManager.removeItem(atPath: thumbnail)
+            }
         } catch {
             print(error.localizedDescription)
         }

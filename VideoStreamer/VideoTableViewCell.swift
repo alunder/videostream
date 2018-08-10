@@ -69,11 +69,10 @@ class VideoTableViewCell: UITableViewCell {
         if let videoInfo = videoManager.cache[video.url] {
             self.titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
             self.durationLabel.text = videoInfo[VideoInfoKeys.Duration] as? String
-            let imagePath = videoInfo[VideoInfoKeys.Thumbnail] as! URL
             if FileManager.default.fileExists(atPath: video.filePath.path) {
                 downloadState = .downloaded
             }
-            if FileManager.default.fileExists(atPath: imagePath.path) {
+            if let imagePath = videoInfo[VideoInfoKeys.Thumbnail] as? URL, FileManager.default.fileExists(atPath: imagePath.path) {
                 let data = FileManager.default.contents(atPath: imagePath.path)
                 let image = UIImage(data: data!)
                 self.thumbnail.image = image
@@ -220,7 +219,11 @@ class VideoTableViewCell: UITableViewCell {
                     
                     // Load thumbnail image
                     
-                    let imagePath = video.thumbnailPath.path
+                    guard let imagePath = video.thumbnailPath?.path else {
+                        self.thumbnail.image = UIImage(named: "Generic Video")!
+                        self.imageLoadingIndicator.stopAnimating()
+                        return
+                    }
                     
                     // Check if thumbnail already exists
                     if FileManager.default.fileExists(atPath: imagePath) {
@@ -301,7 +304,11 @@ class VideoTableViewCell: UITableViewCell {
                 }
                 
                 // Load thumbnail image
-                let imagePath = self.video!.thumbnailPath.path
+                guard let imagePath = self.video!.thumbnailPath?.path else {
+                    self.thumbnail.image = UIImage(named: "Generic Video")!
+                    self.imageLoadingIndicator.stopAnimating()
+                    return
+                }
                 let thumbnailURL = URL(string: "https://i.ytimg.com/vi/\(video.identifier)/maxresdefault.jpg")
                 self.imageLoadingIndicator.stopAnimating()
                 self.thumbnail.sd_setImage(with: thumbnailURL, placeholderImage: UIImage(named: "Generic Video"), completed: { (image, error, cacheType, url) in

@@ -56,7 +56,7 @@ class Video: NSObject, NSCoding {
         }
     }
     
-    var thumbnailPath: URL {
+    var thumbnailPath: URL? {
         get {
             let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
             let cachesDirectoryPath = paths[0] as String
@@ -64,9 +64,9 @@ class Video: NSObject, NSCoding {
             
             switch type {
             case .url:
-                return URL(string: imagesDirectoryPath + "/\(filename).png")!
+                return URL(string: imagesDirectoryPath + "/\(filename).png")
             case .youtube:
-                return URL(string: imagesDirectoryPath + "/\(youtubeID!).jpg")!
+                return URL(string: imagesDirectoryPath + "/\(youtubeID!).jpg")
             }
         }
     }
