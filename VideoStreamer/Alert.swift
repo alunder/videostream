@@ -31,7 +31,7 @@ struct Alert {
     // MARK: Downloading
     
     static func presentDownloadSuccess(on viewController: UIViewController, for video: Video) {
-        let message = "\"\(video.title ?? video.filename)\" is now available offline"
+        let message = "\"\(video.title)\" is now available offline"
         presentAlert(on: viewController, title: "Download successful!", message: message, actions: [okAction])
     }
     

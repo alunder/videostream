@@ -6,7 +6,7 @@
 //  Copyright © 2016 Ritam Sarmah. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import AVFoundation
 
 class Video: NSObject, NSCoding {
@@ -35,8 +35,18 @@ class Video: NSObject, NSCoding {
     var filename: String
     var lastPlayedTime: CMTime?
     var type: VideoType
-    var title: String?
+    var title: String
     var durationInSeconds: Float64?
+    
+    var thumbnailImage: UIImage {
+        if FileManager.default.fileExists(atPath: thumbnailPath.path) {
+            let data = FileManager.default.contents(atPath: thumbnailPath.path)
+            let image = UIImage(data: data!)!
+            return image
+        } else {
+            return UIImage(named: "Generic Video")!
+        }
+    }
     
     var filePath: URL {
         get {
@@ -56,7 +66,7 @@ class Video: NSObject, NSCoding {
         }
     }
     
-    var thumbnailPath: URL? {
+    var thumbnailPath: URL {
         get {
             let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
             let cachesDirectoryPath = paths[0] as String
@@ -64,9 +74,9 @@ class Video: NSObject, NSCoding {
             
             switch type {
             case .url:
-                return URL(string: imagesDirectoryPath + "/\(filename).png")
+                return URL(string: imagesDirectoryPath + "/\(filename).png")!
             case .youtube:
-                return URL(string: imagesDirectoryPath + "/\(youtubeID!).jpg")
+                return URL(string: imagesDirectoryPath + "/\(youtubeID!).jpg")!
             }
         }
     }
@@ -105,7 +115,7 @@ class Video: NSObject, NSCoding {
         } else {
             self.type = .url
         }
-        self.title = title
+        self.title = title ?? (url.lastPathComponent.isEmpty ? url.absoluteString : url.lastPathComponent)
         self.durationInSeconds = duration
         super.init()
     }

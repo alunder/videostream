@@ -15,12 +15,12 @@ struct YouTubeVideoQuality {
     static let small240 = NSNumber(value: XCDYouTubeVideoQuality.small240.rawValue)
 }
 
-struct VideoInfoKeys {
-    static let Title = "Title"
-    static let Duration = "Duration"
-    static let URL = "URL"
-    static let Filename = "Filename"
-    static let Thumbnail = "Thumbnail"
+enum VideoInfoKeys: String {
+    case title = "Title"
+    case duration = "Duration"
+    case url = "URL"
+    case filename = "Filename"
+    case thumbnail = "Thumbnail"
 }
 
 struct Storyboard {
@@ -33,6 +33,7 @@ struct Storyboard {
 struct SettingsConstants {
     static let Speed = "playbackSpeed"
     static let ResumePlayback = "doesResumePlayback"
+    static let BackgroundPlay = "backgroundPlay"
     static let Speeds: [Float] = [0.25, 0.5, 1.0, 1.25, 1.5, 2.0]
 }
 

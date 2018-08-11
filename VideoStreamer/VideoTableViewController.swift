@@ -10,7 +10,6 @@ import UIKit
 
 class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
-    static let unsupportedFileTypes = ["flv"]
     let videoManager = VideoInfoManager.shared
     
     override var canBecomeFirstResponder : Bool {
@@ -23,6 +22,8 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
             self.navigationController?.navigationBar.prefersLargeTitles = true
         }
         self.navigationItem.rightBarButtonItem = self.editButtonItem
+        let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(showInfo))
+        tableView.addGestureRecognizer(recognizer)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -30,11 +31,6 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         tableView.reloadData()
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
         saveVideos()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidBecomeActive, object: nil)
     }
     
     @objc func applicationDidBecomeActive() {
@@ -60,7 +56,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         }
         
         videoLinkAlert.addAction(addAction)
-    
+        
         if UIPasteboard.general.hasURLs {
             linkField.text = UIPasteboard.general.url?.absoluteString
             addAction.isEnabled = true
@@ -86,6 +82,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         return UIApplication.shared.canOpenURL(url)
     }
     
+    // TODO: remove and refactor using VideoError
     enum AlertType {
         case unplayableFileType, videoAlreadyExists, invalidUrl
     }
@@ -111,19 +108,34 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         present(alert, animated: true, completion: nil)
     }
     
+    @objc func showInfo(recognizer: UILongPressGestureRecognizer) {
+        if recognizer.state == .began {
+            let tapLocation = recognizer.location(in: self.tableView)
+            if let tapIndexPath = self.tableView.indexPathForRow(at: tapLocation) {
+                if let tappedCell = self.tableView.cellForRow(at: tapIndexPath) as? VideoTableViewCell {
+                    performSegue(withIdentifier: Storyboard.VideoInfoSegue, sender: tappedCell)
+                }
+            }
+        }
+    }
+    
     // MARK: - Video Management
     func saveVideoFromString(_ urlString: String) {
-        if let url = URL(string: urlString), isValidURL(url) {
-            if videoManager.cache[url] != nil {
-                showAlert(for: .videoAlreadyExists, message: nil)
-                return
-            }
-            let video = Video(url: url, lastPlayedTime: nil)
-            videoManager.addVideo(video, at: 0)
+        guard let url = URL(string: urlString), isValidURL(url) else {
+            showAlert(for: .invalidUrl, message: nil)
+            return
+        }
+        
+        let video = Video(url: url, lastPlayedTime: nil)
+        
+        do {
+            try videoManager.addVideo(video, at: 0)
             let indexPath = IndexPath(row: videoManager.videos.startIndex, section: 0)
             tableView.insertRows(at: [indexPath], with: .automatic)
-        } else {
-            showAlert(for: .invalidUrl, message: nil)
+        } catch VideoError.videoAlreadyExists {
+            showAlert(for: .videoAlreadyExists, message: nil)
+        } catch {
+            print("Unexpected error: \(error).")
         }
     }
     
@@ -132,9 +144,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func deleteVideo(forRowAt indexPath: IndexPath) {
-        let video = videoManager.videos[indexPath.row]
         videoManager.deleteVideo(at: indexPath.row)
-        videoManager.cache.removeValue(forKey: video.url)
         tableView.deleteRows(at: [indexPath], with: .fade)
     }
     
@@ -161,7 +171,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let infoAction = UITableViewRowAction(style: .normal, title: "Info") { (action, indexPath) in
             if let cell = tableView.cellForRow(at: indexPath) as? VideoTableViewCell {
-                if !(cell.videoInfo.isEmpty) {
+                if cell.videoInfo != nil {
                     self.performSegue(withIdentifier: Storyboard.VideoInfoSegue, sender: cell)
                 }
             }
@@ -186,10 +196,12 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         } else if segue.identifier == Storyboard.VideoInfoSegue {
             if let infovc = segue.destination as? VideoInfoViewController {
                 if let videoCell = sender as? VideoTableViewCell {
-                    infovc.video = videoCell.video
-                    infovc.videoInfo = videoManager.cache[infovc.video!.url]
-                    infovc.thumbnailImage = videoCell.thumbnail.image
-                    infovc.downloadState = videoCell.downloadState
+                    if let video = videoCell.video {
+                        infovc.video = video
+                        infovc.videoInfo = videoManager.getInfo(for: video)
+                        infovc.thumbnailImage = videoCell.thumbnail.image
+                        infovc.downloadState = videoCell.downloadState
+                    }
                 }
             }
         }

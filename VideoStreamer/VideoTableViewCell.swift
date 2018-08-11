@@ -25,7 +25,7 @@ class VideoTableViewCell: UITableViewCell {
     
     let reachability = Reachability()!
     let videoManager = VideoInfoManager.shared
-    var videoInfo = [String: Any]() // For segue to info view controller
+    var videoInfo: VideoInfo? // For segue to info view controller
     var video: Video? {
         didSet { updateUI() }
     }
@@ -74,18 +74,14 @@ class VideoTableViewCell: UITableViewCell {
         // Load video data
         guard let video = self.video else { return }
         
-        if let videoInfo = videoManager.cache[video.url] {
-            titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
-            durationLabel.text = videoInfo[VideoInfoKeys.Duration] as? String
+        if let videoInfo = videoManager.getInfo(for: video) {
+            titleLabel.text = videoInfo.title
+            durationLabel.text = videoInfo.duration
             if video.isDownloaded {
                 downloadState = .downloaded
             }
-            if let imagePath = videoInfo[VideoInfoKeys.Thumbnail] as? URL, FileManager.default.fileExists(atPath: imagePath.path) {
-                let data = FileManager.default.contents(atPath: imagePath.path)
-                let image = UIImage(data: data!)
-                self.thumbnail.image = image
-            } else {
-                self.thumbnail.image = UIImage(named: "Generic Video")
+            if videoInfo.thumbnailUrl != nil {
+                thumbnail.image = video.thumbnailImage
             }
             self.imageLoadingIndicator.stopAnimating()
         } else {
@@ -95,6 +91,7 @@ class VideoTableViewCell: UITableViewCell {
             case .youtube:
                 loadYouTubeData(video: video)
             }
+            return
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(notification:)), name: .reachabilityChanged, object: reachability)
@@ -213,9 +210,7 @@ class VideoTableViewCell: UITableViewCell {
     }
     
     func loadVideoData(video: Video) {
-        if titleLabel.text == nil {
-            titleLabel.text = video.title ?? (video.filename.isEmpty ? video.url.absoluteString : video.filename)
-        }
+        titleLabel.text = video.title
         
         // Check if file download exists
         let destination = video.filePath
@@ -242,25 +237,22 @@ class VideoTableViewCell: UITableViewCell {
                                                       withKey: AVMetadataKey.commonKeyTitle,
                                                       keySpace: AVMetadataKeySpace.common)
             if !titles.isEmpty {
-                if let title = titles.first?.value {
+                if let title = titles.first?.value as? String {
                     DispatchQueue.main.async {
-                        self.titleLabel.text = title as? String
+                        self.titleLabel.text = title
                     }
-                    video.title = title as? String
+                    video.title = title
                 }
             }
             
             if durationInSeconds.isFinite {
                 DispatchQueue.main.async {
-                    self.durationLabel.text = self.getStringFrom(durationInSeconds: durationInSeconds)
+                    self.durationLabel.text = durationInSeconds.formattedString()
                     
                     // Load thumbnail image
-                    
-                    guard let imagePath = video.thumbnailPath?.path else {
-                        self.thumbnail.image = UIImage(named: "Generic Video")!
-                        self.imageLoadingIndicator.stopAnimating()
-                        return
-                    }
+                    self.thumbnail.image = video.thumbnailImage
+                    self.imageLoadingIndicator.stopAnimating()
+                    let imagePath = video.thumbnailPath.absoluteString
                     
                     // Check if thumbnail already exists
                     if FileManager.default.fileExists(atPath: imagePath) {
@@ -303,12 +295,12 @@ class VideoTableViewCell: UITableViewCell {
                     self.downloadState = .disabled
                 }
             }
-            self.updateVideoDict()
+            self.videoInfo = self.videoManager.updateInfo(for: self.video!)
         }
     }
     
     func loadYouTubeData(video: Video) {
-        if FileManager.default.fileExists(atPath: video.filePath.path) {
+        if video.isDownloaded {
             downloadState = .downloaded
             self.titleLabel.text = video.title
             loadVideoData(video: video)
@@ -316,23 +308,23 @@ class VideoTableViewCell: UITableViewCell {
         }
         titleLabel.text = "Untitled Video"
         imageLoadingIndicator.startAnimating()
-        XCDYouTubeClient.default().getVideoWithIdentifier(video.youtubeID) { (video, error) in
+        XCDYouTubeClient.default().getVideoWithIdentifier(video.youtubeID) { (ytVideo, error) in
             DispatchQueue.main.async {
-                guard let video = video else {
+                guard let ytVideo = ytVideo else {
                     self.imageLoadingIndicator.stopAnimating()
                     self.titleLabel.text = "Untitled Video"
                     self.thumbnail.image = UIImage(named: "Generic Video")
                     self.downloadState = .disabled
                     return
                 }
-                self.titleLabel.text = video.title
-                self.video?.title = video.title
+                self.titleLabel.text = ytVideo.title
+                self.video?.title = ytVideo.title
                 
-                let durationInSeconds = video.duration
+                let durationInSeconds = ytVideo.duration
                 self.video?.durationInSeconds = durationInSeconds
                 
                 if durationInSeconds.isFinite {
-                    self.durationLabel.text = self.getStringFrom(durationInSeconds: durationInSeconds)
+                    self.durationLabel.text = durationInSeconds.formattedString()
                 } else {
                     self.durationLabel.text = "Live Broadcast"
                     self.thumbnail.image = UIImage(named: "Broadcast")
@@ -341,56 +333,20 @@ class VideoTableViewCell: UITableViewCell {
                 }
                 
                 // Load thumbnail image
-                guard let imagePath = self.video!.thumbnailPath?.path else {
-                    self.thumbnail.image = UIImage(named: "Generic Video")!
-                    self.imageLoadingIndicator.stopAnimating()
-                    return
-                }
-                let thumbnailURL = URL(string: "https://i.ytimg.com/vi/\(video.identifier)/maxresdefault.jpg")
+                self.thumbnail.image = video.thumbnailImage
+                self.imageLoadingIndicator.stopAnimating()
+                let thumbnailURL = URL(string: "https://img.youtube.com/vi/\(ytVideo.identifier)/maxresdefault.jpg")
                 self.imageLoadingIndicator.stopAnimating()
                 self.thumbnail.sd_setImage(with: thumbnailURL, placeholderImage: UIImage(named: "Generic Video"), completed: { (image, error, cacheType, url) in
                     DispatchQueue.main.async {
                         if let image = image {
                             let imageData = UIImageJPEGRepresentation(image, 1.0)
-                            let _ = FileManager.default.createFile(atPath: imagePath, contents: imageData, attributes: nil)
+                            let _ = FileManager.default.createFile(atPath: video.thumbnailPath.path, contents: imageData, attributes: nil)
                         }
                     }
                 })
-                self.updateVideoDict()
+                self.videoInfo = self.videoManager.updateInfo(for: self.video!)
             }
-        }
-    }
-    
-    func getStringFrom(durationInSeconds duration: TimeInterval) -> String {
-        let seconds = Int(duration.truncatingRemainder(dividingBy: 60))
-        let totalMinutes = Int(duration / 60)
-        let minutes = Int(Double(totalMinutes).truncatingRemainder(dividingBy: 60))
-        let hours = Int(Double(totalMinutes) / 60)
-        
-        if hours <= 0 {
-            return String(format: "%02d:%02d", minutes, seconds)
-        } else {
-            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        }
-    }
-    
-    func updateVideoDict() {
-        DispatchQueue.main.async {
-            self.videoInfo[VideoInfoKeys.Title] = self.titleLabel.text
-            self.videoInfo[VideoInfoKeys.Duration] = self.durationLabel.text
-            self.videoInfo[VideoInfoKeys.URL] = self.video?.url.absoluteString
-            
-            switch self.video!.type {
-            case .url:
-                self.videoInfo[VideoInfoKeys.Filename] = self.video?.filename
-                self.videoInfo[VideoInfoKeys.Thumbnail] = self.video?.thumbnailPath
-            case .youtube:
-                self.videoInfo[VideoInfoKeys.Filename] = self.video?.youtubeID
-                self.videoInfo[VideoInfoKeys.Thumbnail] = self.video?.thumbnailPath
-            }
-            
-            self.videoManager.cache[self.video!.url] = self.videoInfo
-            self.videoManager.saveVideos()
         }
     }
     
