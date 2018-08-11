@@ -82,7 +82,6 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         return UIApplication.shared.canOpenURL(url)
     }
     
-    // TODO: remove and refactor using VideoError
     enum AlertType {
         case unplayableFileType, videoAlreadyExists, invalidUrl
     }

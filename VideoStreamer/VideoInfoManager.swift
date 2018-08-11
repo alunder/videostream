@@ -10,21 +10,58 @@ import Foundation
 import XCDYouTubeKit
 import SDWebImage
 
-struct VideoInfo {
+class VideoInfo: NSObject, NSCoding {
     let title: String
     let duration: String
     let filename: String
     let url: URL
     let thumbnailUrl: URL?
-}
-
-extension VideoInfo {
+    
+    struct PropertyKey {
+        static let title = "title"
+        static let duration = "duration"
+        static let filename = "filename"
+        static let url = "url"
+        static let thumbnailUrl = "thumbnail"
+    }
+    
+    init(title: String, duration: String, filename: String, url: URL, thumbnailUrl: URL?) {
+        self.title = title
+        self.duration = duration
+        self.filename = filename
+        self.url = url
+        self.thumbnailUrl = thumbnailUrl
+        
+        super.init()
+    }
+    
     init(video: Video) {
         self.title = video.title
-        self.duration = video.durationInSeconds?.formattedString() ?? "00:00"
+        self.duration = video.durationInSeconds?.formattedString() ?? "--:--"
         self.filename = video.filename
         self.url = video.url
         self.thumbnailUrl = video.thumbnailPath
+        
+        super.init()
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(title, forKey: PropertyKey.title)
+        aCoder.encode(duration, forKey: PropertyKey.duration)
+        aCoder.encode(filename, forKey: PropertyKey.filename)
+        aCoder.encode(url, forKey: PropertyKey.url)
+        aCoder.encode(thumbnailUrl, forKey: PropertyKey.thumbnailUrl)
+    }
+    
+    required convenience init?(coder aDecoder: NSCoder) {
+        let title = aDecoder.decodeObject(forKey: PropertyKey.title) as! String
+        let duration = aDecoder.decodeObject(forKey: PropertyKey.duration) as! String
+        let filename = aDecoder.decodeObject(forKey: PropertyKey.filename) as! String
+        let url = aDecoder.decodeObject(forKey: PropertyKey.url) as! URL
+        let thumbnailUrl = aDecoder.decodeObject(forKey: PropertyKey.thumbnailUrl) as? URL
+        
+        // Must call designated initializer.
+        self.init(title: title, duration: duration, filename: filename, url: url, thumbnailUrl: thumbnailUrl)
     }
 }
 
@@ -38,10 +75,12 @@ class VideoInfoManager {
     static let shared = VideoInfoManager()
     
     var videos = [Video]()
-    private var cache: [URL : VideoInfo] // Associate video URL with VideoInfo for offline access
+    private var cache = [URL : VideoInfo]()// Associate video URL with VideoInfo for offline access
     
     private init() {
-        self.cache = [URL : VideoInfo]()
+        if let savedCache = loadCache() {
+            cache = savedCache
+        }
         if let savedVideos = loadVideos() {
             videos += savedVideos
         }
@@ -105,14 +144,19 @@ class VideoInfoManager {
     }
     
     func saveVideos() {
-        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(videos, toFile: Video.archiveURL.path)
-        if !isSuccessfulSave {
+        let videoSaveSuccess = NSKeyedArchiver.archiveRootObject(videos, toFile: Video.archiveURL.path)
+        let cacheSaveSuccess = NSKeyedArchiver.archiveRootObject(cache, toFile: Video.cacheURL.path)
+        if !videoSaveSuccess || !cacheSaveSuccess {
             print("Failed to save videos")
         }
     }
     
     func loadVideos() -> [Video]? {
         return NSKeyedUnarchiver.unarchiveObject(withFile: Video.archiveURL.path) as? [Video]
+    }
+    
+    func loadCache() -> [URL : VideoInfo]? {
+        return NSKeyedUnarchiver.unarchiveObject(withFile: Video.cacheURL.path) as? [URL : VideoInfo]
     }
     
     //    func loadSampleVideos() {

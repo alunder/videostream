@@ -80,9 +80,7 @@ class VideoTableViewCell: UITableViewCell {
             if video.isDownloaded {
                 downloadState = .downloaded
             }
-            if videoInfo.thumbnailUrl != nil {
-                thumbnail.image = video.thumbnailImage
-            }
+            thumbnail.image = video.thumbnailImage ?? video.genericThumbnailImage
             self.imageLoadingIndicator.stopAnimating()
         } else {
             switch video.type {
@@ -250,17 +248,11 @@ class VideoTableViewCell: UITableViewCell {
                     self.durationLabel.text = durationInSeconds.formattedString()
                     
                     // Load thumbnail image
-                    self.thumbnail.image = video.thumbnailImage
-                    self.imageLoadingIndicator.stopAnimating()
-                    let imagePath = video.thumbnailPath.absoluteString
-                    
-                    // Check if thumbnail already exists
-                    if FileManager.default.fileExists(atPath: imagePath) {
-                        let data = FileManager.default.contents(atPath: imagePath)
-                        let image = UIImage(data: data!)
-                        self.thumbnail.image = image
+                    if let thumbnail = video.thumbnailImage {
+                        self.thumbnail.image = thumbnail
                         self.imageLoadingIndicator.stopAnimating()
                     } else {
+                        
                         // Generate image
                         let imageGenerator = AVAssetImageGenerator(asset: asset)
                         let time = CMTime(seconds: durationInSeconds/4, preferredTimescale: 600)
@@ -274,13 +266,13 @@ class VideoTableViewCell: UITableViewCell {
                                 
                                 // Save thumbnail to Document directory
                                 let imageData = UIImagePNGRepresentation(image)
-                                let _ = FileManager.default.createFile(atPath: imagePath, contents: imageData, attributes: nil)
-                                print("Saved \(imagePath)")
+                                let _ = FileManager.default.createFile(atPath: video.thumbnailPath.path, contents: imageData, attributes: nil)
+                                print("Saved \(video.thumbnailPath.path)")
                             } else {
                                 DispatchQueue.main.async {
                                     print("Failed to load thumbnail for \(video.filename)")
                                     print(error!.localizedDescription)
-                                    self.thumbnail.image = UIImage(named: "Generic Video")!
+                                    self.thumbnail.image = video.genericThumbnailImage
                                     self.imageLoadingIndicator.stopAnimating()
                                 }
                             }
@@ -312,8 +304,7 @@ class VideoTableViewCell: UITableViewCell {
             DispatchQueue.main.async {
                 guard let ytVideo = ytVideo else {
                     self.imageLoadingIndicator.stopAnimating()
-                    self.titleLabel.text = "Untitled Video"
-                    self.thumbnail.image = UIImage(named: "Generic Video")
+                    self.thumbnail.image = video.genericThumbnailImage
                     self.downloadState = .disabled
                     return
                 }
@@ -337,7 +328,7 @@ class VideoTableViewCell: UITableViewCell {
                 self.imageLoadingIndicator.stopAnimating()
                 let thumbnailURL = URL(string: "https://img.youtube.com/vi/\(ytVideo.identifier)/maxresdefault.jpg")
                 self.imageLoadingIndicator.stopAnimating()
-                self.thumbnail.sd_setImage(with: thumbnailURL, placeholderImage: UIImage(named: "Generic Video"), completed: { (image, error, cacheType, url) in
+                self.thumbnail.sd_setImage(with: thumbnailURL, placeholderImage: video.genericThumbnailImage, completed: { (image, error, cacheType, url) in
                     DispatchQueue.main.async {
                         if let image = image {
                             let imageData = UIImageJPEGRepresentation(image, 1.0)

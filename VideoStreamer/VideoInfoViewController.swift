@@ -10,8 +10,6 @@ import UIKit
 import XCDYouTubeKit
 import MXParallaxHeader
 
-// TODO: Refactor downloading of videos to some video download manager
-
 class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     
     var video: Video?

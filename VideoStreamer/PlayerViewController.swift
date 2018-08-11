@@ -40,7 +40,10 @@ class PlayerViewController: AVPlayerViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        player?.pause()
+        if !SettingsManager.shared.backgroundPlay {
+            player?.pause()
+            backgroundPlayer?.pause()
+        }
         player?.replaceCurrentItem(with: nil)
     }
     
@@ -137,7 +140,7 @@ class PlayerViewController: AVPlayerViewController {
             self.present(submenu, animated: true, completion: nil)
         }
         
-        let restartAction = UIAlertAction(title: "Restart", style: .default) { _ in
+        let restartAction = UIAlertAction(title: "Start Over", style: .default) { _ in
             self.player?.seek(to: CMTime(seconds: 0, preferredTimescale: 1), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
         }
         
@@ -145,9 +148,9 @@ class PlayerViewController: AVPlayerViewController {
             
         }
         
-        menu.addAction(speedAction)
-        menu.addAction(restartAction)
         menu.addAction(musicModeAction)
+        menu.addAction(restartAction)
+        menu.addAction(speedAction)
         menu.addAction(cancelAction)
         
         present(menu, animated: true, completion: nil)
