@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -338,6 +337,35 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="H3g-pz-XCN">
+                                        <rect key="frame" x="0.0" y="143.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="H3g-pz-XCN" id="JPU-8H-oA9">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="Background Play" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BAZ-bx-U0Z">
+                                                    <rect key="frame" x="16" y="12" width="286" height="20"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" preservesSuperviewLayoutMargins="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="THe-8f-AbS">
+                                                    <rect key="frame" x="310" y="6" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="backgroundPlayChanged:" destination="GSx-Q8-tiL" eventType="valueChanged" id="jys-mY-k1X"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="THe-8f-AbS" firstAttribute="centerY" secondItem="JPU-8H-oA9" secondAttribute="centerY" id="71o-lV-m96"/>
+                                                <constraint firstItem="BAZ-bx-U0Z" firstAttribute="centerY" secondItem="JPU-8H-oA9" secondAttribute="centerY" id="7aF-XC-cA7"/>
+                                                <constraint firstItem="BAZ-bx-U0Z" firstAttribute="leading" secondItem="JPU-8H-oA9" secondAttribute="leadingMargin" id="Cm3-Sa-S7c"/>
+                                                <constraint firstItem="THe-8f-AbS" firstAttribute="leading" secondItem="BAZ-bx-U0Z" secondAttribute="trailing" constant="8" symbolic="YES" id="Jkm-8w-w8q"/>
+                                                <constraint firstItem="THe-8f-AbS" firstAttribute="trailing" secondItem="JPU-8H-oA9" secondAttribute="trailingMargin" id="iqh-RZ-N2a"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -354,6 +382,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="backgroundPlaySwitch" destination="THe-8f-AbS" id="SOP-vP-THQ"/>
                         <outlet property="labelLeadingConstraint" destination="g2a-cu-nuI" id="4jn-lg-rCE"/>
                         <outlet property="resumePlaybackSwitch" destination="2ue-W7-9Hl" id="K1n-kb-4re"/>
                         <outlet property="speedValueLabel" destination="sTj-gF-6ox" id="nGL-XF-hto"/>

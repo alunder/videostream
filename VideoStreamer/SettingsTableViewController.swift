@@ -12,6 +12,7 @@ class SettingsTableViewController: UITableViewController {
 
     @IBOutlet weak var speedValueLabel: UILabel!
     @IBOutlet weak var resumePlaybackSwitch: UISwitch!
+    @IBOutlet weak var backgroundPlaySwitch: UISwitch!
     @IBOutlet weak var labelLeadingConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
@@ -27,6 +28,7 @@ class SettingsTableViewController: UITableViewController {
         super.viewWillAppear(animated)
         speedValueLabel.text = "\(SettingsManager.shared.playbackSpeed)"
         resumePlaybackSwitch.isOn = SettingsManager.shared.resumePlayback
+        backgroundPlaySwitch.isOn = SettingsManager.shared.backgroundPlay
     }
    
     // MARK: - Navigation
@@ -37,6 +39,10 @@ class SettingsTableViewController: UITableViewController {
     
     @IBAction func resumePlaybackChanged(_ sender: UISwitch) {
         SettingsManager.shared.resumePlayback = sender.isOn
+    }
+    
+    @IBAction func backgroundPlayChanged(_ sender: UISwitch) {
+        SettingsManager.shared.backgroundPlay = sender.isOn
     }
     
 }
