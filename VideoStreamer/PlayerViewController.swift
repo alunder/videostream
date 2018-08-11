@@ -15,11 +15,20 @@ class PlayerViewController: AVPlayerViewController {
     var video: Video?
     var rateToken: NSKeyValueObservation?
     var statusToken: NSKeyValueObservation?
+    var backgroundPlayer: AVPlayer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         addPlaybackMenu()
         configurePlayer()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if SettingsManager.shared.backgroundPlay {
+            NotificationCenter.default.addObserver(self, selector: #selector(enableBackgroundPlay), name: .UIApplicationDidEnterBackground, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(reconnectPlayer), name: .UIApplicationWillEnterForeground, object: nil)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -30,6 +39,7 @@ class PlayerViewController: AVPlayerViewController {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         player?.pause()
         player?.replaceCurrentItem(with: nil)
     }
@@ -84,6 +94,19 @@ class PlayerViewController: AVPlayerViewController {
                     self.player?.seek(to: time, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
                 }
             }
+        }
+    }
+    
+    @objc func enableBackgroundPlay() {
+        // Disconnect the AVPlayer from the presentation when entering background
+        backgroundPlayer = player
+        player = nil
+    }
+    
+    @objc func reconnectPlayer() {
+        // Reconnect the AVPlayer to the presentation when returning to foreground
+        if let backgroundPlayer = backgroundPlayer {
+            player = backgroundPlayer
         }
     }
     

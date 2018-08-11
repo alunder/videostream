@@ -36,8 +36,18 @@ class SettingsManager {
         }
     }
     
+    var backgroundPlay: Bool {
+        get {
+            return defaults.bool(forKey: SettingsConstants.BackgroundPlay)
+        }
+        set {
+            defaults.set(newValue, forKey: SettingsConstants.BackgroundPlay)
+        }
+    }
+    
     func registerDefaults() {
         UserDefaults.standard.register(defaults: [SettingsConstants.Speed : 1.0])
         UserDefaults.standard.register(defaults: [SettingsConstants.ResumePlayback : true])
+        UserDefaults.standard.register(defaults: [SettingsConstants.BackgroundPlay : false])
     }
 }
