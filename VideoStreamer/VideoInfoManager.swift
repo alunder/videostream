@@ -101,8 +101,9 @@ class VideoInfoManager {
     // MARK: - Video Management
     
     func moveVideo(at sourceIndex: Int, to destinationIndex: Int) {
-        let movedObject = videos.remove(at: sourceIndex)
-        try! addVideo(movedObject, at: destinationIndex)
+        let video = videos.remove(at: sourceIndex)
+        videos.insert(video, at: destinationIndex)
+        saveVideos()
     }
     
     func addVideo(_ video: Video, at index: Int) throws {

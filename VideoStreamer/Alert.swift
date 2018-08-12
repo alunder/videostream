@@ -55,7 +55,7 @@ struct Alert {
             }
         }
         presentActionSheet(on: viewController,
-                           title: "Clearing will remove all downloaded video content. Items will not be removed from your library.",
+                           title: "Clearing will remove all downloaded media content. Items will not be removed from your library.",
                            message: nil,
                            actions: [clearAction, cancelAction])
     }
