@@ -18,6 +18,9 @@ class SettingsTableViewController: UITableViewController {
     @IBOutlet weak var clearDownloadsCell: UITableViewCell!
     @IBOutlet weak var clearCacheCell: UITableViewCell!
     
+    var initialOffsetIgnored = false
+    var top: CGFloat?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 11.0, *) {
@@ -57,6 +60,23 @@ class SettingsTableViewController: UITableViewController {
             return
         }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    // MARK: - UIScrollViewDelegate
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let relativeYOffset = scrollView.contentOffset.y + scrollView.contentInset.top
+        if !initialOffsetIgnored {
+            initialOffsetIgnored = true
+            return
+        }
+        
+        if top == nil {
+            top = relativeYOffset
+        } else {
+            if relativeYOffset < top! - 60 {
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
     }
     
 }

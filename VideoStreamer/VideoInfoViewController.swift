@@ -63,7 +63,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         doneButton.layer.shadowOffset = CGSize(width: 0, height: 1.0)
         
         playButton.backgroundColor = Colors.buttonColor
-        playButton.setTitleColor(Colors.themeColor, for: .normal)
+        playButton.setTitleColor(Colors.theme, for: .normal)
         playButton.layer.cornerRadius = 5
         playButton.layer.masksToBounds = true
         playButton.setBackgroundColor(color: .darkGray, forState: .highlighted)
@@ -141,7 +141,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func setDownloadButton() {
-        downloadButton.setTitleColor(Colors.themeColor, for: .normal)
+        downloadButton.setTitleColor(Colors.theme, for: .normal)
         downloadButton.resetProgress()
         if let downloadState = self.downloadState {
             switch downloadState {
