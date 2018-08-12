@@ -73,8 +73,9 @@ class VideoTableViewCell: UITableViewCell {
         
         // Load video data
         guard let video = self.video else { return }
+        self.videoInfo = videoManager.getInfo(for: video)
         
-        if let videoInfo = videoManager.getInfo(for: video) {
+        if let videoInfo = self.videoInfo {
             titleLabel.text = videoInfo.title
             durationLabel.text = videoInfo.duration
             if video.isDownloaded {

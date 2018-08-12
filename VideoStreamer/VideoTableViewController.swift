@@ -38,7 +38,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     @IBAction func addStream(_ sender: UIBarButtonItem) {
-        let videoLinkAlert = UIAlertController(title: "Add Video URL", message: nil, preferredStyle: .alert)
+        let videoLinkAlert = UIAlertController(title: "Add Media URL", message: nil, preferredStyle: .alert)
         var linkField: UITextField!
         
         videoLinkAlert.addTextField { (textField) in

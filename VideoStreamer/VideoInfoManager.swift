@@ -75,7 +75,7 @@ class VideoInfoManager {
     static let shared = VideoInfoManager()
     
     var videos = [Video]()
-    private var cache = [URL : VideoInfo]()// Associate video URL with VideoInfo for offline access
+    private var cache = [URL : VideoInfo]() // Associate video URL with VideoInfo for offline access
     
     private init() {
         if let savedCache = loadCache() {
@@ -126,12 +126,25 @@ class VideoInfoManager {
         saveVideos()
     }
     
+    func resetCache() {
+        cache = [URL : VideoInfo]()
+        for video in videos {
+            deleteThumbnail(forVideo: video)
+        }
+        saveVideos()
+    }
+    
     func deleteThumbnail(forVideo video: Video) {
-        let fileManager = FileManager.default
         do {
-            try fileManager.removeItem(atPath: video.thumbnailPath.path)
+            try FileManager.default.removeItem(atPath: video.thumbnailPath.path)
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    func deleteAllDownloads() {
+        for video in videos {
+            deleteDownload(forVideo: video)
         }
     }
     

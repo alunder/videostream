@@ -15,6 +15,9 @@ class SettingsTableViewController: UITableViewController {
     @IBOutlet weak var backgroundPlaySwitch: UISwitch!
     @IBOutlet weak var labelLeadingConstraint: NSLayoutConstraint!
     
+    @IBOutlet weak var clearDownloadsCell: UITableViewCell!
+    @IBOutlet weak var clearCacheCell: UITableViewCell!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 11.0, *) {
@@ -43,6 +46,17 @@ class SettingsTableViewController: UITableViewController {
     
     @IBAction func backgroundPlayChanged(_ sender: UISwitch) {
         SettingsManager.shared.backgroundPlay = sender.isOn
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 1 && indexPath.row == 0 {
+            Alert.presentClearCache(on: self)
+        } else if indexPath.section == 1 && indexPath.row == 1 {
+            Alert.presentClearDownloads(on: self)
+        } else {
+            return
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
 }

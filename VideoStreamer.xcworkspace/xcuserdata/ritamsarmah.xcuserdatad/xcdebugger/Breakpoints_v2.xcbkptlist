@@ -30,7 +30,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VideoStreamer/VideoInfoManager.swift"
-            timestampString = "555719565.555795"
+            timestampString = "555735480.7243"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "91"
@@ -46,11 +46,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VideoStreamer/VideoTableViewCell.swift"
-            timestampString = "555719565.556754"
+            timestampString = "555735290.373571"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "250"
-            endingLineNumber = "250"
+            startingLineNumber = "251"
+            endingLineNumber = "251"
             landmarkName = "loadVideoData(video:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -62,11 +62,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VideoStreamer/VideoTableViewCell.swift"
-            timestampString = "555719565.557245"
+            timestampString = "555735290.373831"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "211"
-            endingLineNumber = "211"
+            startingLineNumber = "212"
+            endingLineNumber = "212"
             landmarkName = "loadVideoData(video:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -78,11 +78,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VideoStreamer/VideoTableViewCell.swift"
-            timestampString = "555719565.55749"
+            timestampString = "555735290.374063"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
             landmarkName = "updateUI()"
             landmarkType = "7">
          </BreakpointContent>
