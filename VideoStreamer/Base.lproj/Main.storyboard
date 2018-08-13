@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Videos-->
+        <!--Library-->
         <scene sceneID="DYa-W1-c4w">
             <objects>
                 <tableViewController id="Dyf-ye-uf4" customClass="VideoTableViewController" customModule="VideoStreamer" customModuleProvider="target" sceneMemberID="viewController">
@@ -36,7 +36,7 @@
                                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Ivo-DC-5sH">
                                             <rect key="frame" x="54" y="24" width="20" height="20"/>
                                         </activityIndicatorView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xVK-RH-04g">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xVK-RH-04g">
                                             <rect key="frame" x="120" y="17" width="209" height="17"/>
                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -114,7 +114,7 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Videos" id="9Pg-8q-3Y7"/>
+                    <navigationItem key="navigationItem" title="Library" id="9Pg-8q-3Y7"/>
                     <connections>
                         <segue destination="fQy-Aa-PSI" kind="showDetail" identifier="ShowVideoInfo" id="zha-rl-Zvy"/>
                     </connections>
@@ -139,8 +139,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" directionalLockEnabled="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhW-6O-aH5">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="587"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhW-6O-aH5">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="585"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nWe-Nb-VbM">
                                         <rect key="frame" x="16" y="16" width="343" height="36"/>
@@ -190,6 +190,7 @@
                                     <constraint firstItem="tO0-n1-nlf" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="l7f-0Z-yVa"/>
                                     <constraint firstAttribute="trailing" secondItem="nWe-Nb-VbM" secondAttribute="trailing" constant="16" id="qPB-zz-WUc"/>
                                     <constraint firstItem="nWe-Nb-VbM" firstAttribute="leading" secondItem="xhW-6O-aH5" secondAttribute="leading" constant="16" id="usy-Pz-ybO"/>
+                                    <constraint firstAttribute="bottom" secondItem="tO0-n1-nlf" secondAttribute="bottom" constant="16" id="wPg-F3-5Gf"/>
                                     <constraint firstAttribute="trailing" secondItem="tO0-n1-nlf" secondAttribute="trailing" constant="16" id="zGX-fY-fbF"/>
                                 </constraints>
                             </scrollView>
@@ -368,6 +369,44 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection id="EKp-vF-VXK">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="KA8-nt-51s" style="IBUITableViewCellStyleDefault" id="by1-cc-oKF">
+                                        <rect key="frame" x="0.0" y="223.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="by1-cc-oKF" id="LAN-6M-kpr">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Clear Cache" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KA8-nt-51s">
+                                                    <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="Zan-Jt-mRq" style="IBUITableViewCellStyleDefault" id="TeV-EP-NL5">
+                                        <rect key="frame" x="0.0" y="267.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="TeV-EP-NL5" id="FiX-tl-CzZ">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Clear Downloaded Content" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Zan-Jt-mRq">
+                                                    <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="GSx-Q8-tiL" id="Whd-JT-dBk"/>
@@ -383,6 +422,8 @@
                     </navigationItem>
                     <connections>
                         <outlet property="backgroundPlaySwitch" destination="THe-8f-AbS" id="SOP-vP-THQ"/>
+                        <outlet property="clearCacheCell" destination="by1-cc-oKF" id="Oqo-tf-svK"/>
+                        <outlet property="clearDownloadsCell" destination="TeV-EP-NL5" id="TIk-a1-sHS"/>
                         <outlet property="labelLeadingConstraint" destination="g2a-cu-nuI" id="4jn-lg-rCE"/>
                         <outlet property="resumePlaybackSwitch" destination="2ue-W7-9Hl" id="K1n-kb-4re"/>
                         <outlet property="speedValueLabel" destination="sTj-gF-6ox" id="nGL-XF-hto"/>
@@ -472,6 +513,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="hRK-7r-iem"/>
+        <segue reference="JS8-ws-IUU"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -6,7 +6,7 @@
 //  Copyright © 2016 Ritam Sarmah. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import AVFoundation
 
 class Video: NSObject, NSCoding {
@@ -15,12 +15,12 @@ class Video: NSObject, NSCoding {
     
     static let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     static let archiveURL = documentsDirectory.appendingPathComponent("videos")
+    static let cacheURL = documentsDirectory.appendingPathComponent("videoInfo")
     static let validFormats = [".mp3", ".mp4", ".m3u8", ".avi", ".3gp"]
     
     struct PropertyKey {
-        static let urlKey = "url"
-        static let lastPlayedKey = "lastPlayedTime"
-        static let isYouTube = "isYouTube"
+        static let url = "url"
+        static let lastPlayed = "lastPlayedTime"
         static let title = "title"
         static let duration = "duration"
     }
@@ -35,8 +35,25 @@ class Video: NSObject, NSCoding {
     var filename: String
     var lastPlayedTime: CMTime?
     var type: VideoType
-    var title: String?
+    var title: String
     var durationInSeconds: Float64?
+    
+    var genericThumbnailImage: UIImage {
+        if filename.contains(".mp3") {
+            return UIImage(named: "Generic Audio")!
+        } else {
+            return UIImage(named: "Generic Video")!
+        }
+    }
+    
+    var thumbnailImage: UIImage? {
+        if FileManager.default.fileExists(atPath: thumbnailPath.path) {
+            let data = FileManager.default.contents(atPath: thumbnailPath.path)
+            let image = UIImage(data: data!)!
+            return image
+        }
+        return nil
+    }
     
     var filePath: URL {
         get {
@@ -56,7 +73,7 @@ class Video: NSObject, NSCoding {
         }
     }
     
-    var thumbnailPath: URL? {
+    var thumbnailPath: URL {
         get {
             let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
             let cachesDirectoryPath = paths[0] as String
@@ -64,9 +81,9 @@ class Video: NSObject, NSCoding {
             
             switch type {
             case .url:
-                return URL(string: imagesDirectoryPath + "/\(filename).png")
+                return URL(string: imagesDirectoryPath + "/\(filename).png")!
             case .youtube:
-                return URL(string: imagesDirectoryPath + "/\(youtubeID!).jpg")
+                return URL(string: imagesDirectoryPath + "/\(youtubeID!).jpg")!
             }
         }
     }
@@ -105,7 +122,7 @@ class Video: NSObject, NSCoding {
         } else {
             self.type = .url
         }
-        self.title = title
+        self.title = title ?? (url.lastPathComponent.isEmpty ? url.absoluteString : url.lastPathComponent)
         self.durationInSeconds = duration
         super.init()
     }
@@ -113,15 +130,15 @@ class Video: NSObject, NSCoding {
     // MARK: NSCoding
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(url, forKey: PropertyKey.urlKey)
-        aCoder.encode(lastPlayedTime, forKey: PropertyKey.lastPlayedKey)
+        aCoder.encode(url, forKey: PropertyKey.url)
+        aCoder.encode(lastPlayedTime, forKey: PropertyKey.lastPlayed)
         aCoder.encode(title, forKey: PropertyKey.title)
         aCoder.encode(durationInSeconds, forKey: PropertyKey.duration)
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let url = aDecoder.decodeObject(forKey: PropertyKey.urlKey) as! URL
-        let lastPlayedTime = aDecoder.decodeObject(forKey: PropertyKey.lastPlayedKey) as? CMTime
+        let url = aDecoder.decodeObject(forKey: PropertyKey.url) as! URL
+        let lastPlayedTime = aDecoder.decodeObject(forKey: PropertyKey.lastPlayed) as? CMTime
         let title = aDecoder.decodeObject(forKey: PropertyKey.title) as? String
         let duration = aDecoder.decodeObject(forKey: PropertyKey.duration) as? Float64
         

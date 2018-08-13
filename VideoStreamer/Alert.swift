@@ -13,9 +13,16 @@ struct Alert {
     private init() {}
     
     private static let okAction = UIAlertAction(title: "OK", style: .default)
+    private static let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
     
     private static func presentAlert(on viewController: UIViewController, title: String?, message: String?, actions: [UIAlertAction]) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        actions.forEach { alert.addAction($0) }
+        viewController.present(alert, animated: true)
+    }
+    
+    private static func presentActionSheet(on viewController: UIViewController, title: String?, message: String?, actions: [UIAlertAction]) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
         actions.forEach { alert.addAction($0) }
         viewController.present(alert, animated: true)
     }
@@ -31,11 +38,39 @@ struct Alert {
     // MARK: Downloading
     
     static func presentDownloadSuccess(on viewController: UIViewController, for video: Video) {
-        let message = "\"\(video.title ?? video.filename)\" is now available offline"
+        let message = "\"\(video.title)\" is now available offline"
         presentAlert(on: viewController, title: "Download successful!", message: message, actions: [okAction])
     }
     
     static func presentDownloadExists(on viewController: UIViewController) {
-        presentAlert(on: viewController, title: "Video already downloaded!", message: nil, actions: [okAction])
+        presentAlert(on: viewController, title: "Content already downloaded!", message: nil, actions: [okAction])
+    }
+    
+    static func presentClearDownloads(on viewController: UIViewController) {
+        let clearAction = UIAlertAction(title: "Clear Downloaded Content", style: .destructive) { _ in
+            VideoInfoManager.shared.deleteAllDownloads()
+            if let settingsVC = viewController as? SettingsTableViewController {
+                settingsVC.clearDownloadsCell.textLabel!.textColor = .lightGray
+                settingsVC.clearDownloadsCell.isUserInteractionEnabled = false
+            }
+        }
+        presentActionSheet(on: viewController,
+                           title: "Clearing will remove all downloaded media content. Items will not be removed from your library.",
+                           message: nil,
+                           actions: [clearAction, cancelAction])
+    }
+    
+    static func presentClearCache(on viewController: UIViewController) {
+        let clearAction = UIAlertAction(title: "Clear Cached Data", style: .destructive) { _ in
+            VideoInfoManager.shared.resetCache()
+            if let settingsVC = viewController as? SettingsTableViewController {
+                settingsVC.clearCacheCell.textLabel!.textColor = .lightGray
+                settingsVC.clearCacheCell.isUserInteractionEnabled = false
+            }
+        }
+        presentActionSheet(on: viewController,
+                           title: "Clearing will remove cached metadata and thumbnails. Items will not be removed from your library.",
+                           message: nil,
+                           actions: [clearAction, cancelAction])
     }
 }

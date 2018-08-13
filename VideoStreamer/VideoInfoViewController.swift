@@ -10,12 +10,10 @@ import UIKit
 import XCDYouTubeKit
 import MXParallaxHeader
 
-// TODO: Refactor downloading of videos to some video download manager
-
 class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     
     var video: Video?
-    var videoInfo: [String: Any]?
+    var videoInfo: VideoInfo?
     var downloadState: DownloadState?
     var downloadTask: DownloadTask?
     var thumbnailImage: UIImage?
@@ -105,7 +103,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
             return
         }
         
-        titleLabel.text = videoInfo[VideoInfoKeys.Title] as? String
+        titleLabel.text = videoInfo.title
         
         var filenameTitle: String
         switch video.type {
@@ -116,11 +114,11 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         }
         
         filenameLabel.attributedText = attributedString(withTitle: filenameTitle,
-                                                        value: videoInfo[VideoInfoKeys.Filename]! as! String)
-        urlLabel.attributedText = attributedString(withTitle: VideoInfoKeys.URL,
-                                                   value: videoInfo[VideoInfoKeys.URL]! as! String )
-        durationLabel.attributedText = attributedString(withTitle: VideoInfoKeys.Duration,
-                                                        value: videoInfo[VideoInfoKeys.Duration] as! String)
+                                                        value: videoInfo.filename)
+        urlLabel.attributedText = attributedString(withTitle: VideoInfoKeys.url.rawValue,
+                                                   value: videoInfo.url.absoluteString)
+        durationLabel.attributedText = attributedString(withTitle: VideoInfoKeys.duration.rawValue,
+                                                        value: videoInfo.duration)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
