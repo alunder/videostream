@@ -12,6 +12,8 @@ import MXParallaxHeader
 
 class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     
+    let reachability = Reachability()!
+    
     var video: Video?
     var videoInfo: VideoInfo?
     var downloadState: DownloadState?
@@ -41,19 +43,29 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: .reachabilityChanged, object: reachability)
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Could not start reachability notifier")
+        }
         updateUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if video?.lastPlayedTime != nil {
+        if video?.lastPlayedTime != nil && SettingsManager.shared.resumePlayback {
             playButton.setTitle("Resume", for: .normal)
+            if playButton.gestureRecognizers == nil {
+                let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(presentPlaybackOptions))
+                playButton.addGestureRecognizer(recognizer)
+            }
         } else {
             playButton.setTitle("Play", for: .normal)
         }
     }
     
-    func updateUI() {
+    @objc func updateUI() {
         infoScrollView.delaysContentTouches = false
         infoScrollView.delegate = self
         
@@ -62,12 +74,14 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         doneButton.layer.shadowRadius = 3;
         doneButton.layer.shadowOffset = CGSize(width: 0, height: 1.0)
         
+        playButton.isEnabled = true
         playButton.backgroundColor = Colors.buttonColor
         playButton.setTitleColor(Colors.theme, for: .normal)
         playButton.layer.cornerRadius = 5
         playButton.layer.masksToBounds = true
         playButton.setBackgroundColor(color: .darkGray, forState: .highlighted)
         
+        downloadButton.isEnabled = true
         downloadButton.backgroundColor = Colors.buttonColor
         downloadButton.progressColor = Colors.progressColor
         downloadButton.layer.cornerRadius = 5
@@ -119,6 +133,14 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
                                                    value: videoInfo.url.absoluteString)
         durationLabel.attributedText = attributedString(withTitle: VideoInfoKeys.duration.rawValue,
                                                         value: videoInfo.duration)
+        
+        // Disable play and download buttons if functionality not available
+        if reachability.connection == .none && !video.isDownloaded {
+            playButton.isEnabled = false
+            playButton.setTitleColor(.darkGray, for: .normal)
+            downloadButton.isEnabled = false
+            downloadButton.setTitleColor(.darkGray, for: .normal)
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -131,6 +153,10 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
     
     @IBAction func donePressed(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func presentPlaybackOptions() {
+        Alert.presentPlaybackOptions(on: self)
     }
     
     func setDownloadProgress() {

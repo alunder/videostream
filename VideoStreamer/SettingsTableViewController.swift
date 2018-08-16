@@ -23,11 +23,7 @@ class SettingsTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 11.0, *) {
-            labelLeadingConstraint.constant = 0
-        } else {
-            labelLeadingConstraint.constant = 13
-        }
+        labelLeadingConstraint.constant = 0
     }
     
     override func viewWillAppear(_ animated: Bool) {

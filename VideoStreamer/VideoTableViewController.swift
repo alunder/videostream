@@ -18,9 +18,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 11.0, *) {
-            self.navigationController?.navigationBar.prefersLargeTitles = true
-        }
+        self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.rightBarButtonItem = self.editButtonItem
         let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(showInfo))
         tableView.addGestureRecognizer(recognizer)

@@ -73,4 +73,19 @@ struct Alert {
                            message: nil,
                            actions: [clearAction, cancelAction])
     }
+    
+    static func presentPlaybackOptions(on viewController: UIViewController) {
+        let startOver = UIAlertAction(title: "Start Over", style: .default) { _ in
+            if let infoVC = viewController as? VideoInfoViewController {
+                infoVC.video?.lastPlayedTime = nil
+                infoVC.performSegue(withIdentifier: Storyboard.PlayerFromInfoSegue, sender: viewController)
+            }
+        }
+        let resume = UIAlertAction(title: "Resume", style: .default) { _ in
+            if let infoVC = viewController as? VideoInfoViewController {
+                infoVC.performSegue(withIdentifier: Storyboard.PlayerFromInfoSegue, sender: viewController)
+            }
+        }
+        presentActionSheet(on: viewController, title: nil, message: nil, actions: [startOver, resume, cancelAction])
+    }
 }

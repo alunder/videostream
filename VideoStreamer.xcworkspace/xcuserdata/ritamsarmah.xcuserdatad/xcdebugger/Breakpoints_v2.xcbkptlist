@@ -30,7 +30,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VideoStreamer/VideoInfoManager.swift"
-            timestampString = "555788106.034932"
+            timestampString = "555790426.922062"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "91"
@@ -46,13 +46,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VideoStreamer/VideoTableViewCell.swift"
-            timestampString = "555735290.373571"
+            timestampString = "555790822.076032"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "251"
             endingLineNumber = "251"
-            landmarkName = "loadVideoData(video:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -62,13 +62,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VideoStreamer/VideoTableViewCell.swift"
-            timestampString = "555735290.373831"
+            timestampString = "555790822.076409"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "212"
             endingLineNumber = "212"
-            landmarkName = "loadVideoData(video:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -78,13 +78,29 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VideoStreamer/VideoTableViewCell.swift"
-            timestampString = "555735290.374063"
+            timestampString = "555790822.07671"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "78"
             endingLineNumber = "78"
-            landmarkName = "updateUI()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VideoStreamer/VideoInfoViewController.swift"
+            timestampString = "555790822.0770251"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
