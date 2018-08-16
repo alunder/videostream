@@ -59,7 +59,7 @@ class PlayerViewController: AVPlayerViewController {
         }
         
         switch video.type {
-        case .url:
+        case .url, .broadcast:
             playVideo(withURL: video.url)
         case .youtube:
             XCDYouTubeClient.default().getVideoWithIdentifier(video.youtubeID) { (video, error) in

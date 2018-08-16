@@ -58,7 +58,9 @@ class VideoTableViewCell: UITableViewCell {
                 isUserInteractionEnabled = !disabled
                 titleLabel.isUserInteractionEnabled = !disabled
                 durationLabel.isUserInteractionEnabled = !disabled
-                downloadButton.isHidden = disabled
+                if video!.type != .broadcast {
+                    downloadButton.isHidden = disabled
+                }
             }
         }
     }
@@ -78,14 +80,16 @@ class VideoTableViewCell: UITableViewCell {
         if let videoInfo = self.videoInfo {
             titleLabel.text = videoInfo.title
             durationLabel.text = videoInfo.duration
-            if video.isDownloaded {
+            if video.type == .broadcast {
+                downloadState = .disabled
+            } else if video.isDownloaded {
                 downloadState = .downloaded
             }
             thumbnail.image = video.thumbnailImage ?? video.genericThumbnailImage
             self.imageLoadingIndicator.stopAnimating()
         } else {
             switch video.type {
-            case .url:
+            case .url, .broadcast:
                 loadVideoData(video: video)
             case .youtube:
                 loadYouTubeData(video: video)
@@ -282,7 +286,7 @@ class VideoTableViewCell: UITableViewCell {
                 }
             } else {
                 DispatchQueue.main.async {
-                    self.durationLabel.text = "Live Broadcast"
+                    self.durationLabel.text = "🔴 Live"
                     self.thumbnail.image = UIImage(named: "Broadcast")
                     self.imageLoadingIndicator.stopAnimating()
                     self.downloadState = .disabled

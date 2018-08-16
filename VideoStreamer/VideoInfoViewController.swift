@@ -75,18 +75,18 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         doneButton.layer.shadowOffset = CGSize(width: 0, height: 1.0)
         
         playButton.isEnabled = true
-        playButton.backgroundColor = Colors.buttonColor
+        playButton.backgroundColor = Colors.Button.backgroundColor
         playButton.setTitleColor(Colors.theme, for: .normal)
         playButton.layer.cornerRadius = 5
         playButton.layer.masksToBounds = true
-        playButton.setBackgroundColor(color: .darkGray, forState: .highlighted)
+        playButton.setBackgroundColor(color: .gray, forState: .highlighted)
         
         downloadButton.isEnabled = true
-        downloadButton.backgroundColor = Colors.buttonColor
-        downloadButton.progressColor = Colors.progressColor
+        downloadButton.backgroundColor = Colors.Button.backgroundColor
+        downloadButton.progressColor = Colors.Button.progressColor
         downloadButton.layer.cornerRadius = 5
         downloadButton.layer.masksToBounds = true
-        downloadButton.setBackgroundColor(color: .darkGray, forState: .highlighted)
+        downloadButton.setBackgroundColor(color: Colors.Button.highlightColor, forState: .highlighted)
         setDownloadButton()
         
         if let task = DownloadService.shared.getDownloads(withId: video!.url.absoluteString)?.first {
@@ -121,7 +121,7 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         
         var filenameTitle: String
         switch video.type {
-        case .url:
+        case .url, .broadcast:
             filenameTitle = "Filename"
         case .youtube:
             filenameTitle = "YouTube ID"
@@ -137,9 +137,14 @@ class VideoInfoViewController: UIViewController, UIScrollViewDelegate {
         // Disable play and download buttons if functionality not available
         if reachability.connection == .none && !video.isDownloaded {
             playButton.isEnabled = false
-            playButton.setTitleColor(.darkGray, for: .normal)
+            playButton.setTitleColor(Colors.Button.textDisabledColor, for: .normal)
             downloadButton.isEnabled = false
-            downloadButton.setTitleColor(.darkGray, for: .normal)
+            downloadButton.setTitleColor(Colors.Button.textDisabledColor, for: .normal)
+        }
+        
+        if video.type == .broadcast {
+            downloadButton.isEnabled = false
+            downloadButton.setTitleColor(Colors.Button.textDisabledColor, for: .normal)
         }
     }
     

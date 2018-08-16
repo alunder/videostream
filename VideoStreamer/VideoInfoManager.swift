@@ -173,10 +173,10 @@ class VideoInfoManager {
         return NSKeyedUnarchiver.unarchiveObject(withFile: Video.cacheURL.path) as? [URL : VideoInfo]
     }
     
-    //    func loadSampleVideos() {
-    //        saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
-    //        saveVideoFromString("http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4")
-    //        saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
-    //    }
+//        func loadSampleVideos() {
+//            saveVideoFromString("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4")
+//            saveVideoFromString("http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4")
+//            saveVideoFromString("http://techslides.com/demos/sample-videos/small.mp4")
+//        }
     
 }

@@ -39,8 +39,13 @@ struct SettingsConstants {
 
 struct Colors {
     static let theme = UIColor.orange //UIColor(red: 199/255, green: 0/255, blue: 57/255, alpha: 1.0)
-    static let buttonColor = UIColor(red: 0.91, green: 0.91, blue: 0.91, alpha: 1.0)
-    static let progressColor = UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 1.0)
+    
+    struct Button {
+        static let backgroundColor = UIColor(red: 0.91, green: 0.91, blue: 0.91, alpha: 1.0)
+        static let textDisabledColor = UIColor.gray
+        static let progressColor = UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 1.0)
+        static let highlightColor = UIColor.gray
+    }
 }
 
 enum DownloadState {

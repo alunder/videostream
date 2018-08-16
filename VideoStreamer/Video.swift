@@ -26,7 +26,7 @@ class Video: NSObject, NSCoding {
     }
     
     enum VideoType {
-        case url, youtube
+        case broadcast, url, youtube
     }
     
     // MARK: Properties
@@ -41,6 +41,8 @@ class Video: NSObject, NSCoding {
     var genericThumbnailImage: UIImage {
         if filename.contains(".mp3") {
             return UIImage(named: "Generic Audio")!
+        } else if self.type == .broadcast {
+            return UIImage(named: "Broadcast")!
         } else {
             return UIImage(named: "Generic Video")!
         }
@@ -59,7 +61,7 @@ class Video: NSObject, NSCoding {
         get {
             var savedFilename: String
             switch type {
-            case .url:
+            case .url, .broadcast:
                 savedFilename = filename
             case .youtube:
                 savedFilename = youtubeID!
@@ -80,7 +82,7 @@ class Video: NSObject, NSCoding {
             let imagesDirectoryPath = cachesDirectoryPath + "/Thumbnails"
             
             switch type {
-            case .url:
+            case .url, .broadcast:
                 return URL(string: imagesDirectoryPath + "/\(filename).png")!
             case .youtube:
                 return URL(string: imagesDirectoryPath + "/\(youtubeID!).jpg")!
@@ -91,7 +93,7 @@ class Video: NSObject, NSCoding {
     var youtubeID: String? {
         get {
             switch type {
-            case .url:
+            case .url, .broadcast:
                 return nil
             case .youtube:
                 if url.host!.contains("youtu.be") {
@@ -119,6 +121,8 @@ class Video: NSObject, NSCoding {
         self.lastPlayedTime = lastPlayedTime
         if url.host!.contains("youtube") || url.host!.contains("youtu.be") {
             self.type = .youtube
+        } else if filename.contains(".m3u8") {
+            self.type = .broadcast
         } else {
             self.type = .url
         }
