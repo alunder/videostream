@@ -18,9 +18,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 11.0, *) {
-            self.navigationController?.navigationBar.prefersLargeTitles = true
-        }
+        self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.rightBarButtonItem = self.editButtonItem
         let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(showInfo))
         tableView.addGestureRecognizer(recognizer)
@@ -45,6 +43,7 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
             textField.delegate = self
             textField.placeholder = "http://"
             textField.enablesReturnKeyAutomatically = true
+            textField.clearButtonMode = .whileEditing
             textField.addTarget(self, action: #selector(VideoTableViewController.textChanged(_:)), for: .editingChanged)
             linkField = textField
         }
@@ -96,11 +95,11 @@ class VideoTableViewController: UITableViewController, UITextFieldDelegate {
         case .unplayableFileType:
             alert.title = "File type cannot be played"
         case .videoAlreadyExists:
-            alert.title = "Video already added"
-            alert.message = "URL with video is already found in your collection"
+            alert.title = "Content already added"
+            alert.message = "This item is already in your library"
         case .invalidUrl:
             alert.title = "Invalid URL format"
-            alert.message = "Video stream must be a valid URL"
+            alert.message = "Added content must be from a valid URL"
         }
         
         alert.addAction(dismissAction)

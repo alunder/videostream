@@ -97,6 +97,7 @@ class PlayerViewController: AVPlayerViewController {
                     self.player?.seek(to: time, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
                 }
             }
+            self.player?.play()
         }
     }
     

@@ -35,9 +35,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // Color themes
-        UITableViewCell.appearance().tintColor = Colors.themeColor
-        UINavigationBar.appearance().tintColor = Colors.themeColor
-        UIToolbar.appearance().tintColor = Colors.themeColor
+        UITableViewCell.appearance().tintColor = Colors.theme
+        UINavigationBar.appearance().tintColor = Colors.theme
+        UIToolbar.appearance().tintColor = Colors.theme
+        UISwitch.appearance().onTintColor = Colors.theme
+        self.window?.tintColor = Colors.theme
         
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
         
